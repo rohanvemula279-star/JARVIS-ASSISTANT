@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Environment variables and secrets
+.env
+.env.*
+*.key
+*.pem
+secrets.yaml
+config.yaml
+
+# API keys
+*api_key*
+*secret*
+*credentials*
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Logs
+logs/
+*.log
+
+# Databases
+*.db
+*.sqlite3
+
+# Node
+node_modules/
+web/node_modules/
+mobile/node_modules/
+web/dist/
+web/build/
+
+# Large/ generated
+models/
+*.onnx
+*.pb
+*.h5
+*.pkl
+
+# Build artifacts
+*.exe
+*.dll
+*.so
+
+# Misc
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.pdb
