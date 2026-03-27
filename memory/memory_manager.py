@@ -10,19 +10,21 @@ def get_base_dir() -> Path:
     return Path(__file__).resolve().parent.parent
 
 
-BASE_DIR    = get_base_dir()
+BASE_DIR = get_base_dir()
 MEMORY_PATH = BASE_DIR / "memory" / "long_term.json"
-_lock       = Lock()
+_lock = Lock()
 
-MAX_VALUE_LENGTH = 300  
+MAX_VALUE_LENGTH = 300
+
 
 def _empty_memory() -> dict:
     return {
-        "identity":      {},
-        "preferences":   {},
+        "identity": {},
+        "preferences": {},
         "relationships": {},
-        "notes":         {}
+        "notes": {}
     }
+
 
 def load_memory() -> dict:
     if not MEMORY_PATH.exists():
@@ -50,6 +52,7 @@ def save_memory(memory: dict) -> None:
             json.dumps(memory, indent=2, ensure_ascii=False),
             encoding="utf-8"
         )
+
 
 def _truncate_value(val: str) -> str:
     if isinstance(val, str) and len(val) > MAX_VALUE_LENGTH:
@@ -99,7 +102,6 @@ def update_memory(memory_update: dict) -> dict:
     return memory
 
 
-
 def format_memory_for_prompt(memory: dict | None) -> str:
     if not memory:
         return ""
@@ -109,13 +111,17 @@ def format_memory_for_prompt(memory: dict | None) -> str:
     # Identity
     identity = memory.get("identity", {})
     name = identity.get("name", {}).get("value")
-    age  = identity.get("age",  {}).get("value")
+    age = identity.get("age", {}).get("value")
     bday = identity.get("birthday", {}).get("value")
     city = identity.get("city", {}).get("value")
-    if name: lines.append(f"Name: {name}")
-    if age:  lines.append(f"Age: {age}")
-    if bday: lines.append(f"Birthday: {bday}")
-    if city: lines.append(f"City: {city}")
+    if name:
+        lines.append(f"Name: {name}")
+    if age:
+        lines.append(f"Age: {age}")
+    if bday:
+        lines.append(f"Birthday: {bday}")
+    if city:
+        lines.append(f"City: {city}")
 
     prefs = memory.get("preferences", {})
     for i, (key, entry) in enumerate(prefs.items()):
@@ -144,7 +150,7 @@ def format_memory_for_prompt(memory: dict | None) -> str:
     if not lines:
         return ""
 
-    result = "[USER MEMORY]\n" + "\n".join(f"- {l}" for l in lines)
+    result = "[USER MEMORY]\n" + "\n".join(f"- {line}" for line in lines)
     if len(result) > 800:
         result = result[:797] + "…"
 

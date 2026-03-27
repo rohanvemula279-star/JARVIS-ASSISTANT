@@ -3,23 +3,15 @@ import re
 import sys
 from pathlib import Path
 
-
-def get_base_dir() -> Path:
-    if getattr(sys, "frozen", False):
-        return Path(sys.executable).parent
-    return Path(__file__).resolve().parent.parent
+from memory.config_manager import get_gemini_key  # type: ignore
 
 
-BASE_DIR        = get_base_dir()
-API_CONFIG_PATH = BASE_DIR / "config" / "api_keys.json"
-
-
-PLANNER_PROMPT = """You are the planning module of MARK XXV, a personal AI assistant.
-Your job: break any user goal into a sequence of steps using ONLY the tools listed below.
+PLANNER_PROMPT = """You are the planning module of MARK XXV, a personal AI assistant.  # noqa: E501
+Your job: break any user goal into a sequence of steps using ONLY the tools listed below.  # noqa: E501
 
 ABSOLUTE RULES:
 - NEVER use generated_code or write Python scripts. It does not exist.
-- NEVER reference previous step results in parameters. Every step is independent.
+- NEVER reference previous step results in parameters. Every step is independent.  # noqa: E501
 - Use web_search for ANY information retrieval, research, or current data.
 - Use file_controller to save content to disk.
 - Use cmd_control to open files or run system commands.
@@ -36,15 +28,12 @@ web_search
   items: list of strings (optional, for compare mode)
   aspect: string (optional, for compare mode)
 
-browser_control
-  action: "go_to" | "search" | "click" | "type" | "scroll" | "get_text" | "press" | "close" (required)
-  url: string (for go_to)
-  query: string (for search)
-  text: string (for click/type)
-  direction: "up" | "down" (for scroll)
+browser_task
+  request: string (required) — The user's natural language request for a web task
+  user_data: dict (optional) — User info for form filling: {name, email, phone, address, ...}
 
 file_controller
-  action: "write" | "create_file" | "read" | "list" | "delete" | "move" | "copy" | "find" | "disk_usage" (required)
+  action: "write" | "create_file" | "read" | "list" | "delete" | "move" | "copy" | "find" | "disk_usage" (required)  # noqa: E501
   path: string — use "desktop" for Desktop folder
   name: string — filename
   content: string — file content (for write/create_file)
@@ -59,7 +48,7 @@ computer_settings
   value: string (optional)
 
 computer_control
-  action: "type" | "click" | "hotkey" | "press" | "scroll" | "screenshot" | "screen_find" | "screen_click" (required)
+  action: "type" | "click" | "hotkey" | "press" | "scroll" | "screenshot" | "screen_find" | "screen_click" (required)  # noqa: E501
   text: string (for type)
   x, y: int (for click)
   keys: string (for hotkey, e.g. "ctrl+c")
@@ -114,8 +103,8 @@ EXAMPLES:
 Goal: "makine mühendisliği hakkında araştırma yap ve not defterine kaydet"
 Steps:
   1. web_search | query: "mechanical engineering overview definition history"
-  2. web_search | query: "mechanical engineering applications and future trends"
-  3. file_controller | action: write, path: desktop, name: makine_muhendisligi.txt, content: "MAKINE MUHENDISLIGI ARASTIRMASI\n\nBu dosya web arastirmasi sonuclari ile doldurulacak."
+  2. web_search | query: "mechanical engineering applications and future trends"  # noqa: E501
+  3. file_controller | action: write, path: desktop, name: makine_muhendisligi.txt, content: "MAKINE MUHENDISLIGI ARASTIRMASI\n\nBu dosya web arastirmasi sonuclari ile doldurulacak."  # noqa: E501
   4. cmd_control | task: "open makine_muhendisligi.txt on desktop with notepad"
 
 Goal: "Bitcoin fiyatı nedir"
@@ -129,7 +118,7 @@ Steps:
 
 Goal: "WhatsApp'tan Ahmet'e yarın toplantı var de"
 Steps:
-  1. send_message | receiver: Ahmet, message_text: "Yarın toplantı var", platform: WhatsApp
+  1. send_message | receiver: Ahmet, message_text: "Yarın toplantı var", platform: WhatsApp  # noqa: E501
 
 Goal: "Saati aç ve 30 dakika sonraya hatırlatıcı kur"
 Steps:
@@ -151,15 +140,12 @@ OUTPUT — return ONLY valid JSON, no markdown, no explanation, no code blocks:
 """
 
 
-def _get_api_key() -> str:
-    with open(API_CONFIG_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)["gemini_api_key"]
 
 
 def create_plan(goal: str, context: str = "") -> dict:
-    import google.generativeai as genai
+    import google.generativeai as genai  # type: ignore
 
-    genai.configure(api_key=_get_api_key())
+    genai.configure(api_key=get_gemini_key())
     model = genai.GenerativeModel(
         model_name="gemini-2.5-flash-lite",
         system_instruction=PLANNER_PROMPT
@@ -171,8 +157,8 @@ def create_plan(goal: str, context: str = "") -> dict:
 
     try:
         response = model.generate_content(user_input)
-        text     = response.text.strip()
-        text     = re.sub(r"```(?:json)?", "", text).strip().rstrip("`").strip()
+        text = response.text.strip()
+        text = re.sub(r"```(?:json)?", "", text).strip().rstrip("`").strip()
 
         plan = json.loads(text)
 
@@ -181,7 +167,9 @@ def create_plan(goal: str, context: str = "") -> dict:
 
         for step in plan["steps"]:
             if step.get("tool") in ("generated_code",):
-                print(f"[Planner] ⚠️ generated_code detected in step {step.get('step')} — replacing with web_search")
+                print(
+                    f"[Planner] ⚠️ generated_code detected in step {
+                        step.get('step')} — replacing with web_search")
                 desc = step.get("description", goal)
                 step["tool"] = "web_search"
                 step["parameters"] = {"query": desc[:200]}
@@ -216,10 +204,14 @@ def _fallback_plan(goal: str) -> dict:
     }
 
 
-def replan(goal: str, completed_steps: list, failed_step: dict, error: str) -> dict:
-    import google.generativeai as genai
+def replan(
+        goal: str,
+        completed_steps: list,
+        failed_step: dict,
+        error: str) -> dict:
+    import google.generativeai as genai  # type: ignore
 
-    genai.configure(api_key=_get_api_key())
+    genai.configure(api_key=get_gemini_key())
     model = genai.GenerativeModel(
         model_name="gemini-2.5-flash",
         system_instruction=PLANNER_PROMPT
@@ -237,19 +229,22 @@ Already completed:
 Failed step: [{failed_step.get('tool')}] {failed_step.get('description')}
 Error: {error}
 
-Create a REVISED plan for the remaining work only. Do not repeat completed steps."""
+Create a REVISED plan for the remaining work only. Do not repeat completed steps."""  # noqa: E501
 
     try:
         response = model.generate_content(prompt)
-        text     = response.text.strip()
-        text     = re.sub(r"```(?:json)?", "", text).strip().rstrip("`").strip()
-        plan     = json.loads(text)
+        text = response.text.strip()
+        text = re.sub(r"```(?:json)?", "", text).strip().rstrip("`").strip()
+        plan = json.loads(text)
 
         # generated_code kontrolü
         for step in plan.get("steps", []):
             if step.get("tool") == "generated_code":
                 step["tool"] = "web_search"
-                step["parameters"] = {"query": step.get("description", goal)[:200]}
+                step["parameters"] = {
+                    "query": step.get(
+                        "description", goal)[
+                        :200]}
 
         print(f"[Planner] 🔄 Revised plan: {len(plan['steps'])} steps")
         return plan

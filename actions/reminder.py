@@ -26,18 +26,19 @@ def reminder(
 
     date_str = parameters.get("date")
     time_str = parameters.get("time")
-    message  = parameters.get("message", "Reminder")
+    message = parameters.get("message", "Reminder")
 
     if not date_str or not time_str:
         return "I need both a date and a time to set a reminder."
 
     try:
-        target_dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+        target_dt = datetime.strptime(
+            f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
 
         if target_dt <= datetime.now():
             return "That time is already in the past."
 
-        task_name    = f"MARKReminder_{target_dt.strftime('%Y%m%d_%H%M')}"
+        task_name = f"MARKReminder_{target_dt.strftime('%Y%m%d_%H%M')}"
         safe_message = message.replace('"', '').replace("'", "").strip()[:200]
 
         python_exe = sys.executable
@@ -46,9 +47,9 @@ def reminder(
             if os.path.exists(pythonw):
                 python_exe = pythonw
 
-        temp_dir      = os.environ.get("TEMP", "C:\\Temp")
+        temp_dir = os.environ.get("TEMP", "C:\\Temp")
         notify_script = os.path.join(temp_dir, f"{task_name}.pyw")
-        project_root  = os.path.abspath(
+        project_root = os.path.abspath(
             os.path.join(os.path.dirname(__file__), "..")
         )
 
@@ -88,7 +89,7 @@ except Exception:
             f.write(script_code)
 
         xml_content = f'''<?xml version="1.0" encoding="UTF-16"?>
-<Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+<Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">  # noqa: E501
   <RegistrationInfo>
     <Description>MARK Reminder: {safe_message}</Description>
   </RegistrationInfo>
@@ -153,4 +154,6 @@ except Exception:
         return "I couldn't understand that date or time format."
 
     except Exception as e:
-        return f"Something went wrong while scheduling the reminder: {str(e)[:80]}"
+        return f"Something went wrong while scheduling the reminder: {
+            str(e)[  # type: ignore
+                :80]}"  # type: ignore

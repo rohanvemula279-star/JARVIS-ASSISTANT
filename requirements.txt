@@ -1,4 +1,4 @@
-pyaudio
+sounddevice
 google-genai
 google-generativeai
 pillow
@@ -17,3 +17,4 @@ pycaw
 win10toast
 duckduckgo-search
 youtube-transcript-api
+mediapipe>=0.10.9,<0.11.0

@@ -1,0 +1,850 @@
+﻿actions\browser_control.py:9:80: E501 line too long (99 > 79 characters)
+actions\browser_control.py:9:85: E261 at least two spaces before inline comment
+actions\browser_control.py:11:1: E302 expected 2 blank lines, found 1
+actions\browser_control.py:16:26: E261 at least two spaces before inline comment
+actions\browser_control.py:17:16: E221 multiple spaces before operator
+actions\browser_control.py:17:38: E261 at least two spaces before inline comment
+actions\browser_control.py:18:42: E261 at least two spaces before inline comment
+actions\browser_control.py:19:80: E501 line too long (96 > 79 characters)
+actions\browser_control.py:21:68: E261 at least two spaces before inline comment
+actions\browser_control.py:21:80: E501 line too long (82 > 79 characters)
+actions\browser_control.py:22:33: E261 at least two spaces before inline comment
+actions\browser_control.py:46:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\browser_control.py:65:80: E501 line too long (93 > 79 characters)
+actions\browser_control.py:75:22: E261 at least two spaces before inline comment
+actions\browser_control.py:78:80: E501 line too long (80 > 79 characters)
+actions\browser_control.py:79:80: E501 line too long (81 > 79 characters)
+actions\browser_control.py:80:80: E501 line too long (83 > 79 characters)
+actions\browser_control.py:83:79: E261 at least two spaces before inline comment
+actions\browser_control.py:83:80: E501 line too long (93 > 79 characters)
+actions\browser_control.py:85:24: E221 multiple spaces before operator
+actions\browser_control.py:85:58: E261 at least two spaces before inline comment
+actions\browser_control.py:86:24: E221 multiple spaces before operator
+actions\browser_control.py:86:56: E261 at least two spaces before inline comment
+actions\browser_control.py:87:41: E261 at least two spaces before inline comment
+actions\browser_control.py:89:24: E221 multiple spaces before operator
+actions\browser_control.py:89:80: E501 line too long (87 > 79 characters)
+actions\browser_control.py:101:11: E221 multiple spaces before operator
+actions\browser_control.py:141:5: E303 too many blank lines (2)
+actions\browser_control.py:147:5: E303 too many blank lines (2)
+actions\browser_control.py:169:80: E501 line too long (83 > 79 characters)
+actions\browser_control.py:171:80: E501 line too long (87 > 79 characters)
+actions\browser_control.py:176:80: E501 line too long (99 > 79 characters)
+actions\browser_control.py:185:30: E261 at least two spaces before inline comment
+actions\browser_control.py:196:1: W293 blank line contains whitespace
+actions\browser_control.py:204:80: E501 line too long (116 > 79 characters)
+actions\browser_control.py:205:1: W293 blank line contains whitespace
+actions\browser_control.py:206:16: E221 multiple spaces before operator
+actions\browser_control.py:208:15: E221 multiple spaces before operator
+actions\browser_control.py:229:80: E501 line too long (89 > 79 characters)
+actions\browser_control.py:249:23: E221 multiple spaces before operator
+actions\browser_control.py:268:80: E501 line too long (87 > 79 characters)
+actions\browser_control.py:269:80: E501 line too long (85 > 79 characters)
+actions\browser_control.py:270:80: E501 line too long (81 > 79 characters)
+actions\browser_control.py:279:80: E501 line too long (83 > 79 characters)
+actions\browser_control.py:290:80: E501 line too long (90 > 79 characters)
+actions\browser_control.py:293:80: E501 line too long (90 > 79 characters)
+actions\browser_control.py:322:61: E261 at least two spaces before inline comment
+actions\browser_control.py:327:13: E221 multiple spaces before operator
+actions\browser_control.py:340:13: E221 multiple spaces before operator
+actions\browser_control.py:358:80: E501 line too long (86 > 79 characters)
+actions\browser_control.py:364:80: E501 line too long (93 > 79 characters)
+actions\browser_control.py:393:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\browser_control.py:393:4: E221 multiple spaces before operator
+actions\browser_control.py:395:9: E221 multiple spaces before operator
+actions\browser_control.py:405:1: E302 expected 2 blank lines, found 1
+actions\browser_control.py:467:80: E501 line too long (81 > 79 characters)
+actions\browser_control.py:493:43: E261 at least two spaces before inline comment
+actions\browser_control.py:495:58: E261 at least two spaces before inline comment
+actions\browser_control.py:497:22: W292 no newline at end of file
+actions\cmd_control.py:13:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\cmd_control.py:13:9: E221 multiple spaces before operator
+actions\cmd_control.py:23:31: E701 multiple statements on one line (colon)
+actions\cmd_control.py:23:32: E272 multiple spaces before keyword
+actions\cmd_control.py:24:32: E701 multiple statements on one line (colon)
+actions\cmd_control.py:27:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\cmd_control.py:30:80: E501 line too long (95 > 79 characters)
+actions\cmd_control.py:51:80: E501 line too long (88 > 79 characters)
+actions\cmd_control.py:61:80: E501 line too long (176 > 79 characters)
+actions\cmd_control.py:64:1: E302 expected 2 blank lines, found 1
+actions\cmd_control.py:66:1: W293 blank line contains whitespace
+actions\cmd_control.py:67:80: E501 line too long (100 > 79 characters)
+actions\cmd_control.py:68:80: E501 line too long (106 > 79 characters)
+actions\cmd_control.py:71:20: E221 multiple spaces before operator
+actions\cmd_control.py:72:80: E501 line too long (93 > 79 characters)
+actions\cmd_control.py:87:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\cmd_control.py:105:1: E302 expected 2 blank lines, found 1
+actions\cmd_control.py:113:80: E501 line too long (84 > 79 characters)
+actions\cmd_control.py:118:16: E221 multiple spaces before operator
+actions\cmd_control.py:120:18: E221 multiple spaces before operator
+actions\cmd_control.py:126:1: E302 expected 2 blank lines, found 1
+actions\cmd_control.py:132:80: E501 line too long (101 > 79 characters)
+actions\cmd_control.py:155:14: E221 multiple spaces before operator
+actions\cmd_control.py:156:18: E701 multiple statements on one line (colon)
+actions\cmd_control.py:156:19: E272 multiple spaces before keyword
+actions\cmd_control.py:157:17: E701 multiple statements on one line (colon)
+actions\cmd_control.py:157:18: E272 multiple spaces before keyword
+actions\cmd_control.py:176:17: E128 continuation line under-indented for visual indent
+actions\cmd_control.py:180:80: E501 line too long (89 > 79 characters)
+actions\cmd_control.py:194:9: E221 multiple spaces before operator
+actions\cmd_control.py:210:80: E501 line too long (80 > 79 characters)
+actions\cmd_control.py:230:36: W292 no newline at end of file
+actions\code_helper.py:2:80: E501 line too long (96 > 79 characters)
+actions\code_helper.py:10:80: E501 line too long (86 > 79 characters)
+actions\code_helper.py:11:80: E501 line too long (97 > 79 characters)
+actions\code_helper.py:27:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\code_helper.py:27:9: E221 multiple spaces before operator
+actions\code_helper.py:28:16: E221 multiple spaces before operator
+actions\code_helper.py:29:8: E221 multiple spaces before operator
+actions\code_helper.py:31:13: E221 multiple spaces before operator
+actions\code_helper.py:92:12: E221 multiple spaces before operator
+actions\code_helper.py:93:11: E221 multiple spaces before operator
+actions\code_helper.py:93:80: E501 line too long (96 > 79 characters)
+actions\code_helper.py:106:80: E501 line too long (90 > 79 characters)
+actions\code_helper.py:124:80: E501 line too long (83 > 79 characters)
+actions\code_helper.py:125:80: E501 line too long (84 > 79 characters)
+actions\code_helper.py:137:16: E221 multiple spaces before operator
+actions\code_helper.py:138:80: E501 line too long (82 > 79 characters)
+actions\code_helper.py:139:15: E221 multiple spaces before operator
+actions\code_helper.py:151:80: E501 line too long (88 > 79 characters)
+actions\code_helper.py:161:1: E302 expected 2 blank lines, found 1
+actions\code_helper.py:161:80: E501 line too long (95 > 79 characters)
+actions\code_helper.py:162:9: E221 multiple spaces before operator
+actions\code_helper.py:179:9: E221 multiple spaces before operator
+actions\code_helper.py:180:9: E221 multiple spaces before operator
+actions\code_helper.py:186:10: E221 multiple spaces before operator
+actions\code_helper.py:227:14: E221 multiple spaces before operator
+actions\code_helper.py:228:14: E221 multiple spaces before operator
+actions\code_helper.py:229:18: E701 multiple statements on one line (colon)
+actions\code_helper.py:230:17: E701 multiple statements on one line (colon)
+actions\code_helper.py:241:80: E501 line too long (94 > 79 characters)
+actions\code_helper.py:255:17: E701 multiple statements on one line (colon)
+actions\code_helper.py:269:80: E501 line too long (92 > 79 characters)
+actions\code_helper.py:272:21: E701 multiple statements on one line (colon)
+actions\code_helper.py:284:21: E701 multiple statements on one line (colon)
+actions\code_helper.py:288:80: E501 line too long (93 > 79 characters)
+actions\code_helper.py:291:13: E701 multiple statements on one line (colon)
+actions\code_helper.py:294:1: E302 expected 2 blank lines, found 1
+actions\code_helper.py:320:10: E221 multiple spaces before operator
+actions\code_helper.py:323:80: E501 line too long (82 > 79 characters)
+actions\code_helper.py:334:15: E221 multiple spaces before operator
+actions\code_helper.py:354:10: E221 multiple spaces before operator
+actions\code_helper.py:394:9: E221 multiple spaces before operator
+actions\code_helper.py:399:80: E501 line too long (80 > 79 characters)
+actions\code_helper.py:401:80: E501 line too long (84 > 79 characters)
+actions\code_helper.py:412:17: E221 multiple spaces before operator
+actions\code_helper.py:426:19: E221 multiple spaces before operator
+actions\code_helper.py:446:5: E303 too many blank lines (2)
+actions\code_helper.py:448:80: E501 line too long (89 > 79 characters)
+actions\code_helper.py:451:5: E303 too many blank lines (2)
+actions\code_helper.py:463:20: E221 multiple spaces before operator
+actions\code_helper.py:465:80: E501 line too long (109 > 79 characters)
+actions\code_helper.py:469:80: E501 line too long (109 > 79 characters)
+actions\code_helper.py:471:80: E501 line too long (95 > 79 characters)
+actions\code_helper.py:503:80: E501 line too long (82 > 79 characters)
+actions\code_helper.py:506:26: E221 multiple spaces before operator
+actions\code_helper.py:533:80: E501 line too long (91 > 79 characters)
+actions\code_helper.py:534:80: E501 line too long (93 > 79 characters)
+actions\code_helper.py:537:80: E501 line too long (85 > 79 characters)
+actions\code_helper.py:542:6: E221 multiple spaces before operator
+actions\code_helper.py:543:11: E221 multiple spaces before operator
+actions\code_helper.py:545:13: E221 multiple spaces before operator
+actions\code_helper.py:547:14: E221 multiple spaces before operator
+actions\code_helper.py:548:9: E221 multiple spaces before operator
+actions\code_helper.py:549:9: E221 multiple spaces before operator
+actions\code_helper.py:550:12: E221 multiple spaces before operator
+actions\code_helper.py:573:80: E501 line too long (87 > 79 characters)
+actions\code_helper.py:582:80: E501 line too long (110 > 79 characters)
+actions\code_helper.py:582:111: W292 no newline at end of file
+actions\computer_control.py:32:20: E221 multiple spaces before operator
+actions\computer_control.py:50:9: E221 multiple spaces before operator
+actions\computer_control.py:110:13: E221 multiple spaces before operator
+actions\computer_control.py:111:12: E221 multiple spaces before operator
+actions\computer_control.py:116:12: E221 multiple spaces before operator
+actions\computer_control.py:121:12: E221 multiple spaces before operator
+actions\computer_control.py:130:39: E231 missing whitespace after ','
+actions\computer_control.py:130:68: E231 missing whitespace after ','
+actions\computer_control.py:133:13: E221 multiple spaces before operator
+actions\computer_control.py:135:12: E221 multiple spaces before operator
+actions\computer_control.py:139:12: E221 multiple spaces before operator
+actions\computer_control.py:140:80: E501 line too long (89 > 79 characters)
+actions\computer_control.py:147:80: E501 line too long (90 > 79 characters)
+actions\computer_control.py:149:53: E231 missing whitespace after ','
+actions\computer_control.py:287:80: E501 line too long (84 > 79 characters)
+actions\computer_control.py:350:9: E303 too many blank lines (2)
+actions\computer_control.py:351:13: E221 multiple spaces before operator
+actions\computer_control.py:352:12: E221 multiple spaces before operator
+actions\computer_control.py:353:12: E221 multiple spaces before operator
+actions\computer_control.py:383:1: E302 expected 2 blank lines, found 1
+actions\computer_control.py:431:17: E221 multiple spaces before operator
+actions\computer_control.py:434:1: W293 blank line contains whitespace
+actions\computer_control.py:536:19: E221 multiple spaces before operator
+actions\computer_control.py:541:18: E221 multiple spaces before operator
+actions\computer_control.py:543:18: E221 multiple spaces before operator
+actions\computer_control.py:546:80: E501 line too long (95 > 79 characters)
+actions\computer_control.py:554:47: W292 no newline at end of file
+actions\computer_settings.py:21:20: E221 multiple spaces before operator
+actions\computer_settings.py:32:24: W291 trailing whitespace
+actions\computer_settings.py:34:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:39:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\computer_settings.py:39:9: E221 multiple spaces before operator
+actions\computer_settings.py:42:1: E402 module level import not at top of file
+actions\computer_settings.py:43:1: E302 expected 2 blank lines, found 0
+actions\computer_settings.py:50:26: E701 multiple statements on one line (colon)
+actions\computer_settings.py:52:80: E501 line too long (117 > 79 characters)
+actions\computer_settings.py:56:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:58:26: E701 multiple statements on one line (colon)
+actions\computer_settings.py:60:80: E501 line too long (117 > 79 characters)
+actions\computer_settings.py:64:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:72:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:80:20: E221 multiple spaces before operator
+actions\computer_settings.py:81:80: E501 line too long (86 > 79 characters)
+actions\computer_settings.py:82:16: E221 multiple spaces before operator
+actions\computer_settings.py:83:19: E221 multiple spaces before operator
+actions\computer_settings.py:83:80: E501 line too long (91 > 79 characters)
+actions\computer_settings.py:90:80: E501 line too long (80 > 79 characters)
+actions\computer_settings.py:93:80: E501 line too long (83 > 79 characters)
+actions\computer_settings.py:96:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:101:80: E501 line too long (97 > 79 characters)
+actions\computer_settings.py:105:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:110:80: E501 line too long (97 > 79 characters)
+actions\computer_settings.py:121:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:127:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:133:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:139:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:142:13: E128 continuation line under-indented for visual indent
+actions\computer_settings.py:142:80: E501 line too long (100 > 79 characters)
+actions\computer_settings.py:146:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:147:24: E701 multiple statements on one line (colon)
+actions\computer_settings.py:149:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:150:24: E701 multiple statements on one line (colon)
+actions\computer_settings.py:152:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:158:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:166:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:174:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:180:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:181:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:183:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:184:1: E302 expected 2 blank lines, found 0
+actions\computer_settings.py:185:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:186:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:188:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:189:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:190:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:192:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:193:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:194:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:196:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:197:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:198:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:200:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:201:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:202:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:204:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:205:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:206:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:208:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:209:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:210:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:212:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:213:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:214:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:216:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:217:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:218:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:220:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:221:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:222:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:224:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:225:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:226:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:228:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:236:80: E501 line too long (111 > 79 characters)
+actions\computer_settings.py:237:53: E272 multiple spaces before keyword
+actions\computer_settings.py:237:80: E501 line too long (113 > 79 characters)
+actions\computer_settings.py:243:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:244:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:246:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:247:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:248:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:250:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:251:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:252:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:254:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:255:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:256:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:258:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:259:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:260:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:262:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:263:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:264:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:266:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:267:23: E701 multiple statements on one line (colon)
+actions\computer_settings.py:268:9: E701 multiple statements on one line (colon)
+actions\computer_settings.py:270:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:274:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:287:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:290:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:298:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:306:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:314:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:322:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:326:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:338:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:342:80: E501 line too long (90 > 79 characters)
+actions\computer_settings.py:346:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:350:80: E501 line too long (92 > 79 characters)
+actions\computer_settings.py:354:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:360:13: E128 continuation line under-indented for visual indent
+actions\computer_settings.py:360:80: E501 line too long (105 > 79 characters)
+actions\computer_settings.py:362:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:371:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\computer_settings.py:510:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:520:80: E501 line too long (118 > 79 characters)
+actions\computer_settings.py:538:80: E501 line too long (91 > 79 characters)
+actions\computer_settings.py:585:80: E501 line too long (89 > 79 characters)
+actions\computer_settings.py:598:1: E302 expected 2 blank lines, found 1
+actions\computer_settings.py:608:80: E501 line too long (85 > 79 characters)
+actions\computer_settings.py:610:80: E501 line too long (90 > 79 characters)
+actions\computer_settings.py:615:11: E221 multiple spaces before operator
+actions\computer_settings.py:616:15: E221 multiple spaces before operator
+actions\computer_settings.py:618:10: E221 multiple spaces before operator
+actions\computer_settings.py:621:17: E221 multiple spaces before operator
+actions\computer_settings.py:634:5: E303 too many blank lines (2)
+actions\computer_settings.py:680:48: W292 no newline at end of file
+actions\desktop.py:5:80: E501 line too long (82 > 79 characters)
+actions\desktop.py:7:80: E501 line too long (81 > 79 characters)
+actions\desktop.py:26:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\desktop.py:26:9: E221 multiple spaces before operator
+actions\desktop.py:144:80: E501 line too long (96 > 79 characters)
+actions\desktop.py:148:80: E501 line too long (90 > 79 characters)
+actions\desktop.py:152:1: E302 expected 2 blank lines, found 1
+actions\desktop.py:168:80: E501 line too long (95 > 79 characters)
+actions\desktop.py:174:27: E128 continuation line under-indented for visual indent
+actions\desktop.py:186:12: E221 multiple spaces before operator
+actions\desktop.py:199:16: E221 multiple spaces before operator
+actions\desktop.py:210:80: E501 line too long (93 > 79 characters)
+actions\desktop.py:211:80: E501 line too long (101 > 79 characters)
+actions\desktop.py:212:80: E501 line too long (83 > 79 characters)
+actions\desktop.py:215:80: E501 line too long (105 > 79 characters)
+actions\desktop.py:227:10: E221 multiple spaces before operator
+actions\desktop.py:238:18: E221 multiple spaces before operator
+actions\desktop.py:241:16: E221 multiple spaces before operator
+actions\desktop.py:273:10: E221 multiple spaces before operator
+actions\desktop.py:283:80: E501 line too long (96 > 79 characters)
+actions\desktop.py:296:12: E221 multiple spaces before operator
+actions\desktop.py:297:10: E221 multiple spaces before operator
+actions\desktop.py:317:12: E221 multiple spaces before operator
+actions\desktop.py:318:10: E221 multiple spaces before operator
+actions\desktop.py:319:12: E221 multiple spaces before operator
+actions\desktop.py:320:15: E221 multiple spaces before operator
+actions\desktop.py:321:13: E221 multiple spaces before operator
+actions\desktop.py:321:80: E501 line too long (109 > 79 characters)
+actions\desktop.py:354:9: E221 multiple spaces before operator
+actions\desktop.py:360:17: E221 multiple spaces before operator
+actions\desktop.py:364:16: E221 multiple spaces before operator
+actions\desktop.py:371:17: E221 multiple spaces before operator
+actions\desktop.py:386:80: E501 line too long (81 > 79 characters)
+actions\desktop.py:405:21: E221 multiple spaces before operator
+actions\desktop.py:406:80: E501 line too long (111 > 79 characters)
+actions\desktop.py:417:18: W292 no newline at end of file
+actions\dev_agent.py:6:80: E501 line too long (81 > 79 characters)
+actions\dev_agent.py:20:1: E302 expected 2 blank lines, found 1
+actions\dev_agent.py:25:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\dev_agent.py:25:9: E221 multiple spaces before operator
+actions\dev_agent.py:26:16: E221 multiple spaces before operator
+actions\dev_agent.py:27:13: E221 multiple spaces before operator
+actions\dev_agent.py:28:17: E221 multiple spaces before operator
+actions\dev_agent.py:29:14: E221 multiple spaces before operator
+actions\dev_agent.py:30:13: E221 multiple spaces before operator
+actions\dev_agent.py:81:1: E302 expected 2 blank lines, found 1
+actions\dev_agent.py:81:80: E501 line too long (84 > 79 characters)
+actions\dev_agent.py:92:1: E302 expected 2 blank lines, found 1
+actions\dev_agent.py:147:80: E501 line too long (91 > 79 characters)
+actions\dev_agent.py:181:80: E501 line too long (80 > 79 characters)
+actions\dev_agent.py:232:80: E501 line too long (84 > 79 characters)
+actions\dev_agent.py:242:27: W291 trailing whitespace
+actions\dev_agent.py:253:80: E501 line too long (80 > 79 characters)
+actions\dev_agent.py:270:14: E221 multiple spaces before operator
+actions\dev_agent.py:273:18: E701 multiple statements on one line (colon)
+actions\dev_agent.py:274:17: E701 multiple statements on one line (colon)
+actions\dev_agent.py:278:80: E501 line too long (85 > 79 characters)
+actions\dev_agent.py:284:1: E302 expected 2 blank lines, found 1
+actions\dev_agent.py:335:1: E302 expected 2 blank lines, found 1
+actions\dev_agent.py:358:17: E701 multiple statements on one line (colon)
+actions\dev_agent.py:362:17: E701 multiple statements on one line (colon)
+actions\dev_agent.py:370:10: E221 multiple spaces before operator
+actions\dev_agent.py:393:80: E501 line too long (83 > 79 characters)
+actions\dev_agent.py:394:21: E701 multiple statements on one line (colon)
+actions\dev_agent.py:402:17: E701 multiple statements on one line (colon)
+actions\dev_agent.py:424:21: E701 multiple statements on one line (colon)
+actions\dev_agent.py:448:80: E501 line too long (83 > 79 characters)
+actions\dev_agent.py:449:21: E701 multiple statements on one line (colon)
+actions\dev_agent.py:455:80: E501 line too long (93 > 79 characters)
+actions\dev_agent.py:456:80: E501 line too long (96 > 79 characters)
+actions\dev_agent.py:458:13: E701 multiple statements on one line (colon)
+actions\dev_agent.py:461:1: E302 expected 2 blank lines, found 1
+actions\dev_agent.py:477:6: E221 multiple spaces before operator
+actions\dev_agent.py:478:16: E221 multiple spaces before operator
+actions\dev_agent.py:479:13: E221 multiple spaces before operator
+actions\dev_agent.py:481:12: E221 multiple spaces before operator
+actions\dev_agent.py:487:20: E251 unexpected spaces around keyword / parameter equals
+actions\dev_agent.py:487:20: E221 multiple spaces before operator
+actions\dev_agent.py:487:23: E251 unexpected spaces around keyword / parameter equals
+actions\dev_agent.py:488:17: E251 unexpected spaces around keyword / parameter equals
+actions\dev_agent.py:488:17: E221 multiple spaces before operator
+actions\dev_agent.py:488:23: E251 unexpected spaces around keyword / parameter equals
+actions\dev_agent.py:489:21: E251 unexpected spaces around keyword / parameter equals
+actions\dev_agent.py:489:23: E251 unexpected spaces around keyword / parameter equals
+actions\dev_agent.py:490:16: E251 unexpected spaces around keyword / parameter equals
+actions\dev_agent.py:490:16: E221 multiple spaces before operator
+actions\dev_agent.py:490:23: E251 unexpected spaces around keyword / parameter equals
+actions\dev_agent.py:491:14: E251 unexpected spaces around keyword / parameter equals
+actions\dev_agent.py:491:14: E221 multiple spaces before operator
+actions\dev_agent.py:491:23: E251 unexpected spaces around keyword / parameter equals
+actions\dev_agent.py:492:15: E251 unexpected spaces around keyword / parameter equals
+actions\dev_agent.py:492:15: E221 multiple spaces before operator
+actions\dev_agent.py:492:23: E251 unexpected spaces around keyword / parameter equals
+actions\dev_agent.py:493:6: W292 no newline at end of file
+actions\file_controller.py:9:1: E302 expected 2 blank lines, found 1
+actions\file_controller.py:69:80: E501 line too long (87 > 79 characters)
+actions\file_controller.py:132:12: E221 multiple spaces before operator
+actions\file_controller.py:133:12: E221 multiple spaces before operator
+actions\file_controller.py:177:15: E221 multiple spaces before operator
+actions\file_controller.py:203:80: E501 line too long (94 > 79 characters)
+actions\file_controller.py:292:14: E221 multiple spaces before operator
+actions\file_controller.py:293:14: E221 multiple spaces before operator
+actions\file_controller.py:294:13: E221 multiple spaces before operator
+actions\file_controller.py:295:13: E221 multiple spaces before operator
+actions\file_controller.py:296:12: E221 multiple spaces before operator
+actions\file_controller.py:316:80: E501 line too long (92 > 79 characters)
+actions\file_controller.py:317:80: E501 line too long (101 > 79 characters)
+actions\file_controller.py:318:80: E501 line too long (83 > 79 characters)
+actions\file_controller.py:321:80: E501 line too long (98 > 79 characters)
+actions\file_controller.py:324:14: E221 multiple spaces before operator
+actions\file_controller.py:325:16: E221 multiple spaces before operator
+actions\file_controller.py:332:16: E221 multiple spaces before operator
+actions\file_controller.py:380:80: E501 line too long (89 > 79 characters)
+actions\file_controller.py:381:80: E501 line too long (89 > 79 characters)
+actions\file_controller.py:390:1: E302 expected 2 blank lines, found 1
+actions\file_controller.py:396:11: E221 multiple spaces before operator
+actions\file_controller.py:397:9: E221 multiple spaces before operator
+actions\file_controller.py:398:9: E221 multiple spaces before operator
+actions\file_controller.py:482:18: W292 no newline at end of file
+actions\flight_finder.py:5:80: E501 line too long (81 > 79 characters)
+actions\flight_finder.py:34:9: E221 multiple spaces before operator
+actions\flight_finder.py:61:5: E303 too many blank lines (2)
+actions\flight_finder.py:76:14: E221 multiple spaces before operator
+actions\flight_finder.py:79:80: E501 line too long (86 > 79 characters)
+actions\flight_finder.py:91:23: E231 missing whitespace after ','
+actions\flight_finder.py:101:20: E221 multiple spaces before operator
+actions\flight_finder.py:102:80: E501 line too long (81 > 79 characters)
+actions\flight_finder.py:109:1: E303 too many blank lines (3)
+actions\flight_finder.py:114:21: E221 multiple spaces before operator
+actions\flight_finder.py:115:21: E221 multiple spaces before operator
+actions\flight_finder.py:141:1: E303 too many blank lines (3)
+actions\flight_finder.py:162:18: W291 trailing whitespace
+actions\flight_finder.py:197:80: E501 line too long (82 > 79 characters)
+actions\flight_finder.py:203:13: E221 multiple spaces before operator
+actions\flight_finder.py:204:13: E221 multiple spaces before operator
+actions\flight_finder.py:204:80: E501 line too long (80 > 79 characters)
+actions\flight_finder.py:205:16: E221 multiple spaces before operator
+actions\flight_finder.py:213:1: E303 too many blank lines (3)
+actions\flight_finder.py:226:80: E501 line too long (84 > 79 characters)
+actions\flight_finder.py:229:16: E221 multiple spaces before operator
+actions\flight_finder.py:231:16: E221 multiple spaces before operator
+actions\flight_finder.py:232:17: E221 multiple spaces before operator
+actions\flight_finder.py:233:14: E221 multiple spaces before operator
+actions\flight_finder.py:234:14: E221 multiple spaces before operator
+actions\flight_finder.py:235:17: E221 multiple spaces before operator
+actions\flight_finder.py:237:17: E221 multiple spaces before operator
+actions\flight_finder.py:237:80: E501 line too long (91 > 79 characters)
+actions\flight_finder.py:238:80: E501 line too long (83 > 79 characters)
+actions\flight_finder.py:239:16: E221 multiple spaces before operator
+actions\flight_finder.py:248:80: E501 line too long (84 > 79 characters)
+actions\flight_finder.py:290:18: E221 multiple spaces before operator
+actions\flight_finder.py:299:80: E501 line too long (81 > 79 characters)
+actions\flight_finder.py:310:7: E221 multiple spaces before operator
+actions\flight_finder.py:312:12: E221 multiple spaces before operator
+actions\flight_finder.py:319:11: E221 multiple spaces before operator
+actions\flight_finder.py:322:18: E272 multiple spaces before keyword
+actions\flight_finder.py:323:17: E272 multiple spaces before keyword
+actions\flight_finder.py:331:1: E302 expected 2 blank lines, found 1
+actions\flight_finder.py:342:80: E501 line too long (89 > 79 characters)
+actions\flight_finder.py:343:80: E501 line too long (85 > 79 characters)
+actions\flight_finder.py:344:80: E501 line too long (103 > 79 characters)
+actions\flight_finder.py:347:80: E501 line too long (94 > 79 characters)
+actions\flight_finder.py:348:80: E501 line too long (80 > 79 characters)
+actions\flight_finder.py:349:80: E501 line too long (86 > 79 characters)
+actions\flight_finder.py:352:80: E501 line too long (89 > 79 characters)
+actions\flight_finder.py:353:80: E501 line too long (83 > 79 characters)
+actions\flight_finder.py:354:80: E501 line too long (87 > 79 characters)
+actions\flight_finder.py:358:11: E221 multiple spaces before operator
+actions\flight_finder.py:360:13: E221 multiple spaces before operator
+actions\flight_finder.py:361:15: E221 multiple spaces before operator
+actions\flight_finder.py:362:15: E221 multiple spaces before operator
+actions\flight_finder.py:363:10: E221 multiple spaces before operator
+actions\flight_finder.py:364:9: E221 multiple spaces before operator
+actions\flight_finder.py:371:9: E221 multiple spaces before operator
+actions\flight_finder.py:378:80: E501 line too long (82 > 79 characters)
+actions\flight_finder.py:380:80: E501 line too long (94 > 79 characters)
+actions\flight_finder.py:383:1: W293 blank line contains whitespace
+actions\flight_finder.py:389:80: E501 line too long (87 > 79 characters)
+actions\flight_finder.py:394:80: E501 line too long (81 > 79 characters)
+actions\flight_finder.py:413:49: W292 no newline at end of file
+actions\open_app.py:22:80: E501 line too long (118 > 79 characters)
+actions\open_app.py:23:80: E501 line too long (123 > 79 characters)
+actions\open_app.py:24:80: E501 line too long (123 > 79 characters)
+actions\open_app.py:25:80: E501 line too long (117 > 79 characters)
+actions\open_app.py:26:80: E501 line too long (117 > 79 characters)
+actions\open_app.py:27:80: E501 line too long (114 > 79 characters)
+actions\open_app.py:28:80: E501 line too long (114 > 79 characters)
+actions\open_app.py:29:80: E501 line too long (117 > 79 characters)
+actions\open_app.py:30:80: E501 line too long (118 > 79 characters)
+actions\open_app.py:31:80: E501 line too long (115 > 79 characters)
+actions\open_app.py:32:80: E501 line too long (126 > 79 characters)
+actions\open_app.py:33:80: E501 line too long (124 > 79 characters)
+actions\open_app.py:34:80: E501 line too long (114 > 79 characters)
+actions\open_app.py:35:80: E501 line too long (118 > 79 characters)
+actions\open_app.py:36:80: E501 line too long (118 > 79 characters)
+actions\open_app.py:37:80: E501 line too long (114 > 79 characters)
+actions\open_app.py:38:80: E501 line too long (130 > 79 characters)
+actions\open_app.py:39:80: E501 line too long (128 > 79 characters)
+actions\open_app.py:40:80: E501 line too long (131 > 79 characters)
+actions\open_app.py:40:97: E231 missing whitespace after ','
+actions\open_app.py:41:80: E501 line too long (113 > 79 characters)
+actions\open_app.py:42:80: E501 line too long (114 > 79 characters)
+actions\open_app.py:43:80: E501 line too long (115 > 79 characters)
+actions\open_app.py:44:80: E501 line too long (115 > 79 characters)
+actions\open_app.py:45:80: E501 line too long (130 > 79 characters)
+actions\open_app.py:46:80: E501 line too long (130 > 79 characters)
+actions\open_app.py:47:80: E501 line too long (114 > 79 characters)
+actions\open_app.py:48:80: E501 line too long (124 > 79 characters)
+actions\open_app.py:49:80: E501 line too long (123 > 79 characters)
+actions\open_app.py:50:80: E501 line too long (118 > 79 characters)
+actions\open_app.py:51:80: E501 line too long (116 > 79 characters)
+actions\open_app.py:52:80: E501 line too long (117 > 79 characters)
+actions\open_app.py:53:80: E501 line too long (116 > 79 characters)
+actions\open_app.py:54:80: E501 line too long (117 > 79 characters)
+actions\open_app.py:55:80: E501 line too long (115 > 79 characters)
+actions\open_app.py:197:8: E221 multiple spaces before operator
+actions\open_app.py:216:13: E221 multiple spaces before operator
+actions\open_app.py:217:13: E221 multiple spaces before operator
+actions\open_app.py:332:80: E501 line too long (98 > 79 characters)
+actions\open_app.py:335:80: E501 line too long (80 > 79 characters)
+actions\open_app.py:443:11: E221 multiple spaces before operator
+actions\open_app.py:444:13: E221 multiple spaces before operator
+actions\open_app.py:449:15: E221 multiple spaces before operator
+actions\open_app.py:450:12: E221 multiple spaces before operator
+actions\open_app.py:451:15: E221 multiple spaces before operator
+actions\open_app.py:518:14: E221 multiple spaces before operator
+actions\open_app.py:528:80: E501 line too long (84 > 79 characters)
+actions\open_app.py:529:6: W292 no newline at end of file
+actions\reminder.py:29:12: E221 multiple spaces before operator
+actions\reminder.py:35:80: E501 line too long (81 > 79 characters)
+actions\reminder.py:40:18: E221 multiple spaces before operator
+actions\reminder.py:49:17: E221 multiple spaces before operator
+actions\reminder.py:51:21: E221 multiple spaces before operator
+actions\reminder.py:91:80: E501 line too long (82 > 79 characters)
+actions\reminder.py:156:80: E501 line too long (83 > 79 characters)
+actions\reminder.py:156:84: W292 no newline at end of file
+actions\screen_processor.py:36:1: E302 expected 2 blank lines, found 1
+actions\screen_processor.py:41:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\screen_processor.py:41:9: E221 multiple spaces before operator
+actions\screen_processor.py:44:11: E221 multiple spaces before operator
+actions\screen_processor.py:45:7: E221 multiple spaces before operator
+actions\screen_processor.py:46:9: E221 multiple spaces before operator
+actions\screen_processor.py:48:11: E221 multiple spaces before operator
+actions\screen_processor.py:52:7: E221 multiple spaces before operator
+actions\screen_processor.py:108:80: E501 line too long (80 > 79 characters)
+actions\screen_processor.py:111:80: E501 line too long (80 > 79 characters)
+actions\screen_processor.py:140:13: E221 multiple spaces before operator
+actions\screen_processor.py:191:80: E501 line too long (92 > 79 characters)
+actions\screen_processor.py:210:23: E221 multiple spaces before operator
+actions\screen_processor.py:234:80: E501 line too long (95 > 79 characters)
+actions\screen_processor.py:245:80: E501 line too long (80 > 79 characters)
+actions\screen_processor.py:261:80: E501 line too long (88 > 79 characters)
+actions\screen_processor.py:264:80: E501 line too long (87 > 79 characters)
+actions\screen_processor.py:277:80: E501 line too long (86 > 79 characters)
+actions\screen_processor.py:280:80: E501 line too long (87 > 79 characters)
+actions\screen_processor.py:293:80: E501 line too long (84 > 79 characters)
+actions\screen_processor.py:295:80: E501 line too long (97 > 79 characters)
+actions\screen_processor.py:328:80: E501 line too long (97 > 79 characters)
+actions\screen_processor.py:335:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\screen_processor.py:335:6: E221 multiple spaces before operator
+actions\screen_processor.py:336:9: E221 multiple spaces before operator
+actions\screen_processor.py:349:1: E302 expected 2 blank lines, found 1
+actions\screen_processor.py:355:80: E501 line too long (89 > 79 characters)
+actions\screen_processor.py:369:22: E221 multiple spaces before operator
+actions\screen_processor.py:373:22: E221 multiple spaces before operator
+actions\screen_processor.py:376:25: E702 multiple statements on one line (semicolon)
+actions\screen_processor.py:400:9: E221 multiple spaces before operator
+actions\screen_processor.py:400:80: E501 line too long (86 > 79 characters)
+actions\screen_processor.py:401:80: E501 line too long (93 > 79 characters)
+actions\screen_processor.py:407:7: E221 multiple spaces before operator
+actions\screen_processor.py:411:41: W292 no newline at end of file
+actions\send_message.py:13:1: E302 expected 2 blank lines, found 1
+actions\send_message.py:21:24: W291 trailing whitespace
+actions\send_message.py:118:1: E302 expected 2 blank lines, found 1
+actions\send_message.py:144:1: E303 too many blank lines (3)
+actions\send_message.py:170:1: E302 expected 2 blank lines, found 1
+actions\send_message.py:185:11: E221 multiple spaces before operator
+actions\send_message.py:186:13: E221 multiple spaces before operator
+actions\send_message.py:188:13: E221 multiple spaces before operator
+actions\send_message.py:215:18: W292 no newline at end of file
+actions\study_mode.py:28:1: E302 expected 2 blank lines, found 1
+actions\study_mode.py:31:80: E501 line too long (84 > 79 characters)
+actions\study_mode.py:35:76: W291 trailing whitespace
+actions\study_mode.py:38:79: W291 trailing whitespace
+actions\study_mode.py:192:1: W293 blank line contains whitespace
+actions\study_mode.py:196:80: E501 line too long (88 > 79 characters)
+actions\study_mode.py:231:80: E501 line too long (82 > 79 characters)
+actions\study_mode.py:314:80: E501 line too long (86 > 79 characters)
+actions\study_mode.py:322:1: E302 expected 2 blank lines, found 1
+actions\study_mode.py:328:1: E302 expected 2 blank lines, found 1
+actions\study_mode.py:352:80: E501 line too long (84 > 79 characters)
+actions\weather_report.py:52:17: W291 trailing whitespace
+actions\weather_report.py:62:17: W292 no newline at end of file
+actions\web_search.py:16:1: E305 expected 2 blank lines after class or function definition, found 1
+actions\web_search.py:16:9: E221 multiple spaces before operator
+actions\web_search.py:19:1: E302 expected 2 blank lines, found 1
+actions\web_search.py:43:1: E303 too many blank lines (3)
+actions\web_search.py:58:1: E302 expected 2 blank lines, found 1
+actions\web_search.py:63:26: E701 multiple statements on one line (colon)
+actions\web_search.py:64:28: E701 multiple statements on one line (colon)
+actions\web_search.py:65:24: E701 multiple statements on one line (colon)
+actions\web_search.py:71:80: E501 line too long (93 > 79 characters)
+actions\web_search.py:79:80: E501 line too long (82 > 79 characters)
+actions\web_search.py:98:10: E221 multiple spaces before operator
+actions\web_search.py:99:9: E221 multiple spaces before operator
+actions\web_search.py:100:10: E221 multiple spaces before operator
+actions\web_search.py:129:19: E221 multiple spaces before operator
+actions\web_search.py:135:42: W292 no newline at end of file
+actions\youtube_video.py:41:9: E221 multiple spaces before operator
+actions\youtube_video.py:72:12: E221 multiple spaces before operator
+actions\youtube_video.py:75:16: E221 multiple spaces before operator
+actions\youtube_video.py:77:17: E221 multiple spaces before operator
+actions\youtube_video.py:78:18: E221 multiple spaces before operator
+actions\youtube_video.py:79:12: E221 multiple spaces before operator
+actions\youtube_video.py:81:13: E221 multiple spaces before operator
+actions\youtube_video.py:82:14: E221 multiple spaces before operator
+actions\youtube_video.py:84:14: E221 multiple spaces before operator
+actions\youtube_video.py:93:17: E221 multiple spaces before operator
+actions\youtube_video.py:105:80: E501 line too long (87 > 79 characters)
+actions\youtube_video.py:132:32: W291 trailing whitespace
+actions\youtube_video.py:151:1: E302 expected 2 blank lines, found 1
+actions\youtube_video.py:163:80: E501 line too long (88 > 79 characters)
+actions\youtube_video.py:171:80: E501 line too long (92 > 79 characters)
+actions\youtube_video.py:182:13: E221 multiple spaces before operator
+actions\youtube_video.py:190:1: E302 expected 2 blank lines, found 1
+actions\youtube_video.py:206:80: E501 line too long (87 > 79 characters)
+actions\youtube_video.py:213:1: E302 expected 2 blank lines, found 1
+actions\youtube_video.py:218:7: E221 multiple spaces before operator
+actions\youtube_video.py:220:12: E221 multiple spaces before operator
+actions\youtube_video.py:235:11: E221 multiple spaces before operator
+actions\youtube_video.py:238:18: E272 multiple spaces before keyword
+actions\youtube_video.py:239:17: E272 multiple spaces before keyword
+actions\youtube_video.py:247:1: E302 expected 2 blank lines, found 1
+actions\youtube_video.py:254:10: E221 multiple spaces before operator
+actions\youtube_video.py:287:1: E302 expected 2 blank lines, found 1
+actions\youtube_video.py:294:10: E221 multiple spaces before operator
+actions\youtube_video.py:297:15: E221 multiple spaces before operator
+actions\youtube_video.py:297:80: E501 line too long (81 > 79 characters)
+actions\youtube_video.py:298:80: E501 line too long (81 > 79 characters)
+actions\youtube_video.py:301:13: E221 multiple spaces before operator
+actions\youtube_video.py:307:80: E501 line too long (90 > 79 characters)
+actions\youtube_video.py:317:1: E302 expected 2 blank lines, found 1
+actions\youtube_video.py:474:1: E302 expected 2 blank lines, found 1
+actions\youtube_video.py:507:80: E501 line too long (101 > 79 characters)
+actions\youtube_video.py:516:52: W292 no newline at end of file
+agent\error_handler.py:14:9: E221 multiple spaces before operator
+agent\error_handler.py:19:10: E221 multiple spaces before operator
+agent\error_handler.py:19:26: W291 trailing whitespace
+agent\error_handler.py:20:9: E221 multiple spaces before operator
+agent\error_handler.py:20:25: W291 trailing whitespace
+agent\error_handler.py:21:11: E221 multiple spaces before operator
+agent\error_handler.py:21:27: W291 trailing whitespace
+agent\error_handler.py:22:10: E221 multiple spaces before operator
+agent\error_handler.py:22:26: W291 trailing whitespace
+agent\error_handler.py:25:80: E501 line too long (85 > 79 characters)
+agent\error_handler.py:30:80: E501 line too long (83 > 79 characters)
+agent\error_handler.py:85:80: E501 line too long (101 > 79 characters)
+agent\error_handler.py:113:13: E221 multiple spaces before operator
+agent\error_handler.py:114:13: E221 multiple spaces before operator
+agent\error_handler.py:114:80: E501 line too long (80 > 79 characters)
+agent\error_handler.py:124:80: E501 line too long (81 > 79 characters)
+agent\error_handler.py:127:9: E303 too many blank lines (2)
+agent\error_handler.py:128:31: E221 multiple spaces before operator
+agent\error_handler.py:129:80: E501 line too long (97 > 79 characters)
+agent\error_handler.py:131:80: E501 line too long (98 > 79 characters)
+agent\error_handler.py:198:10: W292 no newline at end of file
+agent\executor.py:11:19: E272 multiple spaces before keyword
+agent\executor.py:21:9: E221 multiple spaces before operator
+agent\executor.py:29:1: E302 expected 2 blank lines, found 1
+agent\executor.py:29:80: E501 line too long (80 > 79 characters)
+agent\executor.py:35:9: E221 multiple spaces before operator
+agent\executor.py:36:12: E221 multiple spaces before operator
+agent\executor.py:43:16: E221 multiple spaces before operator
+agent\executor.py:44:17: E128 continuation line under-indented for visual indent
+agent\executor.py:44:80: E501 line too long (84 > 79 characters)
+agent\executor.py:57:80: E501 line too long (89 > 79 characters)
+agent\executor.py:93:14: E221 multiple spaces before operator
+agent\executor.py:110:1: E302 expected 2 blank lines, found 1
+agent\executor.py:110:80: E501 line too long (89 > 79 characters)
+agent\executor.py:116:80: E501 line too long (86 > 79 characters)
+agent\executor.py:127:23: F541 f-string is missing placeholders
+agent\executor.py:130:1: E302 expected 2 blank lines, found 0
+agent\executor.py:137:80: E501 line too long (96 > 79 characters)
+agent\executor.py:174:1: E302 expected 2 blank lines, found 1
+agent\executor.py:198:80: E501 line too long (86 > 79 characters)
+agent\executor.py:202:80: E501 line too long (84 > 79 characters)
+agent\executor.py:240:80: E501 line too long (82 > 79 characters)
+agent\executor.py:245:80: E501 line too long (88 > 79 characters)
+agent\executor.py:248:80: E501 line too long (86 > 79 characters)
+agent\executor.py:249:80: E501 line too long (86 > 79 characters)
+agent\executor.py:251:1: E302 expected 2 blank lines, found 1
+agent\executor.py:258:37: E221 multiple spaces before operator
+agent\executor.py:265:21: E221 multiple spaces before operator
+agent\executor.py:265:29: W291 trailing whitespace
+agent\executor.py:266:13: E221 multiple spaces before operator
+agent\executor.py:273:25: E701 multiple statements on one line (colon)
+agent\executor.py:276:20: E221 multiple spaces before operator
+agent\executor.py:277:24: E221 multiple spaces before operator
+agent\executor.py:282:29: E701 multiple statements on one line (colon)
+agent\executor.py:286:21: E221 multiple spaces before operator
+agent\executor.py:287:21: E221 multiple spaces before operator
+agent\executor.py:288:23: E221 multiple spaces before operator
+agent\executor.py:302:56: W291 trailing whitespace
+agent\executor.py:304:80: E501 line too long (88 > 79 characters)
+agent\executor.py:310:80: E501 line too long (100 > 79 characters)
+agent\executor.py:312:80: E501 line too long (82 > 79 characters)
+agent\executor.py:321:40: E702 multiple statements on one line (semicolon)
+agent\executor.py:331:80: E501 line too long (84 > 79 characters)
+agent\executor.py:332:37: E701 multiple statements on one line (colon)
+agent\executor.py:335:30: W291 trailing whitespace
+agent\executor.py:339:80: E501 line too long (94 > 79 characters)
+agent\executor.py:340:45: E701 multiple statements on one line (colon)
+agent\executor.py:340:80: E501 line too long (91 > 79 characters)
+agent\executor.py:351:80: E501 line too long (81 > 79 characters)
+agent\executor.py:353:40: E221 multiple spaces before operator
+agent\executor.py:355:36: E221 multiple spaces before operator
+agent\executor.py:359:32: E221 multiple spaces before operator
+agent\executor.py:361:28: E221 multiple spaces before operator
+agent\executor.py:370:80: E501 line too long (82 > 79 characters)
+agent\executor.py:371:25: E701 multiple statements on one line (colon)
+agent\executor.py:374:21: E701 multiple statements on one line (colon)
+agent\executor.py:379:80: E501 line too long (90 > 79 characters)
+agent\executor.py:380:80: E501 line too long (93 > 79 characters)
+agent\executor.py:384:18: E221 multiple spaces before operator
+agent\executor.py:384:80: E501 line too long (81 > 79 characters)
+agent\executor.py:385:80: E501 line too long (91 > 79 characters)
+agent\executor.py:386:19: E221 multiple spaces before operator
+agent\executor.py:389:80: E501 line too long (85 > 79 characters)
+agent\executor.py:393:20: E221 multiple spaces before operator
+agent\executor.py:394:21: E701 multiple statements on one line (colon)
+agent\executor.py:397:21: E701 multiple statements on one line (colon)
+agent\executor.py:398:28: W292 no newline at end of file
+agent\planner.py:13:9: E221 multiple spaces before operator
+agent\planner.py:17:80: E501 line too long (85 > 79 characters)
+agent\planner.py:18:80: E501 line too long (89 > 79 characters)
+agent\planner.py:22:80: E501 line too long (81 > 79 characters)
+agent\planner.py:40:80: E501 line too long (102 > 79 characters)
+agent\planner.py:47:80: E501 line too long (115 > 79 characters)
+agent\planner.py:62:80: E501 line too long (117 > 79 characters)
+agent\planner.py:117:80: E501 line too long (80 > 79 characters)
+agent\planner.py:118:80: E501 line too long (182 > 79 characters)
+agent\planner.py:132:80: E501 line too long (91 > 79 characters)
+agent\planner.py:174:13: E221 multiple spaces before operator
+agent\planner.py:175:13: E221 multiple spaces before operator
+agent\planner.py:175:80: E501 line too long (80 > 79 characters)
+agent\planner.py:184:80: E501 line too long (117 > 79 characters)
+agent\planner.py:219:80: E501 line too long (84 > 79 characters)
+agent\planner.py:240:80: E501 line too long (84 > 79 characters)
+agent\planner.py:244:13: E221 multiple spaces before operator
+agent\planner.py:245:13: E221 multiple spaces before operator
+agent\planner.py:245:80: E501 line too long (80 > 79 characters)
+agent\planner.py:246:13: E221 multiple spaces before operator
+agent\planner.py:252:80: E501 line too long (83 > 79 characters)
+agent\planner.py:258:36: W292 no newline at end of file
+agent\task_queue.py:10:12: E221 multiple spaces before operator
+agent\task_queue.py:11:12: E221 multiple spaces before operator
+agent\task_queue.py:12:14: E221 multiple spaces before operator
+agent\task_queue.py:13:11: E221 multiple spaces before operator
+agent\task_queue.py:14:14: E221 multiple spaces before operator
+agent\task_queue.py:18:8: E221 multiple spaces before operator
+agent\task_queue.py:20:9: E221 multiple spaces before operator
+agent\task_queue.py:20:15: W291 trailing whitespace
+agent\task_queue.py:25:21: W291 trailing whitespace
+agent\task_queue.py:27:21: E221 multiple spaces before operator
+agent\task_queue.py:28:21: E221 multiple spaces before operator
+agent\task_queue.py:30:21: E221 multiple spaces before operator
+agent\task_queue.py:31:21: E221 multiple spaces before operator
+agent\task_queue.py:32:21: E221 multiple spaces before operator
+agent\task_queue.py:32:65: W291 trailing whitespace
+agent\task_queue.py:33:21: E221 multiple spaces before operator
+agent\task_queue.py:33:65: W291 trailing whitespace
+agent\task_queue.py:34:80: E501 line too long (88 > 79 characters)
+agent\task_queue.py:39:39: E221 multiple spaces before operator
+agent\task_queue.py:40:43: E221 multiple spaces before operator
+agent\task_queue.py:41:80: E501 line too long (81 > 79 characters)
+agent\task_queue.py:42:44: E221 multiple spaces before operator
+agent\task_queue.py:42:50: W291 trailing whitespace
+agent\task_queue.py:43:33: E221 multiple spaces before operator
+agent\task_queue.py:46:27: E221 multiple spaces before operator
+agent\task_queue.py:47:23: E221 multiple spaces before operator
+agent\task_queue.py:47:36: W291 trailing whitespace
+agent\task_queue.py:58:22: E221 multiple spaces before operator
+agent\task_queue.py:82:13: E221 multiple spaces before operator
+agent\task_queue.py:83:21: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:83:21: E221 multiple spaces before operator
+agent\task_queue.py:83:26: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:84:23: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:84:23: E221 multiple spaces before operator
+agent\task_queue.py:84:26: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:85:20: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:85:20: E221 multiple spaces before operator
+agent\task_queue.py:85:26: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:86:17: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:86:17: E221 multiple spaces before operator
+agent\task_queue.py:86:26: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:87:18: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:87:18: E221 multiple spaces before operator
+agent\task_queue.py:87:26: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:88:24: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:88:26: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:106:80: E501 line too long (94 > 79 characters)
+agent\task_queue.py:140:80: E501 line too long (80 > 79 characters)
+agent\task_queue.py:170:80: E501 line too long (83 > 79 characters)
+agent\task_queue.py:178:19: E221 multiple spaces before operator
+agent\task_queue.py:179:21: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:179:21: E221 multiple spaces before operator
+agent\task_queue.py:179:30: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:180:22: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:180:22: E221 multiple spaces before operator
+agent\task_queue.py:180:30: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:181:28: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:181:30: E251 unexpected spaces around keyword / parameter equals
+agent\task_queue.py:203:27: E221 multiple spaces before operator
+agent\task_queue.py:210:1: E305 expected 2 blank lines after class or function definition, found 1
+agent\task_queue.py:210:7: E221 multiple spaces before operator
+agent\task_queue.py:212:12: E221 multiple spaces before operator
+agent\task_queue.py:221:18: W292 no newline at end of file
+memory\__init__.py:1:1: E265 block comment should start with '# '
+memory\__init__.py:1:16: W291 trailing whitespace
+memory\__init__.py:1:17: W292 no newline at end of file
+memory\config_manager.py:12:9: E221 multiple spaces before operator
+memory\config_manager.py:13:11: E221 multiple spaces before operator
+memory\config_manager.py:59:39: W292 no newline at end of file
+memory\memory_manager.py:13:9: E221 multiple spaces before operator
+memory\memory_manager.py:15:6: E221 multiple spaces before operator
+memory\memory_manager.py:17:23: W291 trailing whitespace
+memory\memory_manager.py:19:1: E302 expected 2 blank lines, found 1
+memory\memory_manager.py:27:1: E302 expected 2 blank lines, found 1
+memory\memory_manager.py:54:1: E302 expected 2 blank lines, found 1
+memory\memory_manager.py:103:1: E303 too many blank lines (3)
+memory\memory_manager.py:112:8: E221 multiple spaces before operator
+memory\memory_manager.py:115:12: E701 multiple statements on one line (colon)
+memory\memory_manager.py:116:11: E701 multiple statements on one line (colon)
+memory\memory_manager.py:117:12: E701 multiple statements on one line (colon)
+memory\memory_manager.py:118:12: E701 multiple statements on one line (colon)

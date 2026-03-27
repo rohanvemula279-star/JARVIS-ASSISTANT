@@ -27,15 +27,15 @@ import platform
 from pathlib import Path
 
 try:
-    import pyautogui
+    import pyautogui  # type: ignore
     pyautogui.FAILSAFE = True
-    pyautogui.PAUSE    = 0.05
+    pyautogui.PAUSE = 0.05
     _PYAUTOGUI = True
 except ImportError:
     _PYAUTOGUI = False
 
 try:
-    import pyperclip
+    import pyperclip  # type: ignore
     _PYPERCLIP = True
 except ImportError:
     _PYPERCLIP = False
@@ -47,7 +47,7 @@ def get_base_dir() -> Path:
     return Path(__file__).resolve().parent.parent
 
 
-BASE_DIR        = get_base_dir()
+BASE_DIR = get_base_dir()
 API_CONFIG_PATH = BASE_DIR / "config" / "api_keys.json"
 
 
@@ -59,9 +59,9 @@ def _load_user_profile() -> dict:
             data = json.loads(memory_path.read_text(encoding="utf-8"))
             identity = data.get("identity", {})
             return {
-                "name":  identity.get("name",  {}).get("value", ""),
-                "age":   identity.get("age",   {}).get("value", ""),
-                "city":  identity.get("city",  {}).get("value", ""),
+                "name": identity.get("name", {}).get("value", ""),
+                "age": identity.get("age", {}).get("value", ""),
+                "city": identity.get("city", {}).get("value", ""),
                 "email": identity.get("email", {}).get("value", ""),
             }
     except Exception:
@@ -107,18 +107,18 @@ def generate_random_data(data_type: str) -> str:
 
     elif dt == "email":
         first = random.choice(_FIRST_NAMES).lower()
-        last  = random.choice(_LAST_NAMES).lower()
-        num   = random.randint(10, 999)
+        last = random.choice(_LAST_NAMES).lower()
+        num = random.randint(10, 999)
         return f"{first}.{last}{num}@{random.choice(_DOMAINS)}"
 
     elif dt == "username":
         first = random.choice(_FIRST_NAMES).lower()
-        num   = random.randint(100, 9999)
+        num = random.randint(100, 9999)
         return f"{first}{num}"
 
     elif dt == "password":
         chars = string.ascii_letters + string.digits + "!@#$%"
-        pwd   = (
+        pwd = (
             random.choice(string.ascii_uppercase) +
             random.choice(string.digits) +
             random.choice("!@#$%") +
@@ -127,26 +127,30 @@ def generate_random_data(data_type: str) -> str:
         return "".join(random.sample(pwd, len(pwd)))
 
     elif dt == "phone":
-        return f"+1{random.randint(200,999)}{random.randint(1000000,9999999)}"
+        return f"+1{random.randint(200,
+                                   999)}{random.randint(1000000,
+                                                        9999999)}"
 
     elif dt == "birthday":
-        year  = random.randint(1980, 2000)
+        year = random.randint(1980, 2000)
         month = random.randint(1, 12)
-        day   = random.randint(1, 28)
+        day = random.randint(1, 28)
         return f"{month:02d}/{day:02d}/{year}"
 
     elif dt == "address":
-        num    = random.randint(100, 9999)
-        street = random.choice(["Main St", "Oak Ave", "Park Blvd", "Elm St", "Cedar Ln"])
+        num = random.randint(100, 9999)
+        street = random.choice(
+            ["Main St", "Oak Ave", "Park Blvd", "Elm St", "Cedar Ln"])
         return f"{num} {street}"
 
     elif dt == "zip_code":
         return str(random.randint(10000, 99999))
 
     elif dt == "city":
-        return random.choice(["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"])
+        return random.choice(
+            ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"])
 
-    return f"random_{data_type}_{random.randint(1000,9999)}"
+    return f"random_{data_type}_{random.randint(1000, 9999)}"
 
 
 def _type_text(text: str, interval: float = 0.03) -> str:
@@ -154,11 +158,12 @@ def _type_text(text: str, interval: float = 0.03) -> str:
     _ensure_pyautogui()
     time.sleep(0.3)
     pyautogui.typewrite(text, interval=interval)
+    # type: ignore
     return f"Typed: {text[:50]}{'...' if len(text) > 50 else ''}"
 
 
-def _click(x: int = None, y: int = None, button: str = "left",
-           clicks: int = 1, image: str = None) -> str:
+def _click(x: int | None = None, y: int | None = None, button: str = "left",
+           clicks: int = 1, image: str | None = None) -> str:
     """
     Clicks at coordinates or on a screen image.
     If image path given, locates it on screen and clicks.
@@ -180,7 +185,7 @@ def _click(x: int = None, y: int = None, button: str = "left",
         return f"Clicked ({x}, {y}) with {button} button"
 
     pyautogui.click(button=button, clicks=clicks)
-    return f"Clicked at current position"
+    return "Clicked at current position"
 
 
 def _hotkey(*keys) -> str:
@@ -238,11 +243,11 @@ def _clipboard_set(text: str) -> str:
         pyperclip.copy(text)
         time.sleep(0.1)
         _hotkey("ctrl", "v")
-        return f"Pasted: {text[:50]}"
+        return f"Pasted: {text[:50]}"  # type: ignore
     return "pyperclip not available"
 
 
-def _screenshot(save_path: str = None) -> str:
+def _screenshot(save_path: str | None = None) -> str:
     """Takes a screenshot."""
     _ensure_pyautogui()
     if not save_path:
@@ -324,10 +329,10 @@ def _smart_type(text: str, clear_first: bool = True) -> str:
         pyperclip.copy(text)
         time.sleep(0.1)
         pyautogui.hotkey("ctrl", "v")
-        return f"Smart-typed (clipboard): {text[:50]}"
+        return f"Smart-typed (clipboard): {text[:50]}"  # type: ignore
     else:
         pyautogui.typewrite(text, interval=0.04)
-        return f"Smart-typed: {text[:50]}"
+        return f"Smart-typed: {text[:50]}"  # type: ignore
 
 
 def _analyze_screen_for_element(description: str) -> tuple[int, int] | None:
@@ -336,7 +341,7 @@ def _analyze_screen_for_element(description: str) -> tuple[int, int] | None:
     of a described element on screen. Returns (x, y) or None.
     """
     try:
-        import google.generativeai as genai
+        import google.generativeai as genai  # type: ignore
         import io
 
         cfg_path = API_CONFIG_PATH
@@ -346,11 +351,10 @@ def _analyze_screen_for_element(description: str) -> tuple[int, int] | None:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel("gemini-2.5-flash-lite")
 
-
         _ensure_pyautogui()
-        w, h  = pyautogui.size()
-        img   = pyautogui.screenshot()
-        buf   = io.BytesIO()
+        w, h = pyautogui.size()
+        img = pyautogui.screenshot()
+        buf = io.BytesIO()
         img.save(buf, format="PNG")
         buf.seek(0)
 
@@ -380,8 +384,9 @@ def _analyze_screen_for_element(description: str) -> tuple[int, int] | None:
 
     return None
 
+
 def computer_control(
-    parameters:     dict,
+    parameters: dict,
     response=None,
     player=None,
     session_memory=None,
@@ -428,10 +433,10 @@ def computer_control(
             return _type_text(text)
 
         elif action == "smart_type":
-            text        = parameters.get("text", "")
+            text = parameters.get("text", "")
             clear_first = parameters.get("clear_first", True)
             return _smart_type(text, clear_first=clear_first)
-        
+
         elif action in ("click", "left_click"):
             return _click(
                 x=parameters.get("x"),
@@ -533,17 +538,18 @@ def computer_control(
 
         elif action == "random_data":
             data_type = parameters.get("type", "name")
-            result    = generate_random_data(data_type)
+            result = generate_random_data(data_type)
             print(f"[ComputerControl] 🎲 Random {data_type}: {result}")
             return result
 
         elif action == "user_data":
-            field   = parameters.get("field", "name")
+            field = parameters.get("field", "name")
             profile = _load_user_profile()
-            value   = profile.get(field, "")
+            value = profile.get(field, "")
             if not value:
                 value = generate_random_data(field)
-                print(f"[ComputerControl] ⚠️ No user {field} in memory, using random: {value}")
+                print(
+                    f"[ComputerControl] ⚠️ No user {field} in memory, using random: {value}")
             return value
 
         else:

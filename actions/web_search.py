@@ -8,23 +8,13 @@ import sys
 from pathlib import Path
 
 
-def get_base_dir() -> Path:
-    if getattr(sys, "frozen", False):
-        return Path(sys.executable).parent
-    return Path(__file__).resolve().parent.parent
-
-BASE_DIR        = get_base_dir()
-API_CONFIG_PATH = BASE_DIR / "config" / "api_keys.json"
-
-def _get_api_key() -> str:
-    with open(API_CONFIG_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)["gemini_api_key"]
+from memory.config_manager import get_gemini_key  # type: ignore
 
 
 def _gemini_search(query: str) -> str:
-    from google import genai
+    from google import genai  # type: ignore[import]
 
-    client = genai.Client(api_key=_get_api_key())
+    client = genai.Client(api_key=get_gemini_key())
     response = client.models.generate_content(
         model="gemini-2.5-flash-lite",
         contents=query,
@@ -33,42 +23,46 @@ def _gemini_search(query: str) -> str:
     text = ""
     for part in response.candidates[0].content.parts:
         if hasattr(part, "text") and part.text:
-            text += part.text
-    if not text.strip():
+            text += part.text  # type: ignore[operator]
+    if not text.strip():  # type: ignore[union-attr]
         raise ValueError("Empty response")
-    return text.strip()
-
+    return text.strip()  # type: ignore[union-attr]
 
 
 def _ddg_search(query: str, max_results: int = 6) -> list:
     try:
-        from ddgs import DDGS
+        from duckduckgo_search import DDGS  # type: ignore[import]
     except ImportError:
-        from duckduckgo_search import DDGS
+        from ddgs import DDGS  # type: ignore[import]
     results = []
     with DDGS() as ddgs:
         for r in ddgs.text(query, max_results=max_results):
             results.append({
-                "title":   r.get("title", ""),
+                "title": r.get("title", ""),
                 "snippet": r.get("body", ""),
-                "url":     r.get("href", ""),
+                "url": r.get("href", ""),
             })
     return results
+
 
 def _format_ddg(query: str, results: list) -> str:
     if not results:
         return f"No results found for: {query}"
     lines = [f"Search results for: {query}\n"]
     for i, r in enumerate(results, 1):
-        if r.get("title"):   lines.append(f"{i}. {r['title']}")
-        if r.get("snippet"): lines.append(f"   {r['snippet']}")
-        if r.get("url"):     lines.append(f"   {r['url']}")
+        if r.get("title"):
+            lines.append(f"{i}. {r['title']}")
+        if r.get("snippet"):
+            lines.append(f"   {r['snippet']}")
+        if r.get("url"):
+            lines.append(f"   {r['url']}")
         lines.append("")
     return "\n".join(lines).strip()
 
 
 def _compare(items: list, aspect: str) -> str:
-    query = f"Compare {', '.join(items)} in terms of {aspect}. Give specific facts and data."
+    query = f"Compare {
+        ', '.join(items)} in terms of {aspect}. Give specific facts and data."
     try:
         return _gemini_search(query)
     except Exception as e:
@@ -76,28 +70,29 @@ def _compare(items: list, aspect: str) -> str:
         all_results = {}
         for item in items:
             try:
-                all_results[item] = _ddg_search(f"{item} {aspect}", max_results=3)
+                all_results[item] = _ddg_search(
+                    f"{item} {aspect}", max_results=3)
             except Exception:
                 all_results[item] = []
-        lines = [f"Comparison — {aspect.upper()}\n{'─'*40}"]
+        lines = [f"Comparison — {aspect.upper()}\n{'─' * 40}"]
         for item in items:
             lines.append(f"\n▸ {item}")
-            for r in all_results.get(item, [])[:2]:
+            for r in all_results.get(item, [])[:2]:  # type: ignore[index]
                 if r.get("snippet"):
                     lines.append(f"  • {r['snippet']}")
         return "\n".join(lines)
 
 
 def web_search(
-    parameters:     dict,
+    parameters: dict,
     response=None,
     player=None,
     session_memory=None,
 ) -> str:
     params = parameters or {}
-    query  = params.get("query", "").strip()
-    mode   = params.get("mode", "search").lower()
-    items  = params.get("items", [])
+    query = params.get("query", "").strip()
+    mode = params.get("mode", "search").lower()
+    items = params.get("items", [])
     aspect = params.get("aspect", "general")
 
     if not query and not items:
@@ -126,7 +121,7 @@ def web_search(
         except Exception as e:
             print(f"[WebSearch] ⚠️ Gemini failed ({e}), trying DDG...")
             results = _ddg_search(query)
-            result  = _format_ddg(query, results)
+            result = _format_ddg(query, results)
             print(f"[WebSearch] ✅ DDG: {len(results)} results.")
             return result
 

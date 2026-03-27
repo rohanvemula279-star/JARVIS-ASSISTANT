@@ -1,3 +1,5 @@
+
+# pyre-ignore-all-errors
 import asyncio
 import threading
 import json
@@ -5,56 +7,46 @@ import re
 import sys
 import traceback
 from pathlib import Path
+import os
+from typing import Any, Optional
 
-import pyaudio
-from google import genai
-from google.genai import types
+import sounddevice as sd  # pyre-ignore[21]
+import numpy as np  # pyre-ignore[21]
+from google import genai  # pyre-ignore[21]
+from google.genai import types  # pyre-ignore[21]
 import time 
-from ui import JarvisUI
-from memory.memory_manager import load_memory, update_memory, format_memory_for_prompt
+from ui import JarvisUI  # pyre-ignore[21]
+from core.face_auth import FaceAuthSystem  # pyre-ignore[21]
+from memory.memory_manager import load_memory, update_memory, format_memory_for_prompt  # pyre-ignore[21]
 
-from agent.task_queue import get_queue
+from agent.task_queue import get_queue  # pyre-ignore[21]
 
-from actions.flight_finder import flight_finder
-from actions.open_app         import open_app
-from actions.weather_report   import weather_action
-from actions.send_message     import send_message
-from actions.reminder         import reminder
-from actions.computer_settings import computer_settings
-from actions.screen_processor import screen_process
-from actions.youtube_video    import youtube_video
-from actions.cmd_control      import cmd_control
-from actions.desktop          import desktop_control
-from actions.browser_control  import browser_control
-from actions.file_controller  import file_controller
-from actions.code_helper      import code_helper
-from actions.dev_agent        import dev_agent
-from actions.web_search       import web_search as web_search_action
-from actions.computer_control import computer_control
+from actions.flight_finder import flight_finder  # pyre-ignore[21]
+from actions.open_app         import open_app  # pyre-ignore[21]
+from actions.weather_report   import weather_action  # pyre-ignore[21]
+from actions.send_message     import send_message  # pyre-ignore[21]
+from actions.reminder         import reminder  # pyre-ignore[21]
+from actions.computer_settings import computer_settings  # pyre-ignore[21]
+from actions.screen_processor import screen_process  # pyre-ignore[21]
+from actions.youtube_video    import youtube_video  # pyre-ignore[21]
+from actions.cmd_control      import cmd_control  # pyre-ignore[21]
+from actions.desktop          import desktop_control  # pyre-ignore[21]
+from actions.browser_control  import browser_control  # pyre-ignore[21]
+from actions.file_controller  import file_controller  # pyre-ignore[21]
+from actions.code_helper      import code_helper  # pyre-ignore[21]
+from actions.dev_agent        import dev_agent  # pyre-ignore[21]
+from actions.web_search       import web_search as web_search_action  # pyre-ignore[21]
+from actions.computer_control import computer_control  # pyre-ignore[21]
+from actions.study_mode       import study_mode, get_study_manager  # pyre-ignore[21]
 
-def get_base_dir():
-    if getattr(sys, "frozen", False):
-        return Path(sys.executable).parent
-    return Path(__file__).resolve().parent
+from memory.config_manager import get_gemini_key, BASE_DIR # type: ignore
 
-BASE_DIR        = get_base_dir()
-API_CONFIG_PATH = BASE_DIR / "config" / "api_keys.json"
 PROMPT_PATH     = BASE_DIR / "core" / "prompt.txt"
 LIVE_MODEL          = "models/gemini-2.5-flash-native-audio-preview-12-2025"
-FORMAT              = pyaudio.paInt16
 CHANNELS            = 1
 SEND_SAMPLE_RATE    = 16000
 RECEIVE_SAMPLE_RATE = 24000
 CHUNK_SIZE          = 1024
-
-pya = pyaudio.PyAudio()
-
-def _get_api_key() -> str:
-    with open(API_CONFIG_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)["gemini_api_key"]
-    
-    with open(API_CONFIG_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)["gemini_api_key"]
 
 def _load_system_prompt() -> str:
     try:
@@ -66,10 +58,10 @@ def _load_system_prompt() -> str:
             "Never simulate or guess results — always call the appropriate tool."
         )
 
-_memory_turn_counter  = 0
-_memory_turn_lock     = threading.Lock()
-_MEMORY_EVERY_N_TURNS = 5
-_last_memory_input    = ""
+_memory_turn_counter: int  = 0
+_memory_turn_lock: Any     = threading.Lock()
+_MEMORY_EVERY_N_TURNS: int = 5
+_last_memory_input: str    = ""
 
 
 def _update_memory_async(user_text: str, jarvis_text: str) -> None:
@@ -83,7 +75,7 @@ def _update_memory_async(user_text: str, jarvis_text: str) -> None:
     global _memory_turn_counter, _last_memory_input
 
     with _memory_turn_lock:
-        _memory_turn_counter += 1
+        _memory_turn_counter += 1  # type: ignore[possibly-undefined]
         current_count = _memory_turn_counter
 
     if current_count % _MEMORY_EVERY_N_TURNS != 0:
@@ -97,14 +89,14 @@ def _update_memory_async(user_text: str, jarvis_text: str) -> None:
     _last_memory_input = text
 
     try:
-        import google.generativeai as genai
-        genai.configure(api_key=_get_api_key())
+        import google.generativeai as genai  # pyre-ignore[21]
+        genai.configure(api_key=get_gemini_key())
         model = genai.GenerativeModel("gemini-2.5-flash-lite")
 
         check = model.generate_content(
             f"Does this message contain personal facts about the user "
             f"(name, age, city, job, hobby, relationship, birthday, preference)? "
-            f"Reply only YES or NO.\n\nMessage: {text[:300]}"
+            f"Reply only YES or NO.\n\nMessage: {text[:300]}"  # pyre-ignore
         )
         if "YES" not in check.text.upper():
             return
@@ -118,7 +110,7 @@ def _update_memory_async(user_text: str, jarvis_text: str) -> None:
             f'{{"identity":{{"name":{{"value":"..."}}}}}}, '
             f'"preferences":{{"hobby":{{"value":"..."}}}}, '
             f'"notes":{{"job":{{"value":"..."}}}}}}\n\n'
-            f"Message: {text[:500]}\n\nJSON:"
+            f"Message: {text[:500]}\n\nJSON:"  # pyre-ignore
         ).text.strip()
 
         raw = re.sub(r"```(?:json)?", "", raw).strip().rstrip("`").strip()
@@ -470,17 +462,35 @@ TOOL_DECLARATIONS = [
         },
         "required": ["origin", "destination", "date"]
     }
-}
+},
+{
+    "name": "study_mode",
+    "description": (
+        "Controls Study Mode. Use when the user asks to start, activate, stop, or cancel study mode. "
+        "Also use this to cancel a pending shutdown if the user says 'cancel shutdown'. "
+        "Study mode locks distractions and monitors the screen to keep the user focused."
+    ),
+    "parameters": {
+        "type": "OBJECT",
+        "properties": {
+            "action": {
+                "type": "STRING", 
+                "description": "activate | deactivate | status | cancel_shutdown"
+            }
+        },
+        "required": ["action"]
+    }
+},
 ]
 
 class JarvisLive:
 
-    def __init__(self, ui: JarvisUI):
-        self.ui             = ui
-        self.session        = None
-        self.audio_in_queue = None
-        self.out_queue      = None
-        self._loop          = None
+    def __init__(self, ui: Any):
+        self.ui: Any             = ui
+        self.session: Any        = None
+        self.audio_in_queue: Any = None
+        self.out_queue: Any      = None
+        self._loop: Any          = None
 
     def speak(self, text: str):
         """Thread-safe speak — any thread can call this."""
@@ -499,7 +509,6 @@ class JarvisLive:
 
         memory  = load_memory()
         mem_str = format_memory_for_prompt(memory)
-
         sys_prompt = _load_system_prompt()
 
         now      = datetime.now()
@@ -544,31 +553,31 @@ class JarvisLive:
         try:
             if name == "open_app":
                 r = await loop.run_in_executor(
-                    None, lambda: open_app(parameters=args, response=None, player=self.ui)
+                    None, lambda: open_app(parameters=args, response=None, player=self.ui)  # type: ignore[arg-type]
                 )
                 result = r or f"Opened {args.get('app_name')} successfully."
 
             elif name == "weather_report":
                 r = await loop.run_in_executor(
-                    None, lambda: weather_action(parameters=args, player=self.ui)
+                    None, lambda: weather_action(parameters=args, player=self.ui)  # type: ignore[arg-type]
                 )
                 result = r or f"Weather report for {args.get('city')} delivered."
 
             elif name == "browser_control":
                 r = await loop.run_in_executor(
-                    None, lambda: browser_control(parameters=args, player=self.ui)
+                    None, lambda: browser_control(parameters=args, player=self.ui)  # type: ignore[arg-type]
                 )
                 result = r or "Browser action completed."
 
             elif name == "file_controller":
                 r = await loop.run_in_executor(
-                    None, lambda: file_controller(parameters=args, player=self.ui)
+                    None, lambda: file_controller(parameters=args, player=self.ui)  # type: ignore[arg-type]
                 )
                 result = r or "File operation completed."
 
             elif name == "send_message":
                 r = await loop.run_in_executor(
-                    None, lambda: send_message(
+                    None, lambda: send_message(  # type: ignore[arg-type]
                         parameters=args, response=None,
                         player=self.ui, session_memory=None
                     )
@@ -577,13 +586,13 @@ class JarvisLive:
 
             elif name == "reminder":
                 r = await loop.run_in_executor(
-                    None, lambda: reminder(parameters=args, response=None, player=self.ui)
+                    None, lambda: reminder(parameters=args, response=None, player=self.ui)  # type: ignore[arg-type]
                 )
                 result = r or f"Reminder set for {args.get('date')} at {args.get('time')}."
 
             elif name == "youtube_video":
                 r = await loop.run_in_executor(
-                    None, lambda: youtube_video(parameters=args, response=None, player=self.ui)
+                    None, lambda: youtube_video(parameters=args, response=None, player=self.ui)  # type: ignore[arg-type]
                 )
                 result = r or "Done."
 
@@ -601,7 +610,7 @@ class JarvisLive:
 
             elif name == "computer_settings":
                 r = await loop.run_in_executor(
-                    None, lambda: computer_settings(
+                    None, lambda: computer_settings(  # type: ignore[arg-type]
                         parameters=args, response=None, player=self.ui
                     )
                 )
@@ -609,18 +618,18 @@ class JarvisLive:
 
             elif name == "cmd_control":
                 r = await loop.run_in_executor(
-                    None, lambda: cmd_control(parameters=args, player=self.ui)
+                    None, lambda: cmd_control(parameters=args, player=self.ui)  # type: ignore[arg-type]
                 )
                 result = r or "Command executed."
 
             elif name == "desktop_control":
                 r = await loop.run_in_executor(
-                    None, lambda: desktop_control(parameters=args, player=self.ui)
+                    None, lambda: desktop_control(parameters=args, player=self.ui)  # type: ignore[arg-type]
                 )
                 result = r or "Desktop action completed."
             elif name == "code_helper":
                 r = await loop.run_in_executor(
-                    None, lambda: code_helper(
+                    None, lambda: code_helper(  # type: ignore[arg-type]
                         parameters=args,
                         player=self.ui,
                         speak=self.speak 
@@ -630,7 +639,7 @@ class JarvisLive:
 
             elif name == "dev_agent":
                 r = await loop.run_in_executor(
-                    None, lambda: dev_agent(
+                    None, lambda: dev_agent(  # type: ignore[arg-type]
                         parameters=args,
                         player=self.ui,
                         speak=self.speak
@@ -641,7 +650,7 @@ class JarvisLive:
                 goal         = args.get("goal", "")
                 priority_str = args.get("priority", "normal").lower()
 
-                from agent.task_queue import get_queue, TaskPriority
+                from agent.task_queue import get_queue, TaskPriority  # pyre-ignore[21]
                 priority_map = {
                     "low":    TaskPriority.LOW,
                     "normal": TaskPriority.NORMAL,
@@ -659,18 +668,24 @@ class JarvisLive:
 
             elif name == "web_search":
                 r = await loop.run_in_executor(
-                    None, lambda: web_search_action(parameters=args, player=self.ui)
+                    None, lambda: web_search_action(parameters=args, player=self.ui)  # type: ignore[arg-type]
                     )
                 result = r or "Search completed."
             elif name == "computer_control":
                 r = await loop.run_in_executor(
-                    None, lambda: computer_control(parameters=args, player=self.ui)
+                    None, lambda: computer_control(parameters=args, player=self.ui)  # type: ignore[arg-type]
                 )
                 result = r or "Done."
 
             elif name == "flight_finder":
                 r = await loop.run_in_executor(
-                    None, lambda: flight_finder(parameters=args, player=self.ui)
+                    None, lambda: flight_finder(parameters=args, player=self.ui)  # type: ignore[arg-type]
+                )
+                result = r or "Done."
+
+            elif name == "study_mode":
+                r = await loop.run_in_executor(
+                    None, lambda: study_mode(parameters=args, player=self.ui)  # type: ignore[arg-type]
                 )
                 result = r or "Done."
 
@@ -681,7 +696,7 @@ class JarvisLive:
             result = f"Tool '{name}' failed: {e}"
             traceback.print_exc()
 
-        print(f"[JARVIS] 📤 {name} → {result[:80]}")
+        print(f"[JARVIS] 📤 {name} → {result[:80]}")  # pyre-ignore
 
         return types.FunctionResponse(
             id=fc.id,
@@ -696,30 +711,38 @@ class JarvisLive:
 
     async def _listen_audio(self):
         print("[JARVIS] 🎤 Mic started")
-        stream = await asyncio.to_thread(
-            pya.open,
-            format=FORMAT,
+        mic_queue = asyncio.Queue()
+        loop = asyncio.get_event_loop()
+
+        def _mic_callback(indata, frames, time_info, status):
+            if status:
+                print(f"[JARVIS] ⚠️ Mic status: {status}")
+            loop.call_soon_threadsafe(mic_queue.put_nowait, bytes(indata))
+
+        stream = sd.RawInputStream(
+            samplerate=SEND_SAMPLE_RATE,
             channels=CHANNELS,
-            rate=SEND_SAMPLE_RATE,
-            input=True,
-            frames_per_buffer=CHUNK_SIZE,
+            dtype='int16',
+            blocksize=CHUNK_SIZE,
+            callback=_mic_callback,
         )
+        stream.start()
         try:
             while True:
-                data = await asyncio.to_thread(
-                    stream.read, CHUNK_SIZE, exception_on_overflow=False
-                )
-                await self.out_queue.put({"data": data, "mime_type": "audio/pcm"})
+                data = await mic_queue.get()
+                if self.ui.mic_active:
+                    await self.out_queue.put({"data": data, "mime_type": "audio/pcm"})
         except Exception as e:
             print(f"[JARVIS] ❌ Mic error: {e}")
             raise
         finally:
+            stream.stop()
             stream.close()
 
     async def _receive_audio(self):
         print("[JARVIS] 👂 Recv started")
-        out_buf = []
-        in_buf  = []
+        out_buf: list[str] = []
+        in_buf: list[str]  = []
 
         try:
             while True:
@@ -735,12 +758,12 @@ class JarvisLive:
                         if sc.input_transcription and sc.input_transcription.text:
                             txt = sc.input_transcription.text.strip()
                             if txt:
-                                in_buf.append(txt)
+                                in_buf.append(txt)  # type: ignore[attr-defined]
 
                         if sc.output_transcription and sc.output_transcription.text:
                             txt = sc.output_transcription.text.strip()
                             if txt:
-                                out_buf.append(txt)
+                                out_buf.append(txt)  # type: ignore[attr-defined]
 
                         if sc.turn_complete:
                             full_in  = ""
@@ -782,13 +805,12 @@ class JarvisLive:
 
     async def _play_audio(self):
         print("[JARVIS] 🔊 Play started")
-        stream = await asyncio.to_thread(
-            pya.open,
-            format=FORMAT,
+        stream = sd.RawOutputStream(
+            samplerate=RECEIVE_SAMPLE_RATE,
             channels=CHANNELS,
-            rate=RECEIVE_SAMPLE_RATE,
-            output=True,
+            dtype='int16',
         )
+        stream.start()
         try:
             while True:
                 chunk = await self.audio_in_queue.get()
@@ -797,11 +819,25 @@ class JarvisLive:
             print(f"[JARVIS] ❌ Play error: {e}")
             raise
         finally:
+            stream.stop()
             stream.close()
+
+    async def _poll_study_warnings(self):
+        """Poll study mode for pending warnings and speak them safely."""
+        while True:
+            try:
+                manager = get_study_manager()
+                if manager.is_active:
+                    warning = manager.get_pending_warning()
+                    if warning:
+                        self.speak(warning)
+            except Exception as e:
+                pass
+            await asyncio.sleep(1)
 
     async def run(self):
         client = genai.Client(
-            api_key=_get_api_key(),
+            api_key=get_gemini_key(),
             http_options={"api_version": "v1beta"}
         )
 
@@ -826,6 +862,7 @@ class JarvisLive:
                     tg.create_task(self._listen_audio())
                     tg.create_task(self._receive_audio())
                     tg.create_task(self._play_audio())
+                    tg.create_task(self._poll_study_warnings())
 
             except Exception as e:
                 print(f"[JARVIS] ⚠️  Error: {e}")
@@ -835,11 +872,45 @@ class JarvisLive:
             await asyncio.sleep(3)
 
 def main():
-    ui = JarvisUI("face.png")
+    # ── Handle --reset-face CLI flag ──
+    if "--reset-face" in sys.argv:
+        print("⚠️  This will delete your face enrollment data.")
+        face_system = FaceAuthSystem()
+        if face_system.has_enrollment_pin():
+            import getpass
+            pin = getpass.getpass("Enter your 4-digit security PIN: ").strip()
+            if not face_system.verify_enrollment_pin(pin):
+                print("❌ Invalid PIN. Reset cancelled.")
+                return
+
+        confirm = input("Type YES to confirm: ").strip()
+        if confirm == "YES":
+            FaceAuthSystem.reset_face_data()
+        else:
+            print("Cancelled.")
+        return
+
+    # ── Initialize face auth system ──
+    face_system = FaceAuthSystem()
+    face_path = os.path.join(os.path.dirname(__file__), "face.png")
+
+    if not face_system.owner_registered():
+        # First-time setup: enrollment mode
+        print("[JARVIS] 📸 No face enrolled — starting enrollment...")
+        face_system.start_camera()
+        ui = JarvisUI(face_path, face_system=face_system, mode="ENROLLMENT")
+    else:
+        # Owner registered — load and enter locked mode
+        if not face_system.load_owner():
+            print("[JARVIS] ⚠️ Face data corrupted — re-enrollment required")
+            face_system.start_camera()
+            ui = JarvisUI(face_path, face_system=face_system, mode="ENROLLMENT")
+        else:
+            face_system.start_camera()
+            ui = JarvisUI(face_path, face_system=face_system, mode="LOCKED")
 
     def runner():
         ui.wait_for_api_key()
-        
         jarvis = JarvisLive(ui)
         try:
             asyncio.run(jarvis.run())
@@ -847,7 +918,9 @@ def main():
             print("\n🔴 Shutting down...")
 
     threading.Thread(target=runner, daemon=True).start()
+    print("[DEBUG] Entering ui.root.mainloop()...", flush=True)
     ui.root.mainloop()
+    print("[DEBUG] Exited ui.root.mainloop().", flush=True)
 
 if __name__ == "__main__":
     main()

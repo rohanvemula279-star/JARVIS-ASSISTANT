@@ -4,21 +4,24 @@ import concurrent.futures
 import platform
 import shutil
 import subprocess
+import typing
 from pathlib import Path
-from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeout
+from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeout  # type: ignore
+
 
 def _get_default_browser_id() -> str:
     """Returns raw default browser identifier string for current OS."""
     system = platform.system()
     try:
         if system == "Windows":
-            import winreg
-            key     = winreg.OpenKey(
-                winreg.HKEY_CURRENT_USER,
+            import winreg  # type: ignore
+            key = winreg.OpenKey(  # type: ignore
+                winreg.HKEY_CURRENT_USER,  # type: ignore
                 r"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice"
             )
-            prog_id = winreg.QueryValueEx(key, "ProgId")[0].lower()
-            winreg.CloseKey(key)
+            prog_id = winreg.QueryValueEx(
+                key, "ProgId")[0].lower()  # type: ignore
+            winreg.CloseKey(key)  # type: ignore
             return prog_id
 
         elif system == "Darwin":
@@ -42,26 +45,41 @@ def _get_default_browser_id() -> str:
 
     return ""
 
+
 _BROWSER_BINARIES = {
     "Windows": {
-        "opera":   ["opera.exe"],
-        "brave":   ["brave.exe"],
+        "opera": ["opera.exe"],
+        "brave": ["brave.exe"],
         "vivaldi": ["vivaldi.exe"],
-        "chrome":  ["chrome.exe"],
+        "chrome": ["chrome.exe"],
         "firefox": ["firefox.exe"],
     },
     "Darwin": {
-        "opera":   ["opera"],
-        "brave":   ["brave browser", "brave"],
+        "opera": ["opera"],
+        "brave": [
+            "brave browser",
+            "brave"],
         "vivaldi": ["vivaldi"],
-        "chrome":  ["google chrome", "google-chrome"],
+        "chrome": [
+            "google chrome",
+            "google-chrome"],
         "firefox": ["firefox"],
     },
     "Linux": {
-        "opera":   ["opera", "opera-stable"],
-        "brave":   ["brave-browser", "brave"],
-        "vivaldi": ["vivaldi-stable", "vivaldi"],
-        "chrome":  ["google-chrome", "google-chrome-stable", "chromium-browser", "chromium"],
+        "opera": [
+            "opera",
+            "opera-stable"],
+        "brave": [
+            "brave-browser",
+            "brave"],
+        "vivaldi": [
+            "vivaldi-stable",
+            "vivaldi"],
+        "chrome": [
+            "google-chrome",
+            "google-chrome-stable",
+            "chromium-browser",
+            "chromium"],
         "firefox": ["firefox"],
     },
 }
@@ -71,7 +89,7 @@ def _get_opera_executable() -> str | None:
     if platform.system() != "Windows":
         return None
     try:
-        import winreg
+        import winreg  # type: ignore
         candidate_keys = [
             r"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\opera.exe",
             r"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\launcher.exe",
@@ -79,13 +97,16 @@ def _get_opera_executable() -> str | None:
             r"SOFTWARE\Clients\StartMenuInternet\OperaGXStable\shell\open\command",
         ]
         for key_path in candidate_keys:
-            for hive in [winreg.HKEY_LOCAL_MACHINE, winreg.HKEY_CURRENT_USER]:
+            for hive in [
+                    winreg.HKEY_LOCAL_MACHINE,
+                    winreg.HKEY_CURRENT_USER]:  # type: ignore
                 try:
-                    key  = winreg.OpenKey(hive, key_path)
-                    val  = winreg.QueryValue(key, None)
-                    winreg.CloseKey(key)
+                    key = winreg.OpenKey(hive, key_path)  # type: ignore
+                    val = winreg.QueryValue(key, None)  # type: ignore
+                    winreg.CloseKey(key)  # type: ignore
                     # Strip quotes and args
-                    exe  = val.strip().strip('"').split('"')[0].split(" --")[0].strip()
+                    exe = val.strip().strip('"').split(
+                        '"')[0].split(" --")[0].strip()
                     if exe and Path(exe).exists():
                         print(f"[Browser] 🔍 Opera found via registry: {exe}")
                         return exe
@@ -97,7 +118,7 @@ def _get_opera_executable() -> str | None:
 
 
 def _find_browser_executable(prog_id: str) -> tuple:
-    system  = platform.system()
+    system = platform.system()
     os_bins = _BROWSER_BINARIES.get(system, {})
 
     if any(x in prog_id for x in ["firefox", "mozilla"]):
@@ -119,9 +140,9 @@ def _find_browser_executable(prog_id: str) -> tuple:
                 return "chromium", path, None
 
     browser_patterns = {
-        "brave":   ["brave"],
+        "brave": ["brave"],
         "vivaldi": ["vivaldi"],
-        "chrome":  ["chrome"],
+        "chrome": ["chrome"],
     }
     for browser_name, patterns in browser_patterns.items():
         if not any(p in prog_id for p in patterns):
@@ -136,58 +157,83 @@ def _find_browser_executable(prog_id: str) -> tuple:
     if "chrome" in prog_id or not prog_id:
         return "chromium", None, "chrome"
 
-
     return "chromium", None, None
 
 
 class _BrowserThread:
 
-
     def __init__(self):
-        self._loop       = None
-        self._thread     = None
-        self._ready      = threading.Event()
-        self._playwright = None
-        self._browser    = None
-        self._context    = None
-        self._page       = None
+        self._loop: asyncio.AbstractEventLoop | None = None
+        self._thread: threading.Thread | None = None
+        self._ready = threading.Event()
+        self._playwright: typing.Any = None
+        self._playwright_mgr: typing.Any = None
+        self._browser: typing.Any = None
+        self._context: typing.Any = None
+        self._page: typing.Any = None
+        self._init_error: Exception | None = None
 
     def start(self):
-        if self._thread and self._thread.is_alive():
+        thread_obj = self._thread
+        if thread_obj is not None and thread_obj.is_alive():
             return
-        self._thread = threading.Thread(
+        self._init_error = None
+        thread = threading.Thread(
             target=self._run_loop, daemon=True, name="BrowserThread"
         )
-        self._thread.start()
-        self._ready.wait(timeout=15)
+        self._thread = thread
+        thread.start()
+        if not self._ready.wait(timeout=15):
+            print("[Browser] ⚠️ Browser thread failed to start within 15 seconds.")
+        if getattr(self, "_init_error", None):
+            print(
+                f"[Browser] ⚠️ Playwright initialization failed: {
+                    self._init_error}")
 
     def _run_loop(self):
-        self._loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(self._loop)
-        self._loop.run_until_complete(self._init())
-        self._ready.set()
-        self._loop.run_forever()
+        try:
+            if platform.system() == "Windows":
+                asyncio.set_event_loop_policy(
+                    getattr(asyncio, "WindowsProactorEventLoopPolicy")())
+            loop = asyncio.new_event_loop()
+            self._loop = loop
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(self._init())
+            self._ready.set()
+            loop.run_forever()
+        except Exception as e:
+            self._init_error = e
+            self._ready.set()  # Unblock start()
 
     async def _init(self):
-        self._playwright = await async_playwright().start()
+        self._playwright_mgr = async_playwright()
+        self._playwright = await self._playwright_mgr.start()
 
     def run(self, coro, timeout: int = 30):
         if not self._loop:
             raise RuntimeError("BrowserThread not started.")
         future = asyncio.run_coroutine_threadsafe(coro, self._loop)
         return future.result(timeout=timeout)
-    
-    async def _get_page(self):
+
+    async def _get_page(self) -> typing.Any:
         if self._page is None or self._page.is_closed():
             await self._launch()
         return self._page
 
     async def _launch(self):
-        prog_id                        = _get_default_browser_id()
-        engine_name, exe_path, channel = _find_browser_executable(prog_id)
-        engine                         = getattr(self._playwright, engine_name)
+        if self._playwright is None:
+            raise RuntimeError(
+                f"Playwright not initialized. Init error: {
+                    getattr(
+                        self,
+                        '_init_error',
+                        'Unknown')}")
 
-        launch_kwargs = {"headless": False}
+        prog_id = _get_default_browser_id()
+        engine_name, exe_path, channel = _find_browser_executable(prog_id)
+        engine = getattr(self._playwright, engine_name)
+
+        launch_kwargs: dict[str, typing.Any] = {"headless": False}
 
         if engine_name == "chromium":
             launch_kwargs["args"] = ["--start-maximized"]
@@ -206,7 +252,8 @@ class _BrowserThread:
                     f"{' / ' + exe_path if exe_path else ''})"
                 )
         except Exception as e:
-            print(f"[Browser] ⚠️ Launch failed ({e}), falling back to built-in Chromium")
+            print(
+                f"[Browser] ⚠️ Launch failed ({e}), falling back to built-in Chromium")
             self._browser = await self._playwright.chromium.launch(
                 headless=False,
                 args=["--start-maximized"]
@@ -226,7 +273,7 @@ class _BrowserThread:
         if self._browser:
             await self._browser.close()
             self._browser = None
-            self._page    = None
+            self._page = None
         if self._playwright:
             await self._playwright.stop()
             self._playwright = None
@@ -245,8 +292,8 @@ class _BrowserThread:
 
     async def _search(self, query: str, engine: str = "google") -> str:
         engines = {
-            "google":     f"https://www.google.com/search?q={query.replace(' ', '+')}",
-            "bing":       f"https://www.bing.com/search?q={query.replace(' ', '+')}",
+            "google": f"https://www.google.com/search?q={query.replace(' ', '+')}",
+            "bing": f"https://www.bing.com/search?q={query.replace(' ', '+')}",
             "duckduckgo": f"https://duckduckgo.com/?q={query.replace(' ', '+')}",
         }
         url = engines.get(engine.lower(), engines["google"])
@@ -267,10 +314,15 @@ class _BrowserThread:
         except Exception as e:
             return f"Click error: {e}"
 
-    async def _type(self, selector=None, text: str = "", clear_first: bool = True) -> str:
+    async def _type(
+            self,
+            selector=None,
+            text: str = "",
+            clear_first: bool = True) -> str:
         page = await self._get_page()
         try:
-            element = page.locator(selector).first if selector else page.locator(":focus")
+            element = page.locator(
+                selector).first if selector else page.locator(":focus")
             if clear_first:
                 await element.clear()
             await element.type(text, delay=50)
@@ -298,13 +350,13 @@ class _BrowserThread:
     async def _get_text(self) -> str:
         page = await self._get_page()
         try:
-            text = await page.inner_text("body")
-            return text[:4000] if len(text) > 4000 else text
+            text = str(await page.inner_text("body"))
+            return text[:4000] if len(text) > 4000 else text  # type: ignore
         except Exception as e:
             return f"Could not get page text: {e}"
 
     async def _fill_form(self, fields: dict) -> str:
-        page    = await self._get_page()
+        page = await self._get_page()
         results = []
         for selector, value in fields.items():
             try:
@@ -317,14 +369,14 @@ class _BrowserThread:
         return "Form filled: " + ", ".join(results)
 
     async def _smart_click(self, description: str) -> str:
-        page       = await self._get_page()
+        page = await self._get_page()
         desc_lower = description.lower()
 
         role_hints = {
-            "button":    ["button", "buton", "btn"],
-            "link":      ["link", "bağlantı"],
+            "button": ["button", "buton", "btn"],
+            "link": ["link", "bağlantı"],
             "searchbox": ["search", "arama"],
-            "textbox":   ["input", "field", "alan"],
+            "textbox": ["input", "field", "alan"],
         }
         for role, keywords in role_hints.items():
             if any(k in desc_lower for k in keywords):
@@ -353,8 +405,8 @@ class _BrowserThread:
 
         for method, locator in [
             ("placeholder", page.get_by_placeholder(description, exact=False)),
-            ("label",       page.get_by_label(description, exact=False)),
-            ("role",        page.get_by_role("textbox")),
+            ("label", page.get_by_label(description, exact=False)),
+            ("role", page.get_by_role("textbox")),
         ]:
             try:
                 el = locator.first
@@ -370,9 +422,10 @@ class _BrowserThread:
         await self._close()
         return "Browser closed."
 
-_bt         = _BrowserThread()
+
+_bt = _BrowserThread()
 _bt_started = False
-_bt_lock    = threading.Lock()
+_bt_lock = threading.Lock()
 
 
 def _ensure_started():
@@ -382,8 +435,9 @@ def _ensure_started():
             _bt.start()
             _bt_started = True
 
+
 def browser_control(
-    parameters:     dict,
+    parameters: dict,
     response=None,
     player=None,
     session_memory=None
@@ -444,7 +498,11 @@ def browser_control(
             result = _bt.run(_bt._fill_form(parameters.get("fields", {})))
 
         elif action == "smart_click":
-            result = _bt.run(_bt._smart_click(parameters.get("description", "")))
+            result = _bt.run(
+                _bt._smart_click(
+                    parameters.get(
+                        "description",
+                        "")))
 
         elif action == "smart_type":
             result = _bt.run(_bt._smart_type(
@@ -469,8 +527,9 @@ def browser_control(
     except Exception as e:
         result = f"Browser error: {e}"
 
-    print(f"[Browser] {result[:80]}")
+    result_str = str(result)
+    print(f"[Browser] {result_str[0:80]}")  # type: ignore
     if player:
-        player.write_log(f"[browser] {result[:60]}")
+        player.write_log(f"[browser] {result_str[0:60]}")  # type: ignore
 
-    return result
+    return result_str

@@ -9,8 +9,8 @@ def get_base_dir() -> Path:
     return Path(__file__).resolve().parent.parent
 
 
-BASE_DIR    = get_base_dir()
-CONFIG_DIR  = BASE_DIR / "config"
+BASE_DIR = get_base_dir()
+CONFIG_DIR = BASE_DIR / "config"
 CONFIG_FILE = CONFIG_DIR / "api_keys.json"
 
 
@@ -32,7 +32,15 @@ def save_api_keys(gemini_api_key: str) -> None:
         except Exception:
             data = {}
 
+    # Update both the single key and the list
     data["gemini_api_key"] = gemini_api_key.strip()
+    
+    if "gemini_api_keys" not in data or not isinstance(data["gemini_api_keys"], list):
+        data["gemini_api_keys"] = [data["gemini_api_key"]]
+    else:
+        # If the key is not in the list, add it as the primary
+        if data["gemini_api_key"] not in data["gemini_api_keys"]:
+            data["gemini_api_keys"].insert(0, data["gemini_api_key"])
 
     CONFIG_FILE.write_text(
         json.dumps(data, indent=2),
@@ -51,7 +59,20 @@ def load_api_keys() -> dict:
 
 
 def get_gemini_key() -> str | None:
-    return load_api_keys().get("gemini_api_key")
+    data = load_api_keys()
+    
+    # Try getting from the list first (rotation/multi-key support)
+    keys = data.get("gemini_api_keys", [])
+    if isinstance(keys, list) and len(keys) > 0:
+        # Filter out placeholders
+        valid_keys = [k for k in keys if k and len(k) > 15 and "YOUR" not in k.upper()]
+        if valid_keys:
+            # Current simplest: return the first valid key
+            # Could be expanded to random.choice or round-robin if state is kept
+            return valid_keys[0]
+            
+    # Fallback to single key
+    return data.get("gemini_api_key")
 
 
 def is_configured() -> bool:

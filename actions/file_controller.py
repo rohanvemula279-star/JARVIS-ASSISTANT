@@ -4,7 +4,8 @@
 import shutil
 from pathlib import Path
 from datetime import datetime
-import send2trash
+import send2trash  # type: ignore
+
 
 def _get_desktop() -> Path:
     """Returns desktop path — works on Windows, Mac, Linux."""
@@ -21,13 +22,13 @@ def _resolve_path(raw: str) -> Path:
     Supports shortcuts: 'desktop', 'downloads', 'documents', 'home'
     """
     shortcuts = {
-        "desktop":   Path.home() / "Desktop",
+        "desktop": Path.home() / "Desktop",
         "downloads": Path.home() / "Downloads",
         "documents": Path.home() / "Documents",
-        "pictures":  Path.home() / "Pictures",
-        "music":     Path.home() / "Music",
-        "videos":    Path.home() / "Videos",
-        "home":      Path.home(),
+        "pictures": Path.home() / "Pictures",
+        "music": Path.home() / "Music",
+        "videos": Path.home() / "Videos",
+        "home": Path.home(),
     }
     lower = raw.strip().lower()
     if lower in shortcuts:
@@ -40,7 +41,7 @@ def _format_size(bytes_size: int) -> str:
     for unit in ["B", "KB", "MB", "GB", "TB"]:
         if bytes_size < 1024:
             return f"{bytes_size:.1f} {unit}"
-        bytes_size /= 1024
+        bytes_size /= 1024  # type: ignore
     return f"{bytes_size:.1f} TB"
 
 
@@ -66,7 +67,9 @@ def list_files(path: str = "desktop", show_hidden: bool = False) -> str:
         if not items:
             return f"Directory is empty: {target}"
 
-        return f"Contents of {target.name}/ ({len(items)} items):\n" + "\n".join(items)
+        return f"Contents of {
+            target.name}/ ({
+            len(items)} items):\n" + "\n".join(items)
 
     except PermissionError:
         return f"Permission denied: {path}"
@@ -129,8 +132,8 @@ def delete_file(path: str, confirm: bool = True) -> str:
 def move_file(source: str, destination: str) -> str:
     """Moves a file or folder to a new location."""
     try:
-        src  = Path(source).expanduser()
-        dst  = _resolve_path(destination)
+        src = Path(source).expanduser()
+        dst = _resolve_path(destination)
 
         if not src.exists():
             return f"Source not found: {source}"
@@ -174,7 +177,7 @@ def copy_file(source: str, destination: str) -> str:
 def rename_file(path: str, new_name: str) -> str:
     """Renames a file or folder."""
     try:
-        target   = Path(path).expanduser()
+        target = Path(path).expanduser()
         new_path = target.parent / new_name
 
         if not target.exists():
@@ -200,7 +203,10 @@ def read_file(path: str, max_chars: int = 3000) -> str:
 
         content = target.read_text(encoding="utf-8", errors="ignore")
         if len(content) > max_chars:
-            content = content[:max_chars] + f"\n\n... (truncated, {len(content)} total chars)"
+            content = (
+                content[:max_chars]  # type: ignore
+                + f"\n\n... (truncated, {len(content)} total chars)"
+            )
         return content
 
     except Exception as e:
@@ -270,7 +276,7 @@ def get_largest_files(path: str = "home", count: int = 10) -> str:
                     continue
 
         files.sort(reverse=True)
-        top = files[:count]
+        top = files[:count]  # type: ignore
 
         if not top:
             return "No files found."
@@ -289,11 +295,11 @@ def get_disk_usage(path: str = "home") -> str:
     """Returns disk usage information."""
     try:
         target = _resolve_path(path)
-        usage  = shutil.disk_usage(target)
-        total  = _format_size(usage.total)
-        used   = _format_size(usage.used)
-        free   = _format_size(usage.free)
-        pct    = usage.used / usage.total * 100
+        usage = shutil.disk_usage(target)
+        total = _format_size(usage.total)
+        used = _format_size(usage.used)
+        free = _format_size(usage.free)
+        pct = usage.used / usage.total * 100
 
         return (
             f"Disk usage for {target}:\n"
@@ -313,23 +319,23 @@ def organize_desktop() -> str:
     try:
         desktop = _get_desktop()
         type_map = {
-            "Images":    [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".ico"],
-            "Documents": [".pdf", ".doc", ".docx", ".txt", ".xls", ".xlsx", ".ppt", ".pptx", ".csv"],
-            "Videos":    [".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv", ".webm"],
-            "Music":     [".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma"],
-            "Archives":  [".zip", ".rar", ".7z", ".tar", ".gz"],
-            "Code":      [".py", ".js", ".html", ".css", ".json", ".xml", ".ts", ".cpp", ".java"],
+            "Images": [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".ico"],  # noqa: E501
+            "Documents": [".pdf", ".doc", ".docx", ".txt", ".xls", ".xlsx", ".ppt", ".pptx", ".csv"],  # noqa: E501
+            "Videos": [".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv", ".webm"],  # noqa: E501
+            "Music": [".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma"],
+            "Archives": [".zip", ".rar", ".7z", ".tar", ".gz"],
+            "Code": [".py", ".js", ".html", ".css", ".json", ".xml", ".ts", ".cpp", ".java"],  # noqa: E501
         }
 
-        moved    = []
-        skipped  = []
+        moved = []
+        skipped = []
 
         for item in desktop.iterdir():
 
             if item.is_dir() or item.name.startswith("."):
                 continue
 
-            ext        = item.suffix.lower()
+            ext = item.suffix.lower()
             target_dir = None
 
             for folder, extensions in type_map.items():
@@ -340,21 +346,21 @@ def organize_desktop() -> str:
             if target_dir is None:
                 target_dir = desktop / "Others"
 
-            target_dir.mkdir(exist_ok=True)
-            new_path = target_dir / item.name
+            target_dir.mkdir(exist_ok=True)  # type: ignore
+            new_path = target_dir / item.name  # type: ignore
 
             if new_path.exists():
                 skipped.append(item.name)
                 continue
 
             shutil.move(str(item), str(new_path))
-            moved.append(f"{item.name} → {target_dir.name}/")
+            moved.append(f"{item.name} → {target_dir.name}/")  # type: ignore
 
         result = f"Desktop organized. {len(moved)} files moved."
         if moved:
-            result += "\n" + "\n".join(moved[:10])
+            result += "\n" + "\n".join(moved[:10])  # type: ignore
             if len(moved) > 10:
-                result += f"\n... and {len(moved)-10} more."
+                result += f"\n... and {len(moved) - 10} more."
         if skipped:
             result += f"\n{len(skipped)} files skipped (already exist)."
 
@@ -373,12 +379,16 @@ def get_file_info(path: str) -> str:
 
         stat = target.stat()
         info = {
-            "Name":     target.name,
-            "Type":     "Folder" if target.is_dir() else "File",
-            "Size":     _format_size(stat.st_size),
-            "Location": str(target.parent),
-            "Created":  datetime.fromtimestamp(stat.st_ctime).strftime("%Y-%m-%d %H:%M"),
-            "Modified": datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M"),
+            "Name": target.name,
+            "Type": "Folder" if target.is_dir() else "File",
+            "Size": _format_size(
+                stat.st_size),
+            "Location": str(
+                target.parent),
+            "Created": datetime.fromtimestamp(
+                stat.st_ctime).strftime("%Y-%m-%d %H:%M"),
+            "Modified": datetime.fromtimestamp(
+                    stat.st_mtime).strftime("%Y-%m-%d %H:%M"),
             "Extension": target.suffix or "None",
         }
 
@@ -387,15 +397,16 @@ def get_file_info(path: str) -> str:
     except Exception as e:
         return f"Could not get file info: {e}"
 
+
 def file_controller(
     parameters: dict,
     response=None,
     player=None,
     session_memory=None
 ) -> str:
-    action  = (parameters or {}).get("action", "").lower().strip()
-    path    = (parameters or {}).get("path", "desktop")
-    name    = (parameters or {}).get("name", "")
+    action = (parameters or {}).get("action", "").lower().strip()
+    path = (parameters or {}).get("path", "desktop")
+    name = (parameters or {}).get("name", "")
     content = (parameters or {}).get("content", "")
 
     def _full_path(p: str, n: str) -> str:
@@ -477,6 +488,6 @@ def file_controller(
         result = f"File controller error: {e}"
 
     if player:
-        player.write_log(f"[file] {result[:60]}")
+        player.write_log(f"[file] {result[:60]}")  # type: ignore
 
     return result

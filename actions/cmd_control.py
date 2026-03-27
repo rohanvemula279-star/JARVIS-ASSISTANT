@@ -5,29 +5,25 @@ import re
 from pathlib import Path
 
 
-def get_base_dir():
-    if getattr(sys, "frozen", False):
-        return Path(sys.executable).parent
-    return Path(__file__).resolve().parent.parent
 
-BASE_DIR        = get_base_dir()
-API_CONFIG_PATH = BASE_DIR / "config" / "api_keys.json"
+from memory.config_manager import get_gemini_key, BASE_DIR # type: ignore
 
 
-def _get_api_key() -> str:
-    with open(API_CONFIG_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)["gemini_api_key"]
+
 
 
 def _get_platform() -> str:
-    if sys.platform == "win32":  return "windows"
-    if sys.platform == "darwin": return "macos"
+    if sys.platform == "win32":
+        return "windows"
+    if sys.platform == "darwin":
+        return "macos"
     return "linux"
+
 
 WIN_COMMAND_MAP = [
     (["disk space", "disk usage", "storage", "free space", "c drive space"],
      "wmic logicaldisk get caption,freespace,size /format:list", False),
-    (["running processes", "list processes", "show processes", "active processes", "tasklist"],
+    (["running processes", "list processes", "show processes", "active processes", "tasklist"],  # noqa: E501
      "tasklist /fo table", False),
     (["ip address", "my ip", "network info", "ipconfig"],
      "ipconfig /all", False),
@@ -48,7 +44,7 @@ WIN_COMMAND_MAP = [
     (["installed programs", "installed software", "installed apps"],
      "wmic product get name,version /format:table", False),
     (["battery", "battery level", "power status"],
-     "powershell (Get-WmiObject -Class Win32_Battery).EstimatedChargeRemaining", False),
+     "powershell (Get-WmiObject -Class Win32_Battery).EstimatedChargeRemaining", False),  # noqa: E501
     (["current time", "what time", "system time"],
      "time /t", False),
     (["current date", "what date", "system date"],
@@ -58,18 +54,25 @@ WIN_COMMAND_MAP = [
     (["downloads", "files in downloads"],
      f'dir "{Path.home() / "Downloads"}"', False),
     (["large files", "biggest files", "largest files"],
-     'powershell "Get-ChildItem C:\\ -Recurse -ErrorAction SilentlyContinue | Sort-Object Length -Descending | Select-Object -First 10 FullName,Length | Format-Table"', False),
+     'powershell "Get-ChildItem C:\\ -Recurse -ErrorAction SilentlyContinue | Sort-Object Length -Descending | Select-Object -First 10 FullName,Length | Format-Table"', False),  # noqa: E501
 ]
+
 
 def _find_hardcoded(task: str) -> str | None:
     task_lower = task.lower()
-    
-    if "notepad" in task_lower or any(ext in task_lower for ext in [".txt", ".log", ".md", ".csv"]):
-        file_match = re.search(r'[\"\']?([\S]+\.(?:txt|log|md|csv|json|xml))[\"\']?', task, re.IGNORECASE)
+
+    if "notepad" in task_lower or any(
+            ext in task_lower for ext in [
+            ".txt", ".log", ".md", ".csv"]):
+        file_match = re.search(
+            r'[\"\']?([\S]+\.(?:txt|log|md|csv|json|xml))[\"\']?',
+            task,
+            re.IGNORECASE)
         if file_match:
             filename = file_match.group(1)
-            desktop  = Path.home() / "Desktop"
-            filepath = Path(filename) if Path(filename).is_absolute() else desktop / filename
+            desktop = Path.home() / "Desktop"
+            filepath = Path(filename) if Path(
+                filename).is_absolute() else desktop / filename
             return f'notepad "{filepath}"'
         if "notepad" in task_lower:
             return "notepad"
@@ -83,6 +86,7 @@ def _find_hardcoded(task: str) -> str | None:
             return command
 
     return None
+
 
 BLOCKED_PATTERNS = [
     r"\brm\s+-rf\b", r"\brmdir\s+/s\b", r"\bdel\s+/[fqs]",
@@ -102,26 +106,28 @@ def _is_safe(command: str) -> tuple[bool, str]:
         return False, f"Blocked pattern: '{match.group()}'"
     return True, "OK"
 
+
 def _ask_gemini(task: str) -> str:
     try:
-        import google.generativeai as genai
-        genai.configure(api_key=_get_api_key())
+        import google.generativeai as genai  # type: ignore
+        genai.configure(api_key=get_gemini_key())
         model = genai.GenerativeModel("gemini-2.5-flash-lite")
 
         prompt = (
             f"Convert this request to a single Windows CMD command.\n"
-            f"Output ONLY the command. No explanation, no markdown, no backticks.\n"
+            f"Output ONLY the command. No explanation, no markdown, no backticks.\n"  # noqa: E501
             f"If unsafe or impossible, output: UNSAFE\n\n"
             f"Request: {task}\n\nCommand:"
         )
         response = model.generate_content(prompt)
-        command  = response.text.strip().strip("`").strip()
+        command = response.text.strip().strip("`").strip()
         if command.startswith("```"):
-            lines   = command.split("\n")
+            lines = command.split("\n")
             command = "\n".join(lines[1:-1]).strip()
         return command
     except Exception as e:
         return f"ERROR: {e}"
+
 
 def _run_silent(command: str, timeout: int = 20) -> str:
     try:
@@ -129,7 +135,11 @@ def _run_silent(command: str, timeout: int = 20) -> str:
         if platform == "windows":
             is_ps = command.strip().lower().startswith("powershell")
             if is_ps:
-                cmd_inner = re.sub(r'^powershell\s+"?', '', command, flags=re.IGNORECASE).rstrip('"')
+                cmd_inner = re.sub(
+                    r'^powershell\s+"?',
+                    '',
+                    command,
+                    flags=re.IGNORECASE).rstrip('"')
                 result = subprocess.run(
                     ["powershell", "-NoProfile", "-Command", cmd_inner],
                     capture_output=True, text=True,
@@ -152,9 +162,11 @@ def _run_silent(command: str, timeout: int = 20) -> str:
             )
 
         output = result.stdout.strip()
-        error  = result.stderr.strip()
-        if output:  return output[:2000]
-        if error:   return f"[stderr]: {error[:500]}"
+        error = result.stderr.strip()
+        if output:
+            return output[:2000]  # type: ignore
+        if error:
+            return f"[stderr]: {error[:500]}"  # type: ignore
         return "Command executed with no output."
 
     except subprocess.TimeoutExpired:
@@ -169,15 +181,16 @@ def _run_visible(command: str) -> None:
         if platform == "windows":
             subprocess.Popen(
                 f'cmd /k "{command}"',
-                creationflags=subprocess.CREATE_NEW_CONSOLE
+                creationflags=subprocess.CREATE_NEW_CONSOLE  # type: ignore
             )
         elif platform == "macos":
             subprocess.Popen(["osascript", "-e",
-                f'tell application "Terminal" to do script "{command}"'])
+                              f'tell application "Terminal" to do script "{command}"'])  # noqa: E501
         else:
             for term in ["gnome-terminal", "xterm", "konsole"]:
                 try:
-                    subprocess.Popen([term, "--", "bash", "-c", f"{command}; exec bash"])
+                    subprocess.Popen(
+                        [term, "--", "bash", "-c", f"{command}; exec bash"])
                     break
                 except FileNotFoundError:
                     continue
@@ -191,7 +204,7 @@ def cmd_control(
     player=None,
     session_memory=None
 ) -> str:
-    task    = (parameters or {}).get("task", "").strip()
+    task = (parameters or {}).get("task", "").strip()
     command = (parameters or {}).get("command", "").strip()
     visible = (parameters or {}).get("visible", True)
 
@@ -201,13 +214,13 @@ def cmd_control(
     if not command:
         command = _find_hardcoded(task)
         if command:
-            print(f"[CMD] ⚡ Hardcoded: {command[:80]}")
+            print(f"[CMD] ⚡ Hardcoded: {command[:80]}")  # type: ignore
         else:
             print(f"[CMD] 🤖 Gemini fallback for: {task}")
             command = _ask_gemini(task)
-            print(f"[CMD] ✅ Generated: {command[:80]}")
+            print(f"[CMD] ✅ Generated: {command[:80]}")  # type: ignore
             if command == "UNSAFE":
-                return "I cannot generate a safe command for that request, sir."
+                return "I cannot generate a safe command for that request, sir."  # noqa: E501
             if command.startswith("ERROR:"):
                 return f"Could not generate command: {command}"
 
@@ -216,7 +229,7 @@ def cmd_control(
         return f"Blocked for safety: {reason}"
 
     if player:
-        player.write_log(f"[CMD] {command[:60]}")
+        player.write_log(f"[CMD] {command[:60]}")  # type: ignore
 
     if any(x in command.lower() for x in ["notepad", "explorer", "start "]):
         subprocess.Popen(command, shell=True)
