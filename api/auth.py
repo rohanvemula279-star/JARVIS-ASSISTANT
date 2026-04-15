@@ -7,11 +7,9 @@ from fastapi.security import OAuth2PasswordBearer
 from .config import settings  # pyre-ignore[21]
 from .database import get_db  # pyre-ignore[21]
 from sqlalchemy.ext.asyncio import AsyncSession  # pyre-ignore[21]
-import bcrypt
+import hashlib
 import os
-
-# Password hashing context (for internal use if needed)
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from fastapi.security import OAuth2PasswordBearer # pyre-ignore[21]
 
 # OAuth2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
@@ -24,8 +22,9 @@ def verify_pin(plain_pin: str) -> bool:
         return False
     try:
         stored_hash = open(ENROLLMENT_PIN_HASH_PATH, "r").read().strip()
-        # The desktop app uses bcrypt.checkpw
-        return bcrypt.checkpw(plain_pin.encode("utf-8"), stored_hash.encode("utf-8"))
+        # The desktop app uses SHA-256 (as seen in core/face_utils.py)
+        current_hash = hashlib.sha256(plain_pin.encode("utf-8")).hexdigest()
+        return current_hash == stored_hash
     except Exception as e:
         print(f"Auth Error: {e}")
         return False

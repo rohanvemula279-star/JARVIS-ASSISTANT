@@ -19,18 +19,16 @@ import time
 from pathlib import Path
 
 
+from memory.config_manager import get_gemini_key, BASE_DIR  # type: ignore
 
-from memory.config_manager import get_gemini_key, BASE_DIR # type: ignore
 DESKTOP = Path.home() / "Desktop"
 MAX_BUILD_ATTEMPTS = 3
-GEMINI_MODEL = "gemini-2.5-flash"
-
-
-
+GEMINI_MODEL = "gemini-2.0-flash-exp"
 
 
 def _get_gemini(model: str = GEMINI_MODEL):
     import google.generativeai as genai  # type: ignore
+
     genai.configure(api_key=get_gemini_key())
     return genai.GenerativeModel(model)
 
@@ -44,13 +42,24 @@ def _clean_code(text: str) -> str:
 
 def _resolve_save_path(output_path: str, language: str) -> Path:
     ext_map = {
-        "python": ".py", "py": ".py",
-        "javascript": ".js", "js": ".js",
-        "typescript": ".ts", "ts": ".ts",
-        "html": ".html", "css": ".css",
-        "java": ".java", "cpp": ".cpp", "c": ".c",
-        "bash": ".sh", "shell": ".sh", "powershell": ".ps1",
-        "sql": ".sql", "json": ".json", "rust": ".rs", "go": ".go",
+        "python": ".py",
+        "py": ".py",
+        "javascript": ".js",
+        "js": ".js",
+        "typescript": ".ts",
+        "ts": ".ts",
+        "html": ".html",
+        "css": ".css",
+        "java": ".java",
+        "cpp": ".cpp",
+        "c": ".c",
+        "bash": ".sh",
+        "shell": ".sh",
+        "powershell": ".ps1",
+        "sql": ".sql",
+        "json": ".json",
+        "rust": ".rs",
+        "go": ".go",
     }
     if output_path:
         p = Path(output_path)
@@ -83,23 +92,34 @@ def _save_file(path: Path, content: str) -> str:
 def _preview(code: str, lines: int = 10) -> str:
     all_lines = code.splitlines()
     preview = "\n".join(all_lines[:lines])  # type: ignore
-    suffix = f"\n... ({
-        len(all_lines) -
-        lines} more lines)" if len(all_lines) > lines else ""
+    suffix = (
+        f"\n... ({len(all_lines) - lines} more lines)" if len(all_lines) > lines else ""
+    )
     return preview + suffix
 
 
 def _has_error(output: str) -> bool:
-    error_signals = ["error", "exception", "traceback", "syntaxerror",
-                     "nameerror", "typeerror", "stderr", "failed", "crash"]
+    error_signals = [
+        "error",
+        "exception",
+        "traceback",
+        "syntaxerror",
+        "nameerror",
+        "typeerror",
+        "stderr",
+        "failed",
+        "crash",
+    ]
     return any(s in output.lower() for s in error_signals)
 
 
 def _take_screenshot() -> Path | None:
     try:
         import pyautogui  # type: ignore
-        screenshot_path = Path.home() / "Desktop" / \
-            f"jarvis_debug_{int(time.time())}.png"
+
+        screenshot_path = (
+            Path.home() / "Desktop" / f"jarvis_debug_{int(time.time())}.png"
+        )
         screenshot = pyautogui.screenshot()
         screenshot.save(str(screenshot_path))
         print(f"[Code] 📸 Screenshot: {screenshot_path}")
@@ -111,6 +131,7 @@ def _take_screenshot() -> Path | None:
 
 def _image_to_base64(path: Path) -> str:
     import base64
+
     return base64.b64encode(path.read_bytes()).decode("utf-8")
 
 
@@ -127,13 +148,23 @@ def _detect_intent(description: str, file_path: str, code: str) -> str:
         "what's wrong",
         "ne yanlış",
         "screenshot",
-        "görüntü"]
+        "görüntü",
+    ]
     if any(k in desc for k in screen_kw):
         return "screen_debug"
 
     # Optimize keywords
-    optimize_kw = ["optimize", "refactor", "clean up", "improve", "temizle",
-                   "iyileştir", "daha iyi", "make it better", "hızlandır"]
+    optimize_kw = [
+        "optimize",
+        "refactor",
+        "clean up",
+        "improve",
+        "temizle",
+        "iyileştir",
+        "daha iyi",
+        "make it better",
+        "hızlandır",
+    ]
     if any(k in desc for k in optimize_kw) and (code or file_path):
         return "optimize"
 
@@ -151,7 +182,8 @@ def _detect_intent(description: str, file_path: str, code: str) -> str:
             "rename",
             "replace",
             "düzenle",
-            "değiştir"]
+            "değiştir",
+        ]
         run_kw = ["run", "execute", "launch", "start", "çalıştır"]
         build_kw = ["build", "make it work", "try", "attempt"]
 
@@ -164,13 +196,7 @@ def _detect_intent(description: str, file_path: str, code: str) -> str:
         if p.exists():
             return "explain"
 
-    explain_kw = [
-        "explain",
-        "what does",
-        "describe",
-        "analyze",
-        "açıkla",
-        "ne yapıyor"]
+    explain_kw = ["explain", "what does", "describe", "analyze", "açıkla", "ne yapıyor"]
     if any(k in desc for k in explain_kw) and (code or file_path):
         return "explain"
 
@@ -181,8 +207,9 @@ def _detect_intent(description: str, file_path: str, code: str) -> str:
     return "write"
 
 
-def _write(description: str, language: str, output_path: str,
-           player=None) -> tuple[str, Path]:
+def _write(
+    description: str, language: str, output_path: str, player=None
+) -> tuple[str, Path]:
     lang = language or "python"
     model = _get_gemini()
 
@@ -243,9 +270,12 @@ def _run_file(path: Path, args: list, timeout: int) -> str:
     try:
         result = subprocess.run(
             interp + [str(path)] + (args or []),
-            capture_output=True, text=True,
-            encoding="utf-8", errors="replace",
-            timeout=timeout, cwd=str(path.parent)
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout,
+            cwd=str(path.parent),
         )
         output = result.stdout.strip()
         error = result.stderr.strip()
@@ -265,13 +295,8 @@ def _run_file(path: Path, args: list, timeout: int) -> str:
 
 
 def _build(
-        description,
-        language,
-        output_path,
-        args,
-        timeout,
-        speak=None,
-        player=None) -> str:
+    description, language, output_path, args, timeout, speak=None, player=None
+) -> str:
     if not description:
         return "Please describe what you want me to build, sir."
 
@@ -299,8 +324,12 @@ def _build(
 
         if not _has_error(last_output):
             msg = (
-                f"Build complete, sir. " f"The code is working after {attempt} attempt{
-                    's' if attempt > 1 else ''}. " f"Saved to {path}.")
+                f"Build complete, sir. "
+                f"The code is working after {attempt} attempt{
+                    's' if attempt > 1 else ''
+                }. "
+                f"Saved to {path}."
+            )
             if speak:
                 speak(msg)
             return f"{msg}\n\nOutput:\n{last_output}"
@@ -480,7 +509,9 @@ def _screen_debug_action(description, file_path, player, speak=None) -> str:
 
     screenshot_path = _take_screenshot()
     if not screenshot_path:
-        return "Could not take screenshot, sir. Please make sure PyAutoGUI is installed."
+        return (
+            "Could not take screenshot, sir. Please make sure PyAutoGUI is installed."
+        )
 
     file_content = ""
     if file_path:
@@ -496,13 +527,18 @@ def _screen_debug_action(description, file_path, player, speak=None) -> str:
 
         image_bytes = screenshot_path.read_bytes()
 
-        user_question = description or "What error or problem do you see on the screen? How can it be fixed?"
+        user_question = (
+            description
+            or "What error or problem do you see on the screen? How can it be fixed?"
+        )
 
         context = ""
         if file_content:
             context = f"\n\nAdditionally, here is the related file content:\n```\n{
                 file_content[  # type: ignore
-                    :4000]}\n```"  # type: ignore
+                    :4000
+                ]
+            }\n```"  # type: ignore
 
         analysis_prompt = f"""You are an expert programmer and debugger analyzing a screenshot.
 
@@ -522,7 +558,7 @@ Be specific and actionable. If you see an error message, quote it exactly."""
         ]
 
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.0-flash-exp",
             contents=contents,
         )
 
@@ -535,9 +571,7 @@ Be specific and actionable. If you see an error message, quote it exactly."""
             pass
 
         if file_path and file_content:
-
-            code_match = re.search(
-                r"```[a-zA-Z]*\n(.*?)```", analysis, re.DOTALL)
+            code_match = re.search(r"```[a-zA-Z]*\n(.*?)```", analysis, re.DOTALL)
             if code_match:
                 fixed_code = code_match.group(1).strip()
                 save_path = Path(file_path)
@@ -548,7 +582,6 @@ Be specific and actionable. If you see an error message, quote it exactly."""
         return analysis
 
     except Exception as e:
-
         try:
             screenshot_path.unlink()
         except Exception:
@@ -557,11 +590,7 @@ Be specific and actionable. If you see an error message, quote it exactly."""
 
 
 def code_helper(
-    parameters: dict,
-    response=None,
-    player=None,
-    session_memory=None,
-    speak=None
+    parameters: dict, response=None, player=None, session_memory=None, speak=None
 ) -> str:
     """
     Called from main.py.
@@ -594,11 +623,7 @@ def code_helper(
         return _write_action(description, language, output_path, player)
 
     elif action == "edit":
-        return _edit_action(
-            file_path,
-            description or p.get("instruction", ""),
-            player
-        )
+        return _edit_action(file_path, description or p.get("instruction", ""), player)
 
     elif action == "explain":
         return _explain_action(file_path, code, player)
@@ -607,14 +632,7 @@ def code_helper(
         return _run_action(file_path, args, timeout, player)
 
     elif action == "build":
-        return _build(
-            description,
-            language,
-            output_path,
-            args,
-            timeout,
-            speak,
-            player)
+        return _build(description, language, output_path, args, timeout, speak, player)
 
     elif action == "optimize":
         return _optimize_action(file_path, code, language, output_path, player)

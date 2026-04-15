@@ -28,6 +28,7 @@ from pathlib import Path
 
 try:
     import pyautogui  # type: ignore
+
     pyautogui.FAILSAFE = True
     pyautogui.PAUSE = 0.05
     _PYAUTOGUI = True
@@ -36,6 +37,7 @@ except ImportError:
 
 try:
     import pyperclip  # type: ignore
+
     _PYPERCLIP = True
 except ImportError:
     _PYPERCLIP = False
@@ -71,18 +73,41 @@ def _load_user_profile() -> dict:
 
 def _ensure_pyautogui():
     if not _PYAUTOGUI:
-        raise RuntimeError(
-            "PyAutoGUI not installed. Run: pip install pyautogui"
-        )
+        raise RuntimeError("PyAutoGUI not installed. Run: pip install pyautogui")
 
 
 _FIRST_NAMES = [
-    "Alex", "Jordan", "Taylor", "Morgan", "Casey", "Riley", "Drew", "Quinn",
-    "Avery", "Blake", "Cameron", "Dakota", "Emerson", "Finley", "Harper"
+    "Alex",
+    "Jordan",
+    "Taylor",
+    "Morgan",
+    "Casey",
+    "Riley",
+    "Drew",
+    "Quinn",
+    "Avery",
+    "Blake",
+    "Cameron",
+    "Dakota",
+    "Emerson",
+    "Finley",
+    "Harper",
 ]
 _LAST_NAMES = [
-    "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller",
-    "Davis", "Wilson", "Moore", "Taylor", "Anderson", "Thomas", "Jackson"
+    "Smith",
+    "Johnson",
+    "Williams",
+    "Brown",
+    "Jones",
+    "Garcia",
+    "Miller",
+    "Davis",
+    "Wilson",
+    "Moore",
+    "Taylor",
+    "Anderson",
+    "Thomas",
+    "Jackson",
 ]
 _DOMAINS = ["gmail.com", "yahoo.com", "outlook.com", "proton.me", "mail.com"]
 
@@ -119,17 +144,15 @@ def generate_random_data(data_type: str) -> str:
     elif dt == "password":
         chars = string.ascii_letters + string.digits + "!@#$%"
         pwd = (
-            random.choice(string.ascii_uppercase) +
-            random.choice(string.digits) +
-            random.choice("!@#$%") +
-            "".join(random.choices(chars, k=9))
+            random.choice(string.ascii_uppercase)
+            + random.choice(string.digits)
+            + random.choice("!@#$%")
+            + "".join(random.choices(chars, k=9))
         )
         return "".join(random.sample(pwd, len(pwd)))
 
     elif dt == "phone":
-        return f"+1{random.randint(200,
-                                   999)}{random.randint(1000000,
-                                                        9999999)}"
+        return f"+1{random.randint(200, 999)}{random.randint(1000000, 9999999)}"
 
     elif dt == "birthday":
         year = random.randint(1980, 2000)
@@ -140,7 +163,8 @@ def generate_random_data(data_type: str) -> str:
     elif dt == "address":
         num = random.randint(100, 9999)
         street = random.choice(
-            ["Main St", "Oak Ave", "Park Blvd", "Elm St", "Cedar Ln"])
+            ["Main St", "Oak Ave", "Park Blvd", "Elm St", "Cedar Ln"]
+        )
         return f"{num} {street}"
 
     elif dt == "zip_code":
@@ -148,7 +172,8 @@ def generate_random_data(data_type: str) -> str:
 
     elif dt == "city":
         return random.choice(
-            ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"])
+            ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"]
+        )
 
     return f"random_{data_type}_{random.randint(1000, 9999)}"
 
@@ -162,8 +187,13 @@ def _type_text(text: str, interval: float = 0.03) -> str:
     return f"Typed: {text[:50]}{'...' if len(text) > 50 else ''}"
 
 
-def _click(x: int | None = None, y: int | None = None, button: str = "left",
-           clicks: int = 1, image: str | None = None) -> str:
+def _click(
+    x: int | None = None,
+    y: int | None = None,
+    button: str = "left",
+    clicks: int = 1,
+    image: str | None = None,
+) -> str:
     """
     Clicks at coordinates or on a screen image.
     If image path given, locates it on screen and clicks.
@@ -292,7 +322,8 @@ def _focus_window(title: str) -> str:
             script = f'(New-Object -ComObject WScript.Shell).AppActivate("{title}")'
             subprocess.run(
                 ["powershell", "-NoProfile", "-Command", script],
-                capture_output=True, timeout=5
+                capture_output=True,
+                timeout=5,
             )
             time.sleep(0.3)
             return f"Focused window: {title}"
@@ -349,7 +380,7 @@ def _analyze_screen_for_element(description: str) -> tuple[int, int] | None:
             api_key = json.load(f)["gemini_api_key"]
 
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-2.5-flash-lite")
+        model = genai.GenerativeModel("gemini-2.0-flash-exp")
 
         _ensure_pyautogui()
         w, h = pyautogui.size()
@@ -365,16 +396,16 @@ def _analyze_screen_for_element(description: str) -> tuple[int, int] | None:
             f"If not found, return: NOT_FOUND"
         )
 
-        response = model.generate_content([
-            {"mime_type": "image/png", "data": buf.getvalue()},
-            prompt
-        ])
+        response = model.generate_content(
+            [{"mime_type": "image/png", "data": buf.getvalue()}, prompt]
+        )
 
         text = response.text.strip()
         if "NOT_FOUND" in text:
             return None
 
         import re
+
         match = re.search(r"(\d+)\s*,\s*(\d+)", text)
         if match:
             return int(match.group(1)), int(match.group(2))
@@ -443,7 +474,7 @@ def computer_control(
                 y=parameters.get("y"),
                 button="left",
                 clicks=1,
-                image=parameters.get("image")
+                image=parameters.get("image"),
             )
 
         elif action == "double_click":
@@ -452,22 +483,19 @@ def computer_control(
                 y=parameters.get("y"),
                 button="left",
                 clicks=2,
-                image=parameters.get("image")
+                image=parameters.get("image"),
             )
 
         elif action == "right_click":
             return _click(
-                x=parameters.get("x"),
-                y=parameters.get("y"),
-                button="right",
-                clicks=1
+                x=parameters.get("x"), y=parameters.get("y"), button="right", clicks=1
             )
 
         elif action == "move":
             return _move_mouse(
                 x=int(parameters.get("x", 0)),
                 y=int(parameters.get("y", 0)),
-                duration=float(parameters.get("duration", 0.3))
+                duration=float(parameters.get("duration", 0.3)),
             )
 
         elif action == "drag":
@@ -475,7 +503,7 @@ def computer_control(
                 x1=int(parameters.get("x1", 0)),
                 y1=int(parameters.get("y1", 0)),
                 x2=int(parameters.get("x2", 0)),
-                y2=int(parameters.get("y2", 0))
+                y2=int(parameters.get("y2", 0)),
             )
 
         elif action == "hotkey":
@@ -490,7 +518,7 @@ def computer_control(
         elif action == "scroll":
             return _scroll(
                 direction=parameters.get("direction", "down"),
-                amount=int(parameters.get("amount", 3))
+                amount=int(parameters.get("amount", 3)),
             )
 
         elif action == "copy":
@@ -507,8 +535,7 @@ def computer_control(
 
         elif action == "wait_image":
             return _wait_for_image(
-                parameters.get("image", ""),
-                timeout=int(parameters.get("timeout", 10))
+                parameters.get("image", ""), timeout=int(parameters.get("timeout", 10))
             )
 
         elif action == "clear_field":
@@ -549,7 +576,8 @@ def computer_control(
             if not value:
                 value = generate_random_data(field)
                 print(
-                    f"[ComputerControl] ⚠️ No user {field} in memory, using random: {value}")
+                    f"[ComputerControl] ⚠️ No user {field} in memory, using random: {value}"
+                )
             return value
 
         else:

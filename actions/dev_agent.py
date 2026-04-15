@@ -18,20 +18,17 @@ import time
 from pathlib import Path
 
 
-
-from memory.config_manager import get_gemini_key, BASE_DIR # type: ignore
+from memory.config_manager import get_gemini_key, BASE_DIR  # type: ignore
 
 PROJECTS_DIR = Path.home() / "Desktop" / "JarvisProjects"
 MAX_FIX_ATTEMPTS = 4
-MODEL_PLANNER = "gemini-2.5-flash"
-MODEL_WRITER = "gemini-2.5-flash-lite"
-
-
-
+MODEL_PLANNER = "gemini-2.0-flash-exp"
+MODEL_WRITER = "gemini-2.0-flash-exp"
 
 
 def _get_model(model_name: str):
     import google.generativeai as genai  # type: ignore
+
     genai.configure(api_key=get_gemini_key())
     return genai.GenerativeModel(model_name)
 
@@ -69,14 +66,21 @@ def _get_interpreter(path: Path) -> list[str] | None:
 def _has_error(output: str) -> bool:
     if "timed out" in output.lower():
         return False
-    signals = ["error", "exception", "traceback", "syntaxerror",
-               "nameerror", "typeerror", "importerror", "stderr", "failed"]
+    signals = [
+        "error",
+        "exception",
+        "traceback",
+        "syntaxerror",
+        "nameerror",
+        "typeerror",
+        "importerror",
+        "stderr",
+        "failed",
+    ]
     return any(s in output.lower() for s in signals)
 
 
-def _identify_error_file(
-        error_output: str,
-        project_files: list[str]) -> str | None:
+def _identify_error_file(error_output: str, project_files: list[str]) -> str | None:
     """
     Try to find which file caused the error from traceback.
     Returns filename or None.
@@ -144,7 +148,8 @@ JSON:"""
         return json.loads(raw)
     except json.JSONDecodeError as e:
         raise ValueError(
-            f"Planner returned invalid JSON: {e}\nRaw: {response.text[:300]}")
+            f"Planner returned invalid JSON: {e}\nRaw: {response.text[:300]}"
+        )
 
 
 class RateLimitError(Exception):
@@ -157,14 +162,12 @@ def _write_file(
     project_description: str,
     all_files: list[dict],
     language: str,
-    project_dir: Path
+    project_dir: Path,
 ) -> str:
     """Write one file. Returns the generated code."""
     model = _get_model(MODEL_WRITER)
 
-    file_list = "\n".join(
-        f"  - {f['path']}: {f['description']}" for f in all_files
-    )
+    file_list = "\n".join(f"  - {f['path']}: {f['description']}" for f in all_files)
 
     prompt = f"""You are an expert {language} developer.
 Write the code for ONE specific file in a larger project.
@@ -213,9 +216,12 @@ def _install_dependencies(dependencies: list[str], project_dir: Path) -> str:
     try:
         result = subprocess.run(
             [sys.executable, "-m", "pip", "install"] + dependencies,
-            capture_output=True, text=True,
-            encoding="utf-8", errors="replace",
-            timeout=120, cwd=str(project_dir)
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+            cwd=str(project_dir),
         )
         if result.returncode == 0:
             return f"Installed: {', '.join(dependencies)}"
@@ -230,7 +236,8 @@ def _open_vscode(project_dir: Path) -> bool:
     vscode_paths = [
         "code",
         r"C:\Users\{}\AppData\Local\Programs\Microsoft VS Code\bin\code.cmd".format(  # noqa: E501
-            Path.home().name),
+            Path.home().name
+        ),
     ]
     for cmd in vscode_paths:
         try:
@@ -238,7 +245,7 @@ def _open_vscode(project_dir: Path) -> bool:
                 [cmd, str(project_dir)],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
-                shell=True
+                shell=True,
             )
             time.sleep(2)
             print(f"[DevAgent] 💻 VSCode opened: {project_dir}")
@@ -249,10 +256,7 @@ def _open_vscode(project_dir: Path) -> bool:
     return False
 
 
-def _run_project(
-        run_command: str,
-        project_dir: Path,
-        timeout: int = 30) -> str:
+def _run_project(run_command: str, project_dir: Path, timeout: int = 30) -> str:
     """Run the project entry point, return output."""
     print(f"[DevAgent] 🚀 Running: {run_command}")
 
@@ -263,9 +267,12 @@ def _run_project(
 
         result = subprocess.run(
             parts,
-            capture_output=True, text=True,
-            encoding="utf-8", errors="replace",
-            timeout=timeout, cwd=str(project_dir)
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout,
+            cwd=str(project_dir),
         )
 
         output = result.stdout.strip()
@@ -293,14 +300,12 @@ def _fix_file(
     project_description: str,
     all_files: list[dict],
     language: str,
-    project_dir: Path
+    project_dir: Path,
 ) -> str:
     """Ask Gemini to fix a specific file based on error output."""
     model = _get_model(MODEL_PLANNER)
 
-    file_list = "\n".join(
-        f"  - {f['path']}: {f['description']}" for f in all_files
-    )
+    file_list = "\n".join(f"  - {f['path']}: {f['description']}" for f in all_files)
 
     prompt = f"""You are an expert {language} debugger.
 Fix the file below. It caused an error when the project was run.
@@ -344,7 +349,7 @@ def _build_project(
     project_name: str,
     timeout: int,
     speak=None,
-    player=None
+    player=None,
 ) -> str:
     """
     Full build loop:
@@ -393,8 +398,7 @@ def _build_project(
         log(f"Writing {file_path}...")
         try:
             code = _write_file(
-                file_path, file_desc, description,
-                files, language, project_dir
+                file_path, file_desc, description, files, language, project_dir
             )
             file_codes[file_path] = code
         except RateLimitError:
@@ -452,7 +456,7 @@ def _build_project(
                 description,
                 files,
                 language,
-                project_dir
+                project_dir,
             )
             file_codes[error_file] = fixed
         except RateLimitError:
@@ -473,11 +477,7 @@ def _build_project(
 
 
 def dev_agent(
-    parameters: dict,
-    response=None,
-    player=None,
-    session_memory=None,
-    speak=None
+    parameters: dict, response=None, player=None, session_memory=None, speak=None
 ) -> str:
     """
     Called from main.py.
@@ -503,5 +503,5 @@ def dev_agent(
         project_name=project_name,
         timeout=timeout,
         speak=speak,
-        player=player
+        player=player,
     )

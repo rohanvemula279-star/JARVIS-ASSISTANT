@@ -21,12 +21,14 @@ from PIL import ImageGrab  # type: ignore
 
 try:
     import requests  # type: ignore
+
     _REQUESTS_OK = True
 except ImportError:
     _REQUESTS_OK = False
 
 try:
     from youtube_transcript_api import YouTubeTranscriptApi  # type: ignore
+
     _TRANSCRIPT_OK = True
 except ImportError:
     _TRANSCRIPT_OK = False
@@ -43,7 +45,6 @@ HEADERS = {
     ),
     "Accept-Language": "en-US,en;q=0.9",
 }
-
 
 
 def open_browser():
@@ -92,8 +93,7 @@ def find_video_thumbnails() -> list[tuple[int, int]]:
 
         filtered = []
         for cx, cy, area in sorted(candidates, key=lambda c: c[1]):
-            if not any(abs(cx - fx) < 80 and abs(cy - fy)
-                       < 80 for fx, fy in filtered):
+            if not any(abs(cx - fx) < 80 and abs(cy - fy) < 80 for fx, fy in filtered):
                 filtered.append((cx, cy))
 
         return filtered
@@ -125,11 +125,7 @@ def _ask_for_url(prompt_text: str = "YouTube video URL:") -> str | None:
             root = tk.Tk()
             root.withdraw()
 
-        url = simpledialog.askstring(
-            "J.A.R.V.I.S",
-            prompt_text,
-            parent=root
-        )
+        url = simpledialog.askstring("J.A.R.V.I.S", prompt_text, parent=root)
         return url.strip() if url else None
     except Exception as e:
         print(f"[YouTube] ⚠️ URL dialog failed: {e}")
@@ -152,8 +148,7 @@ def _get_transcript(video_id: str) -> str | None:
         transcript = None
         try:
             transcript = transcript_list.find_manually_created_transcript(
-                ["en", "tr", "de", "fr", "es", "it",
-                    "pt", "ru", "ja", "ko", "ar", "zh"]
+                ["en", "tr", "de", "fr", "es", "it", "pt", "ru", "ja", "ko", "ar", "zh"]
             )
         except Exception:
             pass
@@ -161,8 +156,20 @@ def _get_transcript(video_id: str) -> str | None:
         if transcript is None:
             try:
                 transcript = transcript_list.find_generated_transcript(
-                    ["en", "tr", "de", "fr", "es", "it",
-                        "pt", "ru", "ja", "ko", "ar", "zh"]
+                    [
+                        "en",
+                        "tr",
+                        "de",
+                        "fr",
+                        "es",
+                        "it",
+                        "pt",
+                        "ru",
+                        "ja",
+                        "ko",
+                        "ar",
+                        "zh",
+                    ]
                 )
             except Exception:
                 for t in transcript_list:
@@ -187,14 +194,14 @@ def _summarize_with_gemini(transcript: str, video_url: str) -> str:
 
     genai.configure(api_key=get_gemini_key())
     model = genai.GenerativeModel(
-        model_name="gemini-2.5-flash",
+        model_name="gemini-2.0-flash-exp",
         system_instruction=(
             "You are Rohan Vemula's AI assistant. "
             "Summarize YouTube video transcripts clearly and concisely. "
             "Structure: 1-sentence overview, then 3-5 key points. "
             "Be direct. Address the user as 'sir'. "
             "Match the language of the transcript."
-        )
+        ),
     )
 
     max_chars = 80000
@@ -296,8 +303,7 @@ def _scrape_trending(region: str = "TR", max_results: int = 8) -> list[dict]:
         html = r.text
 
         titles = re.findall(r'"title":\{"runs":\[\{"text":"([^"]+)"\}\]', html)
-        channels = re.findall(
-            r'"ownerText":\{"runs":\[\{"text":"([^"]+)"', html)
+        channels = re.findall(r'"ownerText":\{"runs":\[\{"text":"([^"]+)"', html)
 
         results = []
         seen = set()
@@ -306,8 +312,9 @@ def _scrape_trending(region: str = "TR", max_results: int = 8) -> list[dict]:
                 continue
             seen.add(title)
             channel = channels[i] if i < len(channels) else "Unknown"
-            results.append({"rank": len(results) +
-                            1, "title": title, "channel": channel})
+            results.append(
+                {"rank": len(results) + 1, "title": title, "channel": channel}
+            )
             if len(results) >= max_results:
                 break
 
@@ -460,8 +467,7 @@ def _handle_trending(parameters: dict, player, speak) -> str:
     if speak:
         top3 = trending[:3]  # type: ignore
         spoken = "Here are the top trending videos, sir. " + ". ".join(
-            f"Number {v['rank']}: {v['title']} by {v['channel']}"
-            for v in top3
+            f"Number {v['rank']}: {v['title']} by {v['channel']}" for v in top3
         )
         speak(spoken)
 

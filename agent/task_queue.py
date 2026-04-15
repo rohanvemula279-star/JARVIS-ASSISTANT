@@ -1,9 +1,50 @@
+import json
+import os
 import threading
 import time
 import uuid
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
 from typing import Callable, Any
+
+
+def _get_base_dir() -> Path:
+    import sys
+
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).parent
+    return Path(__file__).resolve().parent.parent
+
+
+BASE_DIR = _get_base_dir()
+TASK_HISTORY_PATH = BASE_DIR / "memory" / "task_history.json"
+MAX_HISTORY_SIZE = 100
+
+
+def _load_task_history() -> list[dict]:
+    """Load task history from JSON file."""
+    if not TASK_HISTORY_PATH.exists():
+        return []
+    try:
+        data = json.loads(TASK_HISTORY_PATH.read_text(encoding="utf-8"))
+        if isinstance(data, list):
+            return data
+    except Exception as e:
+        print(f"[TaskQueue] ⚠️ Load history error: {e}")
+    return []
+
+
+def _save_task_history(history: list[dict]) -> None:
+    """Save task history to JSON file."""
+    TASK_HISTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
+    history = history[:MAX_HISTORY_SIZE]
+    try:
+        TASK_HISTORY_PATH.write_text(
+            json.dumps(history, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+    except Exception as e:
+        print(f"[TaskQueue] ⚠️ Save history error: {e}")
 
 
 class TaskStatus(Enum):
@@ -31,8 +72,7 @@ class Task:
     error: str = field(compare=False, default="")
     speak: Any = field(compare=False, default=None)
     on_complete: Any = field(compare=False, default=None)
-    cancel_flag: threading.Event = field(
-        compare=False, default_factory=threading.Event)
+    cancel_flag: threading.Event = field(compare=False, default_factory=threading.Event)
 
 
 class TaskQueue:
@@ -50,6 +90,7 @@ class TaskQueue:
     def _get_executor(self):
         if self._executor is None:
             from agent.executor import AgentExecutor  # type: ignore
+
             self._executor = AgentExecutor()
         return self._executor
 
@@ -58,9 +99,7 @@ class TaskQueue:
             return
         self._running = True
         self._worker_thread = threading.Thread(
-            target=self._worker_loop,
-            daemon=True,
-            name="AgentTaskQueue"
+            target=self._worker_loop, daemon=True, name="AgentTaskQueue"
         )
         self._worker_thread.start()  # type: ignore
         print("[TaskQueue] ✅ Started")
@@ -105,9 +144,10 @@ class TaskQueue:
             if not task:
                 return False
             if task.status in (
-                    TaskStatus.COMPLETED,
-                    TaskStatus.FAILED,
-                    TaskStatus.CANCELLED):
+                TaskStatus.COMPLETED,
+                TaskStatus.FAILED,
+                TaskStatus.CANCELLED,
+            ):
                 return False
 
             task.cancel_flag.set()
@@ -130,19 +170,30 @@ class TaskQueue:
 
     def get_all_statuses(self) -> list[dict]:
         with self._lock:
-            return [
+            statuses = [
                 {
                     "task_id": t.task_id,
-                    "goal": t.goal[:50],  # type: ignore
+                    "goal": t.goal[:50],
                     "status": t.status.value,
                 }
                 for t in self._tasks.values()
             ]
 
+        history = _load_task_history()
+        for entry in history[-20:]:
+            statuses.append(
+                {
+                    "task_id": entry.get("task_id", "unknown"),
+                    "goal": entry.get("goal", "")[:50],
+                    "status": entry.get("status", "unknown"),
+                }
+            )
+
+        return statuses
+
     def pending_count(self) -> int:
         with self._lock:
-            return sum(
-                1 for t in self._queue if t.status == TaskStatus.PENDING)
+            return sum(1 for t in self._queue if t.status == TaskStatus.PENDING)
 
     def _worker_loop(self) -> None:
         while self._running:
@@ -150,7 +201,7 @@ class TaskQueue:
 
             with self._condition:
                 while self._running and not self._next_task():
-                    self._condition.wait(timeout=1.0)
+                    self._condition.wait(timeout=0.3)
                 task = self._next_task()
                 if task:
                     task.status = TaskStatus.RUNNING
@@ -165,7 +216,7 @@ class TaskQueue:
                     target=self._run_task,
                     args=(task,),
                     daemon=True,
-                    name=f"AgentTask-{task.task_id}"
+                    name=f"AgentTask-{task.task_id}",
                 ).start()
 
     def _next_task(self) -> Task | None:
@@ -194,6 +245,8 @@ class TaskQueue:
                     task.result = result
                 self._active_count -= 1
 
+            self._save_task_to_history(task, result)
+
             if task.on_complete and not task.cancel_flag.is_set():
                 try:
                     task.on_complete(task.task_id, result)
@@ -207,10 +260,27 @@ class TaskQueue:
                 task.status = TaskStatus.FAILED
                 task.error = str(e)
                 self._active_count -= 1
+
+            self._save_task_to_history(task, None)
+
             print(f"[TaskQueue] ❌ Failed: [{task.task_id}] {e}")
 
         with self._condition:
             self._condition.notify()
+
+    def _save_task_to_history(self, task: Task, result: Any) -> None:
+        """Save completed/failed task to history file."""
+        history = _load_task_history()
+        entry = {
+            "task_id": task.task_id,
+            "goal": task.goal,
+            "status": task.status.value,
+            "result": str(result)[:500] if result else None,
+            "error": task.error,
+            "completed_at": time.time(),
+        }
+        history.append(entry)
+        _save_task_history(history)
 
 
 _queue = TaskQueue()

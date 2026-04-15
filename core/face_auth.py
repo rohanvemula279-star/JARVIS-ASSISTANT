@@ -38,48 +38,106 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 # Handle imports from project root
 try:
     from config.face_config import (  # pyre-ignore
-        CAMERA_INDEX, CAMERA_BACKEND, CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_FPS,
-        DETECTION_INTERVAL_MS, IDENTITY_CHECK_INTERVAL_MS, PROCESS_SCALE,
-        OWNER_SIGNATURE_PATH, OWNER_HASH_PATH,
-        SIMILARITY_THRESHOLD, STRICT_MODE, STRICT_CONSECUTIVE_REQUIRED, STRICT_WINDOW,
-        MAX_FAILED_ATTEMPTS, LOCKOUT_DURATION, MIN_LANDMARK_CONFIDENCE,
-        ENROLLMENT_SAMPLES, ENROLLMENT_DELAY, ENROLLMENT_MIN_CONFIDENCE,
-        AUTO_LOCK_TIMEOUT, INTRUDER_INSTANT_LOCK,
+        CAMERA_INDEX,
+        CAMERA_BACKEND,
+        CAMERA_WIDTH,
+        CAMERA_HEIGHT,
+        CAMERA_FPS,
+        DETECTION_INTERVAL_MS,
+        IDENTITY_CHECK_INTERVAL_MS,
+        PROCESS_SCALE,
+        OWNER_SIGNATURE_PATH,
+        OWNER_HASH_PATH,
+        SIMILARITY_THRESHOLD,
+        STRICT_MODE,
+        STRICT_CONSECUTIVE_REQUIRED,
+        STRICT_WINDOW,
+        MAX_FAILED_ATTEMPTS,
+        LOCKOUT_DURATION,
+        MIN_LANDMARK_CONFIDENCE,
+        ENROLLMENT_SAMPLES,
+        ENROLLMENT_DELAY,
+        ENROLLMENT_MIN_CONFIDENCE,
+        AUTO_LOCK_TIMEOUT,
+        INTRUDER_INSTANT_LOCK,
         ENROLLMENT_PIN_HASH_PATH,
-        SFACE_MODEL_PATH, OWNER_EMBEDDING_PATH, OWNER_EMBEDDING_HASH_PATH,
-        REQUIRE_BLINK_FOR_AUTH, BLINK_EAR_THRESHOLD, BLINK_DETECTION_WINDOW,
-        MIN_BLINKS_REQUIRED, AUTH_TIMEOUT, COOLDOWN_AFTER_FAILURE,
+        SFACE_MODEL_PATH,
+        OWNER_EMBEDDING_PATH,
+        OWNER_EMBEDDING_HASH_PATH,
+        REQUIRE_BLINK_FOR_AUTH,
+        BLINK_EAR_THRESHOLD,
+        BLINK_DETECTION_WINDOW,
+        MIN_BLINKS_REQUIRED,
+        AUTH_TIMEOUT,
+        COOLDOWN_AFTER_FAILURE,
     )
     from core.face_utils import (  # pyre-ignore
-        extract_face_signature, cosine_similarity,
-        save_signature_with_hash, verify_signature_integrity,
-        save_pin, verify_pin,
-        DeepFaceEmbedder, compute_ear,
-        NOSE_TIP, LEFT_EYE_CORNER, RIGHT_EYE_CORNER, CHIN, FOREHEAD_TOP,
+        extract_face_signature,
+        cosine_similarity,
+        save_signature_with_hash,
+        verify_signature_integrity,
+        save_pin,
+        verify_pin,
+        DeepFaceEmbedder,
+        compute_ear,
+        NOSE_TIP,
+        LEFT_EYE_CORNER,
+        RIGHT_EYE_CORNER,
+        CHIN,
+        FOREHEAD_TOP,
     )
 except ImportError:
     # Fallback for direct execution
     _root = Path(__file__).resolve().parent.parent
     sys.path.insert(0, str(_root))
     from config.face_config import (  # pyre-ignore
-        CAMERA_INDEX, CAMERA_BACKEND, CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_FPS,
-        DETECTION_INTERVAL_MS, IDENTITY_CHECK_INTERVAL_MS, PROCESS_SCALE,
-        OWNER_SIGNATURE_PATH, OWNER_HASH_PATH,
-        SIMILARITY_THRESHOLD, STRICT_MODE, STRICT_CONSECUTIVE_REQUIRED, STRICT_WINDOW,
-        MAX_FAILED_ATTEMPTS, LOCKOUT_DURATION, MIN_LANDMARK_CONFIDENCE,
-        ENROLLMENT_SAMPLES, ENROLLMENT_DELAY, ENROLLMENT_MIN_CONFIDENCE,
-        AUTO_LOCK_TIMEOUT, INTRUDER_INSTANT_LOCK,
+        CAMERA_INDEX,
+        CAMERA_BACKEND,
+        CAMERA_WIDTH,
+        CAMERA_HEIGHT,
+        CAMERA_FPS,
+        DETECTION_INTERVAL_MS,
+        IDENTITY_CHECK_INTERVAL_MS,
+        PROCESS_SCALE,
+        OWNER_SIGNATURE_PATH,
+        OWNER_HASH_PATH,
+        SIMILARITY_THRESHOLD,
+        STRICT_MODE,
+        STRICT_CONSECUTIVE_REQUIRED,
+        STRICT_WINDOW,
+        MAX_FAILED_ATTEMPTS,
+        LOCKOUT_DURATION,
+        MIN_LANDMARK_CONFIDENCE,
+        ENROLLMENT_SAMPLES,
+        ENROLLMENT_DELAY,
+        ENROLLMENT_MIN_CONFIDENCE,
+        AUTO_LOCK_TIMEOUT,
+        INTRUDER_INSTANT_LOCK,
         ENROLLMENT_PIN_HASH_PATH,
-        SFACE_MODEL_PATH, OWNER_EMBEDDING_PATH, OWNER_EMBEDDING_HASH_PATH,
-        REQUIRE_BLINK_FOR_AUTH, BLINK_EAR_THRESHOLD, BLINK_DETECTION_WINDOW,
-        MIN_BLINKS_REQUIRED, AUTH_TIMEOUT, COOLDOWN_AFTER_FAILURE,
+        SFACE_MODEL_PATH,
+        OWNER_EMBEDDING_PATH,
+        OWNER_EMBEDDING_HASH_PATH,
+        REQUIRE_BLINK_FOR_AUTH,
+        BLINK_EAR_THRESHOLD,
+        BLINK_DETECTION_WINDOW,
+        MIN_BLINKS_REQUIRED,
+        AUTH_TIMEOUT,
+        COOLDOWN_AFTER_FAILURE,
     )
     from core.face_utils import (  # pyre-ignore
-        extract_face_signature, cosine_similarity,
-        save_signature_with_hash, verify_signature_integrity,
-        save_pin, verify_pin,
-        DeepFaceEmbedder, compute_ear,
-        NOSE_TIP, LEFT_EYE_CORNER, RIGHT_EYE_CORNER, CHIN, FOREHEAD_TOP,
+        extract_face_signature,
+        cosine_similarity,
+        save_signature_with_hash,
+        verify_signature_integrity,
+        save_pin,
+        verify_pin,
+        DeepFaceEmbedder,
+        compute_ear,
+        NOSE_TIP,
+        LEFT_EYE_CORNER,
+        RIGHT_EYE_CORNER,
+        CHIN,
+        FOREHEAD_TOP,
     )
 
 import mediapipe as mp  # pyre-ignore
@@ -94,7 +152,9 @@ class FaceAuthSystem:
 
     def __init__(self):
         # MediaPipe Face Landmarker
-        model_path = os.path.join(os.path.dirname(__file__), '..', 'face_landmarker.task')
+        model_path = os.path.join(
+            os.path.dirname(__file__), "..", "face_landmarker.task"
+        )
         self.face_landmarker = vision.FaceLandmarker.create_from_options(
             vision.FaceLandmarkerOptions(
                 base_options=mp.tasks.BaseOptions(model_asset_path=model_path),
@@ -126,29 +186,29 @@ class FaceAuthSystem:
             "frame": None,
             "frame_rgb": None,
             "face_detected": False,
-            "face_box": None,           # (x, y, w, h)
+            "face_box": None,  # (x, y, w, h)
             "landmarks": None,
-            "is_owner": None,           # True / False / None
+            "is_owner": None,  # True / False / None
             "confidence": 0.0,
-            "status": "IDLE",           # IDLE / SCANNING / VERIFYING / GRANTED / DENIED / LOCKED_OUT / NO_CAMERA / LOW_QUALITY
+            "status": "IDLE",  # IDLE / SCANNING / VERIFYING / GRANTED / DENIED / LOCKED_OUT / NO_CAMERA / LOW_QUALITY
             "camera_ok": False,
             "auth_attempts": 0,
             "lockout_until": 0,
-            "quality_hint": "",         # "Move closer" / "Improve lighting" / ""
+            "quality_hint": "",  # "Move closer" / "Improve lighting" / ""
         }
 
         # Identity — deep embeddings (primary) + geometric signature (fallback)
-        self.owner_signature = None         # legacy geometric (30-dim)
-        self.owner_gallery = None           # deep embeddings (N, 128)
+        self.owner_signature = None  # legacy geometric (30-dim)
+        self.owner_gallery = None  # deep embeddings (N, 128)
         self._identity_history = deque(maxlen=STRICT_WINDOW)
 
         # Blink liveness detection
         self._blink_detected = False
         self._blink_start_time = 0.0
-        self._prev_ear = 0.3                # previous EAR for edge detection
+        self._prev_ear = 0.3  # previous EAR for edge detection
         self._blink_count = 0
-        self._identity_confirmed = False    # owner matched, awaiting liveness
-        self._auth_start_time = 0.0         # when current auth attempt started
+        self._identity_confirmed = False  # owner matched, awaiting liveness
+        self._auth_start_time = 0.0  # when current auth attempt started
 
         # Session monitoring
         self._session_active = False
@@ -167,7 +227,12 @@ class FaceAuthSystem:
     def start_camera(self):
         """Open camera and start background capture thread. Returns True on success."""
         with self._lock:
-            if self.cap is not None and self.cap.isOpened() and self._thread is not None and self._thread.is_alive():  # pyre-ignore
+            if (
+                self.cap is not None
+                and self.cap.isOpened()
+                and self._thread is not None
+                and self._thread.is_alive()
+            ):  # pyre-ignore
                 print("[FaceAuth] ✅ Camera already running")
                 return True
 
@@ -195,7 +260,9 @@ class FaceAuthSystem:
             self.state["status"] = "SCANNING"
 
         self._stop_event.clear()
-        self._thread = threading.Thread(target=self._capture_loop, daemon=True)  # pyre-ignore
+        self._thread = threading.Thread(
+            target=self._capture_loop, daemon=True
+        )  # pyre-ignore
         self._thread.start()  # pyre-ignore
         print("[FaceAuth] ✅ Camera started")
         return True
@@ -233,7 +300,9 @@ class FaceAuthSystem:
                 self._detect_face(frame_rgb)
 
             # Identity check (time-based)
-            dynamic_interval = getattr(self, '_dynamic_identity_interval_ms', IDENTITY_CHECK_INTERVAL_MS)
+            dynamic_interval = getattr(
+                self, "_dynamic_identity_interval_ms", IDENTITY_CHECK_INTERVAL_MS
+            )
             if now_ms - self._last_identity_time >= dynamic_interval:
                 self._last_identity_time = now_ms
                 t0 = time.time()
@@ -243,6 +312,8 @@ class FaceAuthSystem:
                     self._dynamic_identity_interval_ms = pipeline_time_ms + 50
                 else:
                     self._dynamic_identity_interval_ms = IDENTITY_CHECK_INTERVAL_MS
+                with self._lock:
+                    self.state["last_check_ms"] = int(pipeline_time_ms)
 
             # Small sleep to cap CPU (captures at ~60-100fps without this)
             time.sleep(0.008)
@@ -264,7 +335,9 @@ class FaceAuthSystem:
                 self.cap = cv2.VideoCapture(CAMERA_INDEX, CAMERA_BACKEND)
                 if self.cap.isOpened():  # pyre-ignore
                     self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAMERA_WIDTH)  # pyre-ignore
-                    self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CAMERA_HEIGHT)  # pyre-ignore
+                    self.cap.set(
+                        cv2.CAP_PROP_FRAME_HEIGHT, CAMERA_HEIGHT
+                    )  # pyre-ignore
                     print(f"[FaceAuth] ✅ Reconnected on attempt {attempt + 1}")
                     with self._lock:
                         self.state["camera_ok"] = True
@@ -287,7 +360,7 @@ class FaceAuthSystem:
         small = cv2.resize(frame_rgb, (small_w, small_h))
 
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=small)
-        
+
         with self._lock:
             ts = int(time.time() * 1000)
             if ts <= self._mp_timestamp_ms:
@@ -296,28 +369,30 @@ class FaceAuthSystem:
 
         results = self.face_landmarker.detect_for_video(mp_image, ts)
 
-        # ── Phase 1: update basic detection state under lock ──
-        # Do NOT call _check_landmark_quality or _update_blink_detection here
-        # because those methods also acquire self._lock → deadlock.
         face_landmarks = None
         had_face = False
+        num_faces = len(results.face_landmarks) if results.face_landmarks else 0
 
         with self._lock:
-            if results.face_landmarks:
+            if num_faces == 1:
                 face_landmarks = results.face_landmarks[0]
                 had_face = True
                 self.state["face_detected"] = True
                 self.state["landmarks"] = face_landmarks
-                self.state["face_box"] = self._landmarks_to_box(  # pyre-ignore
-                    face_landmarks, (h, w)
+                self.state["face_box"] = self._landmarks_to_box(
+                    face_landmarks, (small_h, small_w), (h, w)
                 )
+            elif num_faces > 1:
+                self.state["face_detected"] = False
+                self.state["landmarks"] = None
+                self.state["face_box"] = None
+                self.state["quality_hint"] = "Multiple faces detected"
             else:
                 self.state["face_detected"] = False
                 self.state["landmarks"] = None
                 self.state["face_box"] = None
                 self.state["quality_hint"] = ""
 
-        # ── Phase 2: quality check OUTSIDE the lock ──
         if had_face and face_landmarks is not None:
             quality_ok = self._check_landmark_quality(face_landmarks)
             with self._lock:
@@ -326,7 +401,6 @@ class FaceAuthSystem:
                 elif self.state["status"] == "LOW_QUALITY":
                     self.state["status"] = "SCANNING"
 
-            # ── Phase 3: blink detection OUTSIDE the lock ──
             if quality_ok and REQUIRE_BLINK_FOR_AUTH:
                 self._update_blink_detection(face_landmarks)
 
@@ -342,7 +416,9 @@ class FaceAuthSystem:
             pts.append((lm.x, lm.y))
 
         # Check if key points are within frame (0..1)
-        out_of_frame = sum(1 for x, y in pts if x < 0.05 or x > 0.95 or y < 0.05 or y > 0.95)
+        out_of_frame = sum(
+            1 for x, y in pts if x < 0.05 or x > 0.95 or y < 0.05 or y > 0.95
+        )
 
         if out_of_frame >= 2:
             with self._lock:
@@ -362,25 +438,37 @@ class FaceAuthSystem:
             self.state["quality_hint"] = ""
         return True
 
-    def _landmarks_to_box(self, landmarks, frame_shape):
-        """Convert landmarks to (x, y, w, h) bounding box in pixel coords."""
-        h, w = frame_shape[:2]
+    def _landmarks_to_box(self, landmarks, scaled_shape, original_shape):
+        """Convert landmarks to (x, y, w, h) bounding box in pixel coords.
+
+        Args:
+            landmarks: MediaPipe face landmarks (normalized 0-1)
+            scaled_shape: (h, w) of the scaled frame used for detection
+            original_shape: (h, w) of the original frame
+        """
+        s_h, s_w = scaled_shape[:2]
+        o_h, o_w = original_shape[:2]
         xs = [lm.x for lm in landmarks]
         ys = [lm.y for lm in landmarks]
 
-        # Scale back from PROCESS_SCALE
-        x_min = min(xs) * w
-        x_max = max(xs) * w
-        y_min = min(ys) * h
-        y_max = max(ys) * h
+        x_min = min(xs) * s_w
+        x_max = max(xs) * s_w
+        y_min = min(ys) * s_h
+        y_max = max(ys) * s_h
 
-        # Add 15% padding
+        scale_x = o_w / s_w
+        scale_y = o_h / s_h
+        x_min *= scale_x
+        x_max *= scale_x
+        y_min *= scale_y
+        y_max *= scale_y
+
         pad_x = (x_max - x_min) * 0.15
         pad_y = (y_max - y_min) * 0.15
         x_min = max(0, x_min - pad_x)
         y_min = max(0, y_min - pad_y)
-        x_max = min(w, x_max + pad_x)
-        y_max = min(h, y_max + pad_y)
+        x_max = min(o_w, x_max + pad_x)
+        y_max = min(o_h, y_max + pad_y)
 
         return (int(x_min), int(y_min), int(x_max - x_min), int(y_max - y_min))
 
@@ -392,17 +480,17 @@ class FaceAuthSystem:
         right_ear = compute_ear(landmarks, "right")
         avg_ear = (left_ear + right_ear) / 2.0
 
-        # Detect blink: EAR drops below threshold then rises back
-        if self._prev_ear >= BLINK_EAR_THRESHOLD and avg_ear < BLINK_EAR_THRESHOLD:
-            # Eyes just closed → blink started
-            pass
-        elif self._prev_ear < BLINK_EAR_THRESHOLD and avg_ear >= BLINK_EAR_THRESHOLD:
-            # Eyes just opened → blink completed
-            self._blink_count += 1
-            if self._blink_count >= MIN_BLINKS_REQUIRED:
-                self._blink_detected = True
+        with self._lock:
+            if self._prev_ear >= BLINK_EAR_THRESHOLD and avg_ear < BLINK_EAR_THRESHOLD:
+                pass
+            elif (
+                self._prev_ear < BLINK_EAR_THRESHOLD and avg_ear >= BLINK_EAR_THRESHOLD
+            ):
+                self._blink_count += 1
+                if self._blink_count >= MIN_BLINKS_REQUIRED:
+                    self._blink_detected = True
 
-        self._prev_ear = avg_ear
+            self._prev_ear = avg_ear
 
     # ──── IDENTITY MATCHING ────
 
@@ -429,7 +517,11 @@ class FaceAuthSystem:
             self.state["status"] = "VERIFYING"
 
         # ── Deep embedding path (primary) ──
-        if self._embedder is not None and self.owner_gallery is not None and frame_rgb is not None:
+        if (
+            self._embedder is not None
+            and self.owner_gallery is not None
+            and frame_rgb is not None
+        ):
             try:
                 current_emb = self._embedder.extract_embedding(frame_rgb, landmarks)
                 if current_emb is None:
@@ -456,7 +548,10 @@ class FaceAuthSystem:
                         elif is_clear_non_match:
                             self.state["is_owner"] = False
                             self._identity_confirmed = False
-                        elif len(self._identity_history) == self._identity_history.maxlen and positive_count == 0:
+                        elif (
+                            len(self._identity_history) == self._identity_history.maxlen
+                            and positive_count == 0
+                        ):
                             self.state["is_owner"] = False
                             self._identity_confirmed = False
                     else:
@@ -494,7 +589,10 @@ class FaceAuthSystem:
                         elif is_clear_non_match:
                             self.state["is_owner"] = False
                             self._identity_confirmed = False
-                        elif len(self._identity_history) == self._identity_history.maxlen and positive_count == 0:
+                        elif (
+                            len(self._identity_history) == self._identity_history.maxlen
+                            and positive_count == 0
+                        ):
                             self.state["is_owner"] = False
                             self._identity_confirmed = False
                     else:
@@ -539,8 +637,8 @@ class FaceAuthSystem:
             "Normal position — final capture",
         ]
 
-        signatures = []   # geometric (fallback)
-        embeddings = []   # deep (primary)
+        signatures = []  # geometric (fallback)
+        embeddings = []  # deep (primary)
 
         for i in range(ENROLLMENT_SAMPLES):
             instruction = prompts[i] if i < len(prompts) else "Hold steady"
@@ -587,7 +685,9 @@ class FaceAuthSystem:
             time.sleep(ENROLLMENT_DELAY)
 
         if len(signatures) < 5:
-            print(f"[FaceAuth] ❌ Enrollment failed — only {len(signatures)} samples captured")
+            print(
+                f"[FaceAuth] ❌ Enrollment failed — only {len(signatures)} samples captured"
+            )
             return False
 
         # ── Save geometric signature (fallback) ──
@@ -605,11 +705,17 @@ class FaceAuthSystem:
             norms = np.linalg.norm(gallery, axis=1, keepdims=True)
             norms[norms < 1e-6] = 1.0
             gallery = gallery / norms
-            DeepFaceEmbedder.save_gallery(gallery, OWNER_EMBEDDING_PATH, OWNER_EMBEDDING_HASH_PATH)
+            DeepFaceEmbedder.save_gallery(
+                gallery, OWNER_EMBEDDING_PATH, OWNER_EMBEDDING_HASH_PATH
+            )
             self.owner_gallery = gallery
-            print(f"[FaceAuth] ✅ Owner enrolled — {len(embeddings)} deep embeddings + {len(signatures)} geometric")
+            print(
+                f"[FaceAuth] ✅ Owner enrolled — {len(embeddings)} deep embeddings + {len(signatures)} geometric"
+            )
         else:
-            print(f"[FaceAuth] ⚠️ Only {len(embeddings)} deep embeddings captured, using geometric only")
+            print(
+                f"[FaceAuth] ⚠️ Only {len(embeddings)} deep embeddings captured, using geometric only"
+            )
             print(f"[FaceAuth] ✅ Owner enrolled ({len(signatures)} geometric samples)")
 
         if callback:
@@ -628,7 +734,9 @@ class FaceAuthSystem:
         loaded_any = False
 
         # Load deep embedding gallery (primary)
-        gallery = DeepFaceEmbedder.load_gallery(OWNER_EMBEDDING_PATH, OWNER_EMBEDDING_HASH_PATH)
+        gallery = DeepFaceEmbedder.load_gallery(
+            OWNER_EMBEDDING_PATH, OWNER_EMBEDDING_HASH_PATH
+        )
         if gallery is not None:
             self.owner_gallery = gallery
             loaded_any = True
@@ -681,9 +789,13 @@ class FaceAuthSystem:
 
     def _clear_enrollment_data(self):
         """Remove enrollment files."""
-        for path in [OWNER_SIGNATURE_PATH, OWNER_HASH_PATH,
-                     OWNER_EMBEDDING_PATH, OWNER_EMBEDDING_HASH_PATH,
-                     ENROLLMENT_PIN_HASH_PATH]:
+        for path in [
+            OWNER_SIGNATURE_PATH,
+            OWNER_HASH_PATH,
+            OWNER_EMBEDDING_PATH,
+            OWNER_EMBEDDING_HASH_PATH,
+            ENROLLMENT_PIN_HASH_PATH,
+        ]:
             if os.path.exists(path):
                 os.remove(path)
                 print(f"[FaceAuth] 🗑️ Removed {path}")
@@ -691,9 +803,13 @@ class FaceAuthSystem:
     @staticmethod
     def reset_face_data():
         """CLI reset: clear all enrollment data. For --reset-face flag."""
-        for path in [OWNER_SIGNATURE_PATH, OWNER_HASH_PATH,
-                     OWNER_EMBEDDING_PATH, OWNER_EMBEDDING_HASH_PATH,
-                     ENROLLMENT_PIN_HASH_PATH]:
+        for path in [
+            OWNER_SIGNATURE_PATH,
+            OWNER_HASH_PATH,
+            OWNER_EMBEDDING_PATH,
+            OWNER_EMBEDDING_HASH_PATH,
+            ENROLLMENT_PIN_HASH_PATH,
+        ]:
             if os.path.exists(path):
                 os.remove(path)
                 print(f"Removed {path}")
@@ -714,6 +830,7 @@ class FaceAuthSystem:
             'GRANTED'        — Owner confirmed + liveness passed
             'DENIED'         — Face detected but not owner
             'NO_FACE'        — No face in frame
+            'MULTIPLE_FACES' — More than one face detected
             'NEED_BLINK'     — Owner identity confirmed, awaiting blink
             'LOCKED_OUT'     — Too many failed attempts
             'NO_CAMERA'      — Camera not available
@@ -728,6 +845,9 @@ class FaceAuthSystem:
         if time.time() < state["lockout_until"]:
             remaining = int(state["lockout_until"] - time.time())
             return f"LOCKED_OUT:{remaining}"
+
+        if state["quality_hint"] == "Multiple faces detected":
+            return "MULTIPLE_FACES"
 
         if not state["face_detected"]:
             return "NO_FACE"
@@ -760,7 +880,10 @@ class FaceAuthSystem:
             with self._lock:
                 a = self.state.get("auth_attempts", 0)
                 self.state["auth_attempts"] = a + 1 if isinstance(a, int) else 1
-                if isinstance(self.state["auth_attempts"], int) and self.state["auth_attempts"] >= MAX_FAILED_ATTEMPTS:
+                if (
+                    isinstance(self.state["auth_attempts"], int)
+                    and self.state["auth_attempts"] >= MAX_FAILED_ATTEMPTS
+                ):
                     self.state["lockout_until"] = time.time() + LOCKOUT_DURATION
                     self.state["status"] = "LOCKED_OUT"
                     self.state["auth_attempts"] = 0
@@ -837,7 +960,7 @@ class FaceAuthSystem:
         if self._thread and self._thread.is_alive():
             self._thread.join(timeout=3)  # pyre-ignore
         self._thread = None
-        
+
         self._stop_event.clear()
 
         with self._lock:
@@ -849,7 +972,7 @@ class FaceAuthSystem:
             self.cap = None
             self.state["camera_ok"] = False
             self.state["status"] = "PERMANENTLY_UNLOCKED"
-            
+
         print("[FaceAuth] 📷 Camera feed explicitly stopped (UNLOCKED state).")
 
     # ──── THREAD-SAFE STATE ACCESS ────
@@ -883,3 +1006,91 @@ class FaceAuthSystem:
         self._prev_ear = 0.3
         self._auth_start_time = 0.0
         self._session_active = False
+
+    # ──── INTEGRATION WITH ASSISTANT ────
+
+    def authenticate_face(self, timeout=30):
+        """
+        Blocking authentication for assistant integration.
+
+        Returns True if authenticated, False otherwise.
+        Blocks until auth granted, denied, or timeout.
+
+        Args:
+            timeout: Maximum seconds to wait
+
+        Returns:
+            bool: True if granted, False otherwise
+        """
+        if not self.owner_registered():
+            print("[FaceAuth] ❌ No owner enrolled")
+            return False
+
+        if not self.state.get("camera_ok", False):
+            if not self.start_camera():
+                print("[FaceAuth] ❌ Camera failed to start")
+                return False
+
+        self.reset_auth()
+        start_time = time.time()
+
+        while time.time() - start_time < timeout:
+            result = self.authenticate()
+
+            if result == "GRANTED":
+                print("[FaceAuth] ✅ Authentication granted")
+                return True
+
+            if result in ("DENIED", "MULTIPLE_FACES"):
+                print(f"[FaceAuth] ❌ Auth failed: {result}")
+                time.sleep(0.5)
+                continue
+
+            if result in ("NO_FACE", "LOW_QUALITY", "NEED_BLINK"):
+                time.sleep(0.1)
+                continue
+
+            if result.startswith("LOCKED_OUT"):
+                print("[FaceAuth] ❌ Locked out")
+                return False
+
+            if result == "NO_CAMERA":
+                print("[FaceAuth] ❌ No camera")
+                return False
+
+        print("[FaceAuth] ❌ Authentication timeout")
+        return False
+
+    def reauthenticate(self):
+        """
+        Force re-authentication. Call this to lock the assistant.
+        Returns True if re-auth succeeds, False if denied/timeout.
+        """
+        self._session_active = False
+        self.reset_auth()
+        return self.authenticate_face(timeout=30)
+
+    def lock_assistant(self):
+        """
+        Immediately lock the assistant (stops session monitoring).
+        """
+        self._session_active = False
+        with self._lock:
+            self.state["status"] = "SCANNING"
+        print("[FaceAuth] 🔒 Assistant locked")
+
+    def check_auto_lock(self):
+        """
+        Check if auto-lock should trigger due to inactivity.
+
+        Returns:
+            True if should lock, False otherwise
+        """
+        with self._lock:
+            status = self.state.get("status")
+
+        if status == "PERMANENTLY_UNLOCKED":
+            result = self.check_session()
+            if result in ("AUTO_LOCK", "INTRUDER"):
+                return True
+        return False

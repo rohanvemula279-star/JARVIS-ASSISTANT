@@ -60,39 +60,86 @@ Respond line 2: reason (10 words max)"""
 
         # ─── FIX 1: Blocklist, not whitelist ───
         self.blocked_processes = {
-            'Discord.exe', 'Telegram.exe', 'WhatsApp.exe',
-            'Slack.exe', 'Signal.exe', 'Spotify.exe',
-            'vlc.exe', 'wmplayer.exe', 'iTunes.exe',
-            'Steam.exe', 'steamwebhelper.exe',
-            'EpicGamesLauncher.exe', 'GalaxyClient.exe',
-            'Riot Client.exe', 'LeagueClient.exe',
-            'Valorant.exe', 'MinecraftLauncher.exe',
-            'obs64.exe', 'obs32.exe',
+            "Discord.exe",
+            "Telegram.exe",
+            "WhatsApp.exe",
+            "Slack.exe",
+            "Signal.exe",
+            "Spotify.exe",
+            "vlc.exe",
+            "wmplayer.exe",
+            "iTunes.exe",
+            "Steam.exe",
+            "steamwebhelper.exe",
+            "EpicGamesLauncher.exe",
+            "GalaxyClient.exe",
+            "Riot Client.exe",
+            "LeagueClient.exe",
+            "Valorant.exe",
+            "MinecraftLauncher.exe",
+            "obs64.exe",
+            "obs32.exe",
         }
 
         self.protected_processes = {
-            'svchost.exe', 'csrss.exe', 'lsass.exe',
-            'winlogon.exe', 'dwm.exe', 'taskhostw.exe',
-            'sihost.exe', 'fontdrvhost.exe', 'dllhost.exe',
-            'ctfmon.exe', 'explorer.exe', 'python.exe',
-            'pythonw.exe', 'chrome.exe', 'msedge.exe',
-            'firefox.exe', 'code.exe', 'Code.exe',
-            'WINWORD.EXE', 'EXCEL.EXE', 'POWERPNT.EXE',
-            'notepad.exe', 'Notepad.exe', 'calc.exe', 'Calculator.exe',
-            'WindowsTerminal.exe', 'cmd.exe',
-            'SearchHost.exe', 'RuntimeBroker.exe',
-            'ShellExperienceHost.exe', 'TextInputHost.exe',
-            'SecurityHealthSystray.exe', 'ApplicationFrameHost.exe',
-            'StartMenuExperienceHost.exe', 'AcroRd32.exe', 'FoxitReader.exe',
-            'SumatraPDF.exe', 'Notion.exe', 'Obsidian.exe',
-            'Teams.exe', 'Zoom.exe',
+            "svchost.exe",
+            "csrss.exe",
+            "lsass.exe",
+            "winlogon.exe",
+            "dwm.exe",
+            "taskhostw.exe",
+            "sihost.exe",
+            "fontdrvhost.exe",
+            "dllhost.exe",
+            "ctfmon.exe",
+            "explorer.exe",
+            "python.exe",
+            "pythonw.exe",
+            "chrome.exe",
+            "msedge.exe",
+            "firefox.exe",
+            "code.exe",
+            "Code.exe",
+            "WINWORD.EXE",
+            "EXCEL.EXE",
+            "POWERPNT.EXE",
+            "notepad.exe",
+            "Notepad.exe",
+            "calc.exe",
+            "Calculator.exe",
+            "WindowsTerminal.exe",
+            "cmd.exe",
+            "SearchHost.exe",
+            "RuntimeBroker.exe",
+            "ShellExperienceHost.exe",
+            "TextInputHost.exe",
+            "SecurityHealthSystray.exe",
+            "ApplicationFrameHost.exe",
+            "StartMenuExperienceHost.exe",
+            "AcroRd32.exe",
+            "FoxitReader.exe",
+            "SumatraPDF.exe",
+            "Notion.exe",
+            "Obsidian.exe",
+            "Teams.exe",
+            "Zoom.exe",
         }
 
         self.distracting_keywords = [
-            'instagram', 'reddit', 'twitter', 'facebook',
-            'netflix', 'spotify', 'discord', 'whatsapp',
-            'tiktok', 'twitch', 'snapchat', 'telegram',
-            'game', 'gaming',
+            "instagram",
+            "reddit",
+            "twitter",
+            "facebook",
+            "netflix",
+            "spotify",
+            "discord",
+            "whatsapp",
+            "tiktok",
+            "twitch",
+            "snapchat",
+            "telegram",
+            "game",
+            "gaming",
         ]
 
     # ─── Activation / Deactivation ───
@@ -169,9 +216,7 @@ Respond line 2: reason (10 words max)"""
         if win32gui is None:
             return ""
         try:
-            return win32gui.GetWindowText(
-                win32gui.GetForegroundWindow()
-            )
+            return win32gui.GetWindowText(win32gui.GetForegroundWindow())
         except Exception:
             return ""
 
@@ -188,19 +233,18 @@ Respond line 2: reason (10 words max)"""
             img_bytes = _capture_screenshot()
 
             client = genai.Client(
-                api_key=get_gemini_key(),
-                http_options={"api_version": "v1beta"}
+                api_key=get_gemini_key(), http_options={"api_version": "v1beta"}
             )
 
             response = client.models.generate_content(
-                model='gemini-2.5-flash',
+                model="gemini-2.0-flash-exp",
                 contents=[
-                    genai.types.Part.from_bytes(
-                        data=img_bytes,
-                        mime_type='image/jpeg'),
-                    self.VISION_ANALYSIS_PROMPT])
+                    genai.types.Part.from_bytes(data=img_bytes, mime_type="image/jpeg"),
+                    self.VISION_ANALYSIS_PROMPT,
+                ],
+            )
 
-            result = response.text.strip().split('\n')[0].upper()
+            result = response.text.strip().split("\n")[0].upper()
             print(f"[StudyMode] Vision: {response.text.strip()}")
             return "DISTRACTED" in result
 
@@ -230,8 +274,7 @@ Respond line 2: reason (10 words max)"""
             )
         elif current == 3:
             killed = self._close_distracting_apps()
-            apps = "distracting applications" if not killed else ", ".join(
-                killed)
+            apps = "distracting applications" if not killed else ", ".join(killed)
             self._queue_warning(
                 f"Sir, I've closed {apps}. "
                 f"Your study applications remain open. Please focus."
@@ -241,7 +284,7 @@ Respond line 2: reason (10 words max)"""
                 "Sir, this is my final warning. I am initiating system "
                 "shutdown in 2 minutes. Say cancel shutdown to abort."
             )
-            subprocess.run(['shutdown', '/s', '/t', '120'])
+            subprocess.run(["shutdown", "/s", "/t", "120"])
 
     def _handle_studying(self):
         with self._lock:
@@ -258,14 +301,14 @@ Respond line 2: reason (10 words max)"""
             return False
 
         title = self._get_active_window_title().lower()
-        browsers = ['chrome', 'edge', 'firefox', 'brave', 'opera']
+        browsers = ["chrome", "edge", "firefox", "brave", "opera"]
 
         if not any(b in title for b in browsers):
             return False
 
         if any(kw in title for kw in self.distracting_keywords):
             print(f"[StudyMode] Closing tab: {title[:50]}")  # type: ignore
-            pyautogui.hotkey('ctrl', 'w')
+            pyautogui.hotkey("ctrl", "w")
             time.sleep(0.5)
             return True
 
@@ -281,10 +324,9 @@ Respond line 2: reason (10 words max)"""
         # Kill blocked processes
         try:
             result = subprocess.run(
-                ['tasklist', '/FO', 'CSV', '/NH'],
-                capture_output=True, text=True
+                ["tasklist", "/FO", "CSV", "/NH"], capture_output=True, text=True
             )
-            for line in result.stdout.strip().split('\n'):
+            for line in result.stdout.strip().split("\n"):
                 if not line.strip():
                     continue
                 try:
@@ -299,10 +341,7 @@ Respond line 2: reason (10 words max)"""
                 if name in self.protected_processes:
                     continue
                 if name in self.blocked_processes:
-                    subprocess.run(
-                        ['taskkill', '/f', '/im', name],
-                        capture_output=True
-                    )
+                    subprocess.run(["taskkill", "/f", "/im", name], capture_output=True)
                     killed.append(name)  # type: ignore
                     print(f"[StudyMode] Killed: {name}")
         except Exception as e:
@@ -313,9 +352,8 @@ Respond line 2: reason (10 words max)"""
     # ─── Shutdown Cancel ───
 
     def cancel_shutdown(self):
-        subprocess.run(['shutdown', '/a'])
-        self._queue_warning(
-            "Shutdown cancelled, sir. Please return to your studies.")
+        subprocess.run(["shutdown", "/a"])
+        self._queue_warning("Shutdown cancelled, sir. Please return to your studies.")
         print("[StudyMode] Shutdown cancelled")
 
 

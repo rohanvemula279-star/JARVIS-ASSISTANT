@@ -18,6 +18,7 @@ from pathlib import Path
 
 try:
     import pyautogui  # type: ignore
+
     pyautogui.FAILSAFE = True
     pyautogui.PAUSE = 0.05
     _PYAUTOGUI = True
@@ -26,6 +27,7 @@ except ImportError:
 
 try:
     import pyperclip  # type: ignore
+
     _PYPERCLIP = True
 except ImportError:
     _PYPERCLIP = False
@@ -33,8 +35,7 @@ except ImportError:
 _OS = platform.system()
 
 
-
-from memory.config_manager import get_gemini_key, BASE_DIR # type: ignore
+from memory.config_manager import get_gemini_key, BASE_DIR  # type: ignore
 
 
 def volume_up():
@@ -43,7 +44,12 @@ def volume_up():
             pyautogui.press("volumeup")
     elif _OS == "Darwin":
         subprocess.run(
-            ["osascript", "-e", "set volume output volume (output volume of (get volume settings) + 10)"])  # noqa: E501
+            [
+                "osascript",
+                "-e",
+                "set volume output volume (output volume of (get volume settings) + 10)",
+            ]
+        )  # noqa: E501
     else:
         subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", "+10%"])
 
@@ -54,7 +60,12 @@ def volume_down():
             pyautogui.press("volumedown")
     elif _OS == "Darwin":
         subprocess.run(
-            ["osascript", "-e", "set volume output volume (output volume of (get volume settings) - 10)"])  # noqa: E501
+            [
+                "osascript",
+                "-e",
+                "set volume output volume (output volume of (get volume settings) - 10)",
+            ]
+        )  # noqa: E501
     else:
         subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", "-10%"])
 
@@ -76,25 +87,21 @@ def volume_set(value: int):
             from comtypes import CLSCTX_ALL  # type: ignore
             from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume  # type: ignore
             import math
+
             devices = AudioUtilities.GetSpeakers()
-            interface = devices.Activate(
-                IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+            interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
             vol = cast(interface, POINTER(IAudioEndpointVolume))
-            vol_db = - \
-                65.25 if value == 0 else max(-65.25,
-                                             20 * math.log10(value / 100))
+            vol_db = -65.25 if value == 0 else max(-65.25, 20 * math.log10(value / 100))
             vol.SetMasterVolumeLevel(vol_db, None)  # type: ignore
             print(f"[Settings] 🔊 Volume → {value}%")
             return
         except Exception as e:
             print(f"[Settings] ⚠️ pycaw failed: {e}")
     elif _OS == "Darwin":
-        subprocess.run(
-            ["osascript", "-e", f"set volume output volume {value}"])
+        subprocess.run(["osascript", "-e", f"set volume output volume {value}"])
         return
     else:
-        subprocess.run(["pactl", "set-sink-volume",
-                       "@DEFAULT_SINK@", f"{value}%"])
+        subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", f"{value}%"])
         return
 
 
@@ -104,7 +111,8 @@ def brightness_up():
         time.sleep(0.3)
     elif _OS == "Darwin":
         subprocess.run(
-            ["osascript", "-e", "tell application \"System Events\" to key code 144"])  # noqa: E501
+            ["osascript", "-e", 'tell application "System Events" to key code 144']
+        )  # noqa: E501
     else:
         subprocess.run(["brightnessctl", "set", "+10%"])
 
@@ -115,7 +123,8 @@ def brightness_down():
         time.sleep(0.3)
     elif _OS == "Darwin":
         subprocess.run(
-            ["osascript", "-e", "tell application \"System Events\" to key code 145"])  # noqa: E501
+            ["osascript", "-e", 'tell application "System Events" to key code 145']
+        )  # noqa: E501
     else:
         subprocess.run(["brightnessctl", "set", "10%-"])
 
@@ -154,7 +163,9 @@ def maximize_window():
             [
                 "osascript",
                 "-e",
-                'tell application "System Events" to keystroke "f" using {control down, command down}'])  # noqa: E501
+                'tell application "System Events" to keystroke "f" using {control down, command down}',
+            ]
+        )  # noqa: E501
     else:
         pyautogui.hotkey("win", "up")
 
@@ -206,7 +217,8 @@ def focus_search():
         pyautogui.hotkey("ctrl", "l")
 
 
-def pause_video(): pyautogui.press("space")
+def pause_video():
+    pyautogui.press("space")
 
 
 def refresh_page():
@@ -292,22 +304,32 @@ def reload_page_n(n: int):
         time.sleep(0.8)
 
 
-def scroll_up(amount: int = 500): pyautogui.scroll(amount)
-def scroll_down(amount: int = 500): pyautogui.scroll(-amount)
+def scroll_up(amount: int = 500):
+    pyautogui.scroll(amount)
 
 
-def scroll_top(): pyautogui.hotkey(
-    "ctrl", "home") if _OS != "Darwin" else pyautogui.hotkey(
-        "command", "up")
+def scroll_down(amount: int = 500):
+    pyautogui.scroll(-amount)
 
 
-def scroll_bottom(): pyautogui.hotkey(
-    "ctrl", "end") if _OS != "Darwin" else pyautogui.hotkey(
-        "command", "down")
+def scroll_top():
+    pyautogui.hotkey("ctrl", "home") if _OS != "Darwin" else pyautogui.hotkey(
+        "command", "up"
+    )
 
 
-def page_up(): pyautogui.press("pageup")
-def page_down(): pyautogui.press("pagedown")
+def scroll_bottom():
+    pyautogui.hotkey("ctrl", "end") if _OS != "Darwin" else pyautogui.hotkey(
+        "command", "down"
+    )
+
+
+def page_up():
+    pyautogui.press("pageup")
+
+
+def page_down():
+    pyautogui.press("pagedown")
 
 
 def copy():
@@ -359,9 +381,16 @@ def save_file():
         pyautogui.hotkey("ctrl", "s")
 
 
-def press_enter(): pyautogui.press("enter")
-def press_escape(): pyautogui.press("escape")
-def press_key(key: str): pyautogui.press(key)
+def press_enter():
+    pyautogui.press("enter")
+
+
+def press_escape():
+    pyautogui.press("escape")
+
+
+def press_key(key: str):
+    pyautogui.press(key)
 
 
 def type_text(text: str, press_enter_after: bool = False):
@@ -427,6 +456,7 @@ def sleep_display():
     if _OS == "Windows":
         try:
             import ctypes
+
             ctypes.windll.user32.SendMessageW(0xFFFF, 0x0112, 0xF170, 2)  # type: ignore
         except Exception:
             pass
@@ -441,7 +471,8 @@ def restart_computer():
         subprocess.run(["shutdown", "/r", "/t", "5"])
     elif _OS == "Darwin":
         subprocess.run(
-            ["osascript", "-e", 'tell application "System Events" to restart'])
+            ["osascript", "-e", 'tell application "System Events" to restart']
+        )
     else:
         subprocess.run(["sudo", "reboot"])
 
@@ -451,7 +482,8 @@ def shutdown_computer():
         subprocess.run(["shutdown", "/s", "/t", "5"])
     elif _OS == "Darwin":
         subprocess.run(
-            ["osascript", "-e", 'tell application "System Events" to shut down'])  # noqa: E501
+            ["osascript", "-e", 'tell application "System Events" to shut down']
+        )  # noqa: E501
     else:
         subprocess.run(["sudo", "shutdown", "-h", "now"])
 
@@ -465,7 +497,9 @@ def dark_mode():
             [
                 "osascript",
                 "-e",
-                'tell app "System Events" to tell appearance preferences to set dark mode to not dark mode'])  # noqa: E501
+                'tell app "System Events" to tell appearance preferences to set dark mode to not dark mode',
+            ]
+        )  # noqa: E501
 
 
 def toggle_wifi():
@@ -626,11 +660,14 @@ def _detect_action(description: str) -> dict:
     Döner: {"action": str, "value": optional}
     """
     import google.generativeai as genai  # type: ignore
-    genai.configure(api_key=get_gemini_key())
-    model = genai.GenerativeModel("gemini-2.5-flash-lite")
 
-    available = ", ".join(sorted(ACTION_MAP.keys())) + \
-        ", volume_set, type_text, write_on_screen, reload_n, press_key"
+    genai.configure(api_key=get_gemini_key())
+    model = genai.GenerativeModel("gemini-2.0-flash-exp")
+
+    available = (
+        ", ".join(sorted(ACTION_MAP.keys()))
+        + ", volume_set, type_text, write_on_screen, reload_n, press_key"
+    )
 
     prompt = f"""The user wants to control their computer. Detect their intent.
 

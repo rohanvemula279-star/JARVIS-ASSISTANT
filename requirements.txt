@@ -18,3 +18,6 @@ win10toast
 duckduckgo-search
 youtube-transcript-api
 mediapipe>=0.10.9,<0.11.0
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib

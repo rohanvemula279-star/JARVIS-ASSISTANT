@@ -16,9 +16,9 @@ def _gemini_search(query: str) -> str:
 
     client = genai.Client(api_key=get_gemini_key())
     response = client.models.generate_content(
-        model="gemini-2.5-flash-lite",
+        model="gemini-2.0-flash-exp",
         contents=query,
-        config={"tools": [{"google_search": {}}]}
+        config={"tools": [{"google_search": {}}], "max_output_tokens": 512},
     )
     text = ""
     for part in response.candidates[0].content.parts:
@@ -37,11 +37,13 @@ def _ddg_search(query: str, max_results: int = 6) -> list:
     results = []
     with DDGS() as ddgs:
         for r in ddgs.text(query, max_results=max_results):
-            results.append({
-                "title": r.get("title", ""),
-                "snippet": r.get("body", ""),
-                "url": r.get("href", ""),
-            })
+            results.append(
+                {
+                    "title": r.get("title", ""),
+                    "snippet": r.get("body", ""),
+                    "url": r.get("href", ""),
+                }
+            )
     return results
 
 
@@ -61,8 +63,9 @@ def _format_ddg(query: str, results: list) -> str:
 
 
 def _compare(items: list, aspect: str) -> str:
-    query = f"Compare {
-        ', '.join(items)} in terms of {aspect}. Give specific facts and data."
+    query = f"Compare {', '.join(items)} in terms of {
+        aspect
+    }. Give specific facts and data."
     try:
         return _gemini_search(query)
     except Exception as e:
@@ -70,8 +73,7 @@ def _compare(items: list, aspect: str) -> str:
         all_results = {}
         for item in items:
             try:
-                all_results[item] = _ddg_search(
-                    f"{item} {aspect}", max_results=3)
+                all_results[item] = _ddg_search(f"{item} {aspect}", max_results=3)
             except Exception:
                 all_results[item] = []
         lines = [f"Comparison — {aspect.upper()}\n{'─' * 40}"]

@@ -5,11 +5,7 @@ import re
 from pathlib import Path
 
 
-
-from memory.config_manager import get_gemini_key, BASE_DIR # type: ignore
-
-
-
+from memory.config_manager import get_gemini_key, BASE_DIR  # type: ignore
 
 
 def _get_platform() -> str:
@@ -21,40 +17,69 @@ def _get_platform() -> str:
 
 
 WIN_COMMAND_MAP = [
-    (["disk space", "disk usage", "storage", "free space", "c drive space"],
-     "wmic logicaldisk get caption,freespace,size /format:list", False),
-    (["running processes", "list processes", "show processes", "active processes", "tasklist"],  # noqa: E501
-     "tasklist /fo table", False),
-    (["ip address", "my ip", "network info", "ipconfig"],
-     "ipconfig /all", False),
-    (["ping", "internet connection", "connected to internet"],
-     "ping -n 4 google.com", False),
-    (["open ports", "listening ports", "netstat"],
-     "netstat -an | findstr LISTENING", False),
-    (["wifi networks", "available wifi", "wireless networks"],
-     "netsh wlan show networks", False),
-    (["system info", "computer info", "hardware info", "pc info", "specs"],
-     "systeminfo", False),
-    (["cpu usage", "processor usage"],
-     "wmic cpu get loadpercentage", False),
-    (["memory usage", "ram usage"],
-     "wmic OS get FreePhysicalMemory,TotalVisibleMemorySize /Value", False),
-    (["windows version", "os version"],
-     "ver", False),
-    (["installed programs", "installed software", "installed apps"],
-     "wmic product get name,version /format:table", False),
-    (["battery", "battery level", "power status"],
-     "powershell (Get-WmiObject -Class Win32_Battery).EstimatedChargeRemaining", False),  # noqa: E501
-    (["current time", "what time", "system time"],
-     "time /t", False),
-    (["current date", "what date", "system date"],
-     "date /t", False),
-    (["desktop files", "files on desktop"],
-     f'dir "{Path.home() / "Desktop"}"', False),
-    (["downloads", "files in downloads"],
-     f'dir "{Path.home() / "Downloads"}"', False),
-    (["large files", "biggest files", "largest files"],
-     'powershell "Get-ChildItem C:\\ -Recurse -ErrorAction SilentlyContinue | Sort-Object Length -Descending | Select-Object -First 10 FullName,Length | Format-Table"', False),  # noqa: E501
+    (
+        ["disk space", "disk usage", "storage", "free space", "c drive space"],
+        "wmic logicaldisk get caption,freespace,size /format:list",
+        False,
+    ),
+    (
+        [
+            "running processes",
+            "list processes",
+            "show processes",
+            "active processes",
+            "tasklist",
+        ],  # noqa: E501
+        "tasklist /fo table",
+        False,
+    ),
+    (["ip address", "my ip", "network info", "ipconfig"], "ipconfig /all", False),
+    (
+        ["ping", "internet connection", "connected to internet"],
+        "ping -n 4 google.com",
+        False,
+    ),
+    (
+        ["open ports", "listening ports", "netstat"],
+        "netstat -an | findstr LISTENING",
+        False,
+    ),
+    (
+        ["wifi networks", "available wifi", "wireless networks"],
+        "netsh wlan show networks",
+        False,
+    ),
+    (
+        ["system info", "computer info", "hardware info", "pc info", "specs"],
+        "systeminfo",
+        False,
+    ),
+    (["cpu usage", "processor usage"], "wmic cpu get loadpercentage", False),
+    (
+        ["memory usage", "ram usage"],
+        "wmic OS get FreePhysicalMemory,TotalVisibleMemorySize /Value",
+        False,
+    ),
+    (["windows version", "os version"], "ver", False),
+    (
+        ["installed programs", "installed software", "installed apps"],
+        "wmic product get name,version /format:table",
+        False,
+    ),
+    (
+        ["battery", "battery level", "power status"],
+        "powershell (Get-WmiObject -Class Win32_Battery).EstimatedChargeRemaining",
+        False,
+    ),  # noqa: E501
+    (["current time", "what time", "system time"], "time /t", False),
+    (["current date", "what date", "system date"], "date /t", False),
+    (["desktop files", "files on desktop"], f'dir "{Path.home() / "Desktop"}"', False),
+    (["downloads", "files in downloads"], f'dir "{Path.home() / "Downloads"}"', False),
+    (
+        ["large files", "biggest files", "largest files"],
+        'powershell "Get-ChildItem C:\\ -Recurse -ErrorAction SilentlyContinue | Sort-Object Length -Descending | Select-Object -First 10 FullName,Length | Format-Table"',
+        False,
+    ),  # noqa: E501
 ]
 
 
@@ -62,17 +87,17 @@ def _find_hardcoded(task: str) -> str | None:
     task_lower = task.lower()
 
     if "notepad" in task_lower or any(
-            ext in task_lower for ext in [
-            ".txt", ".log", ".md", ".csv"]):
+        ext in task_lower for ext in [".txt", ".log", ".md", ".csv"]
+    ):
         file_match = re.search(
-            r'[\"\']?([\S]+\.(?:txt|log|md|csv|json|xml))[\"\']?',
-            task,
-            re.IGNORECASE)
+            r"[\"\']?([\S]+\.(?:txt|log|md|csv|json|xml))[\"\']?", task, re.IGNORECASE
+        )
         if file_match:
             filename = file_match.group(1)
             desktop = Path.home() / "Desktop"
-            filepath = Path(filename) if Path(
-                filename).is_absolute() else desktop / filename
+            filepath = (
+                Path(filename) if Path(filename).is_absolute() else desktop / filename
+            )
             return f'notepad "{filepath}"'
         if "notepad" in task_lower:
             return "notepad"
@@ -89,13 +114,22 @@ def _find_hardcoded(task: str) -> str | None:
 
 
 BLOCKED_PATTERNS = [
-    r"\brm\s+-rf\b", r"\brmdir\s+/s\b", r"\bdel\s+/[fqs]",
-    r"\bformat\b", r"\bdiskpart\b", r"\bfdisk\b",
-    r"\breg\s+(delete|add)\b", r"\bbcdedit\b",
+    r"\brm\s+-rf\b",
+    r"\brmdir\s+/s\b",
+    r"\bdel\s+/[fqs]",
+    r"\bformat\b",
+    r"\bdiskpart\b",
+    r"\bfdisk\b",
+    r"\breg\s+(delete|add)\b",
+    r"\bbcdedit\b",
     r"\bnet\s+localgroup\b",
-    r"\bshutdown\b", r"\brestart-computer\b",
-    r"\bstop-process\b", r"\bkill\s+-9\b", r"\btaskkill\b",
-    r"\beval\b", r"\b__import__\b",
+    r"\bshutdown\b",
+    r"\brestart-computer\b",
+    r"\bstop-process\b",
+    r"\bkill\s+-9\b",
+    r"\btaskkill\b",
+    r"\beval\b",
+    r"\b__import__\b",
 ]
 _BLOCKED_RE = re.compile("|".join(BLOCKED_PATTERNS), re.IGNORECASE)
 
@@ -110,8 +144,9 @@ def _is_safe(command: str) -> tuple[bool, str]:
 def _ask_gemini(task: str) -> str:
     try:
         import google.generativeai as genai  # type: ignore
+
         genai.configure(api_key=get_gemini_key())
-        model = genai.GenerativeModel("gemini-2.5-flash-lite")
+        model = genai.GenerativeModel("gemini-2.0-flash-exp")
 
         prompt = (
             f"Convert this request to a single Windows CMD command.\n"
@@ -136,29 +171,37 @@ def _run_silent(command: str, timeout: int = 20) -> str:
             is_ps = command.strip().lower().startswith("powershell")
             if is_ps:
                 cmd_inner = re.sub(
-                    r'^powershell\s+"?',
-                    '',
-                    command,
-                    flags=re.IGNORECASE).rstrip('"')
+                    r'^powershell\s+"?', "", command, flags=re.IGNORECASE
+                ).rstrip('"')
                 result = subprocess.run(
                     ["powershell", "-NoProfile", "-Command", cmd_inner],
-                    capture_output=True, text=True,
-                    encoding="utf-8", errors="replace", timeout=timeout
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    timeout=timeout,
                 )
             else:
                 result = subprocess.run(
                     ["cmd", "/c", command],
-                    capture_output=True, text=True,
-                    encoding="cp1252", errors="replace",
-                    timeout=timeout, cwd=str(Path.home())
+                    capture_output=True,
+                    text=True,
+                    encoding="cp1252",
+                    errors="replace",
+                    timeout=timeout,
+                    cwd=str(Path.home()),
                 )
         else:
             shell = "/bin/zsh" if platform == "macos" else "/bin/bash"
             result = subprocess.run(
-                command, shell=True, executable=shell,
-                capture_output=True, text=True,
-                errors="replace", timeout=timeout,
-                cwd=str(Path.home())
+                command,
+                shell=True,
+                executable=shell,
+                capture_output=True,
+                text=True,
+                errors="replace",
+                timeout=timeout,
+                cwd=str(Path.home()),
             )
 
         output = result.stdout.strip()
@@ -181,16 +224,22 @@ def _run_visible(command: str) -> None:
         if platform == "windows":
             subprocess.Popen(
                 f'cmd /k "{command}"',
-                creationflags=subprocess.CREATE_NEW_CONSOLE  # type: ignore
+                creationflags=subprocess.CREATE_NEW_CONSOLE,  # type: ignore
             )
         elif platform == "macos":
-            subprocess.Popen(["osascript", "-e",
-                              f'tell application "Terminal" to do script "{command}"'])  # noqa: E501
+            subprocess.Popen(
+                [
+                    "osascript",
+                    "-e",
+                    f'tell application "Terminal" to do script "{command}"',
+                ]
+            )  # noqa: E501
         else:
             for term in ["gnome-terminal", "xterm", "konsole"]:
                 try:
                     subprocess.Popen(
-                        [term, "--", "bash", "-c", f"{command}; exec bash"])
+                        [term, "--", "bash", "-c", f"{command}; exec bash"]
+                    )
                     break
                 except FileNotFoundError:
                     continue
@@ -199,10 +248,7 @@ def _run_visible(command: str) -> None:
 
 
 def cmd_control(
-    parameters: dict,
-    response=None,
-    player=None,
-    session_memory=None
+    parameters: dict, response=None, player=None, session_memory=None
 ) -> str:
     task = (parameters or {}).get("task", "").strip()
     command = (parameters or {}).get("command", "").strip()

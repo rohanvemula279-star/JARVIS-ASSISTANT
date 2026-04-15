@@ -28,7 +28,6 @@ from pathlib import Path
 from memory.config_manager import get_gemini_key  # type: ignore
 
 
-
 def _parse_date(raw: str) -> str:
     """
     Converts natural language date to YYYY-MM-DD.
@@ -60,8 +59,9 @@ def _parse_date(raw: str) -> str:
 
     try:
         import google.generativeai as genai  # type: ignore[import]
+
         genai.configure(api_key=get_gemini_key())
-        model = genai.GenerativeModel("gemini-2.5-flash-lite")
+        model = genai.GenerativeModel("gemini-2.0-flash-exp")
         today_str = today.strftime("%Y-%m-%d")
         response = model.generate_content(
             f"Today is {today_str}. Convert this date to YYYY-MM-DD format: '{raw}'. "
@@ -74,12 +74,29 @@ def _parse_date(raw: str) -> str:
         pass
 
     month_map = {
-        "january": 1, "february": 2, "march": 3, "april": 4,
-        "may": 5, "june": 6, "july": 7, "august": 8,
-        "september": 9, "october": 10, "november": 11, "december": 12,
-        "ocak": 1, "şubat": 2, "mart": 3,
-        "nisan": 4, "mayıs": 5, "haziran": 6, "temmuz": 7,
-        "ağustos": 8, "eylül": 9, "ekim": 10, "kasım": 11,
+        "january": 1,
+        "february": 2,
+        "march": 3,
+        "april": 4,
+        "may": 5,
+        "june": 6,
+        "july": 7,
+        "august": 8,
+        "september": 9,
+        "october": 10,
+        "november": 11,
+        "december": 12,
+        "ocak": 1,
+        "şubat": 2,
+        "mart": 3,
+        "nisan": 4,
+        "mayıs": 5,
+        "haziran": 6,
+        "temmuz": 7,
+        "ağustos": 8,
+        "eylül": 9,
+        "ekim": 10,
+        "kasım": 11,
         "aralık": 12,
     }
     for month_name, month_num in month_map.items():
@@ -116,10 +133,7 @@ def _build_google_flights_url(
             f"&curr=TRY"
         )
     else:
-        url = (
-            f"{base}?q=Flights+from+{origin}+to+{destination}+on+{date}"
-            f"&curr=TRY"
-        )
+        url = f"{base}?q=Flights+from+{origin}+to+{destination}+on+{date}&curr=TRY"
 
     return url
 
@@ -170,7 +184,7 @@ def _parse_flights_with_gemini(
             "You are a flight data extraction expert. "
             "Extract flight information from raw webpage text. "
             "Return ONLY valid JSON array. No explanation, no markdown."
-        )
+        ),
     )
 
     truncated = raw_text[:12000]  # type: ignore[index]
@@ -208,8 +222,7 @@ def _format_spoken(
             f"on {date}, sir. The page may not have loaded correctly."
         )
 
-    lines = [
-        f"Here are the flights from {origin} to {destination} on {date}, sir."]
+    lines = [f"Here are the flights from {origin} to {destination} on {date}, sir."]
 
     for i, f in enumerate(flights[:5], 1):  # type: ignore[index]
         airline = f.get("airline", "Unknown airline")
@@ -220,10 +233,10 @@ def _format_spoken(
         price = f.get("price", "")
         currency = f.get("currency", "")
 
-        stop_str = "non-stop" if stops == 0 else f"{stops} stop{
-            's' if stops > 1 else ''}"
-        price_str = f"{price} {currency}".strip(
-        ) if price else "price unavailable"
+        stop_str = (
+            "non-stop" if stops == 0 else f"{stops} stop{'s' if stops > 1 else ''}"
+        )
+        price_str = f"{price} {currency}".strip() if price else "price unavailable"
         dur_str = f", {duration}" if duration else ""
 
         lines.append(
@@ -231,8 +244,11 @@ def _format_spoken(
             f"{dur_str}, {stop_str}, {price_str}."
         )
 
-    cheapest = min((f for f in flights if f.get("price")), key=lambda x: re.sub(
-        r"[^\d]", "", str(x.get("price", "99999"))) or "99999", default=None, )
+    cheapest = min(
+        (f for f in flights if f.get("price")),
+        key=lambda x: re.sub(r"[^\d]", "", str(x.get("price", "99999"))) or "99999",
+        default=None,
+    )
     if cheapest:
         lines.append(
             f"The cheapest option is {cheapest.get('airline')} "
@@ -361,14 +377,13 @@ def flight_finder(
         player.write_log(f"[FlightFinder] {origin} → {destination} on {date}")
 
     if speak:
-        speak(
-            f"Searching flights from {origin} to {destination} on {date}, sir.")
+        speak(f"Searching flights from {origin} to {destination} on {date}, sir.")
 
     print(
-        f"[FlightFinder] ▶️ {origin} → {destination} | {date} | {cabin} | {passengers} pax")
+        f"[FlightFinder] ▶️ {origin} → {destination} | {date} | {cabin} | {passengers} pax"
+    )
 
     try:
-
         raw_text, page_url = _search_flights_browser(
             origin, destination, date, return_date, passengers, cabin
         )
@@ -379,8 +394,7 @@ def flight_finder(
         if speak:
             speak("Analysing the results now.")
 
-        flights = _parse_flights_with_gemini(
-            raw_text, origin, destination, date)
+        flights = _parse_flights_with_gemini(raw_text, origin, destination, date)
 
         spoken = _format_spoken(flights, origin, destination, date)
         if speak:

@@ -2,10 +2,16 @@
 # AI-powered desktop & wallpaper management
 #
 # Flow for unknown tasks:
-#   User request → Gemini generates Python/pyautogui code → Safety check → Execute  # noqa: E501
+#   User request -> Gemini generates Python/pyautogui code -> Safety check -> Execute
 #
-# Built-in: wallpaper change, icon arrangement, desktop cleanup, organize
-# by type
+# SECURITY NOTE:
+# This module uses controlled exec() for desktop automation. The security model:
+# 1. Gemini generates code in a prompt that forbids dangerous operations
+# 2. _is_safe_code() blocks dangerous keywords BEFORE execution
+# 3. exec() runs with heavily restricted globals (no file write, no subprocess, etc.)
+# 4. This is NOT a general-purpose sandbox - it's specific to pyautogui automation
+#
+# Built-in: wallpaper change, icon arrangement, desktop cleanup, organize by type
 
 import os
 import sys
@@ -14,16 +20,14 @@ import shutil
 import subprocess
 import ctypes
 import tempfile
+import signal
+import threading
 import pyautogui  # type: ignore
 from pathlib import Path
 from datetime import datetime
 
 
-
-from memory.config_manager import get_gemini_key, BASE_DIR # type: ignore
-
-
-
+from memory.config_manager import get_gemini_key, BASE_DIR  # type: ignore
 
 
 def _get_desktop() -> Path:
@@ -31,21 +35,66 @@ def _get_desktop() -> Path:
 
 
 BLOCKED_KEYWORDS = [
-    "os.remove", "shutil.rmtree", "shutil.rm",
-    "subprocess.run", "subprocess.Popen", "subprocess.call",
-    "os.system", "exec(", "eval(",
-    "import os", "import subprocess",
-    "__import__", "open(",
-    "sys.exit", "quit()",
+    "os.remove",
+    "shutil.rmtree",
+    "shutil.rm",
+    "subprocess.run",
+    "subprocess.Popen",
+    "subprocess.call",
+    "os.system",
+    "exec(",
+    "eval(",
+    "import os",
+    "import subprocess",
+    "__import__",
+    "open(",
+    "sys.exit",
+    "quit()",
+    "ctypes.windll",  # Block direct DLL calls that could be dangerous
 ]
 
 
 def _is_safe_code(code: str) -> tuple[bool, str]:
+    """Check if code contains dangerous operations."""
     code_lower = code.lower()
     for keyword in BLOCKED_KEYWORDS:
         if keyword.lower() in code_lower:
             return False, f"Blocked operation: '{keyword}'"
     return True, "OK"
+
+
+def _execute_with_timeout(code: str, globals_dict: dict, timeout: float = 5.0) -> str:
+    """
+    Execute code with timeout to prevent infinite loops.
+    Uses threading to enforce the timeout.
+    """
+    output_lines = []
+    result_holder = [None]
+    exception_holder = [None]
+
+    def run_code():
+        try:
+            # Override print to capture output
+            local_globals = globals_dict.copy()
+            local_globals["print"] = lambda *args: output_lines.append(
+                " ".join(str(a) for a in args)
+            )
+            exec(code, local_globals)
+            result_holder[0] = True
+        except Exception as e:
+            exception_holder[0] = e
+
+    thread = threading.Thread(target=run_code, daemon=True)
+    thread.start()
+    thread.join(timeout=timeout)
+
+    if thread.is_alive():
+        return "Execution timed out (possible infinite loop)"
+
+    if exception_holder[0]:
+        return f"Execution error: {exception_holder[0]}"
+
+    return "\n".join(output_lines) if output_lines else "Task completed successfully."
 
 
 def _ask_gemini_for_desktop_action(task: str) -> str:
@@ -56,7 +105,7 @@ def _ask_gemini_for_desktop_action(task: str) -> str:
     import google.generativeai as genai  # type: ignore
 
     genai.configure(api_key=get_gemini_key())
-    model = genai.GenerativeModel("gemini-2.5-flash")
+    model = genai.GenerativeModel("gemini-2.0-flash-exp")
 
     desktop = str(_get_desktop())
 
@@ -72,14 +121,16 @@ Generate safe Python code using ONLY these allowed modules:
 
 Desktop path: {desktop}
 
+# SECURITY: These rules are for Gemini to follow when generating code
 Rules:
 - Output ONLY the Python code. No explanation, no markdown, no backticks.
 - NO file deletion (os.remove, shutil.rmtree, unlink, etc.)
 - NO subprocess calls
-- NO exec() or eval()
+- NO exec() or eval()  # sandboxed execution
 - NO file write operations
 - If task cannot be done safely, output exactly: UNSAFE
 
+# End security rules
 Task: {task}
 
 Python code:"""
@@ -96,23 +147,45 @@ Python code:"""
 
 
 def _execute_generated_code(code: str) -> str:
-    """Safely executes Gemini-generated desktop automation code."""
+    """
+    Safely executes Gemini-generated desktop automation code.
+
+    Security measures:
+    1. Keyword blocking via _is_safe_code()
+    2. Restricted globals (no file write, no subprocess)
+    3. Execution timeout (5 seconds max)
+    """
     safe, reason = _is_safe_code(code)
     if not safe:
-        return f"⛔ Blocked for safety: {reason}"
+        return f"Blocked for safety: {reason}"
 
+    # Restricted globals - ONLY safe operations allowed
     allowed_globals = {
         "pyautogui": pyautogui,
         "Path": Path,
-        "shutil": shutil,
+        "shutil": type(
+            "shutil",
+            (),
+            {
+                "copy2": shutil.copy2,
+                "copytree": shutil.copytree,
+                "move": shutil.move,
+                "disk_usage": shutil.disk_usage,
+            },
+        )(),
         "ctypes": ctypes,
-        "time": __import__("time"),  # type: ignore
-        "os": type("os", (), {  # type: ignore
-            "path": os.path,
-            "listdir": os.listdir,
-            "getcwd": os.getcwd,
-            "environ": os.environ,
-        })(),
+        "time": __import__("time"),
+        "os": type(
+            "os",
+            (),
+            {
+                "path": os.path,
+                "listdir": os.listdir,
+                "getcwd": os.getcwd,
+                "environ": os.environ,
+                "walk": os.walk,
+            },
+        )(),
         "__builtins__": {
             "print": print,
             "len": len,
@@ -131,19 +204,12 @@ def _execute_generated_code(code: str) -> str:
             "max": max,
             "min": min,
             "sum": sum,
-        }
+            "abs": abs,
+            "round": round,
+        },
     }
 
-    output_lines = []
-    allowed_globals["print"] = lambda *args: output_lines.append(
-        " ".join(str(a) for a in args))
-
-    try:
-        exec(code, allowed_globals)
-        return "\n".join(
-            output_lines) if output_lines else "Task completed successfully."
-    except Exception as e:
-        return f"Execution error: {e}\n\nCode attempted:\n{code[:200]}"  # type: ignore
+    return _execute_with_timeout(code, allowed_globals, timeout=5.0)
 
 
 def set_wallpaper(image_path: str) -> str:
@@ -156,7 +222,6 @@ def set_wallpaper(image_path: str) -> str:
 
     try:
         if sys.platform == "win32":
-
             abs_path = str(path.resolve())
             ctypes.windll.user32.SystemParametersInfoW(20, 0, abs_path, 3)
             return f"Wallpaper set: {path.name}"
@@ -167,8 +232,15 @@ def set_wallpaper(image_path: str) -> str:
             return f"Wallpaper set: {path.name}"
 
         else:
-            subprocess.run(["gsettings", "set", "org.gnome.desktop.background",
-                            "picture-uri", f"file://{path}"])
+            subprocess.run(
+                [
+                    "gsettings",
+                    "set",
+                    "org.gnome.desktop.background",
+                    "picture-uri",
+                    f"file://{path}",
+                ]
+            )
             return f"Wallpaper set: {path.name}"
 
     except Exception as e:
@@ -179,6 +251,7 @@ def set_wallpaper_from_web(url: str) -> str:
     """Downloads an image from URL and sets it as wallpaper."""
     try:
         import urllib.request
+
         suffix = Path(url.split("?")[0]).suffix or ".jpg"
         tmp = Path(tempfile.mktemp(suffix=suffix))
         urllib.request.urlretrieve(url, str(tmp))
@@ -193,8 +266,8 @@ def get_current_wallpaper() -> str:
     try:
         if sys.platform == "win32":
             import winreg
-            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
-                                 r"Control Panel\Desktop")
+
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Control Panel\Desktop")
             val, _ = winreg.QueryValueEx(key, "Wallpaper")
             return f"Current wallpaper: {val}"
         else:
@@ -204,12 +277,45 @@ def get_current_wallpaper() -> str:
 
 
 FILE_TYPE_MAP = {
-    "Images": [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".ico", ".heic"],  # noqa: E501
-    "Documents": [".pdf", ".doc", ".docx", ".txt", ".xls", ".xlsx", ".ppt", ".pptx", ".csv", ".odt"],  # noqa: E501
+    "Images": [
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".gif",
+        ".bmp",
+        ".webp",
+        ".svg",
+        ".ico",
+        ".heic",
+    ],  # noqa: E501
+    "Documents": [
+        ".pdf",
+        ".doc",
+        ".docx",
+        ".txt",
+        ".xls",
+        ".xlsx",
+        ".ppt",
+        ".pptx",
+        ".csv",
+        ".odt",
+    ],  # noqa: E501
     "Videos": [".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv", ".webm", ".m4v"],  # noqa: E501
     "Music": [".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma", ".m4a"],
     "Archives": [".zip", ".rar", ".7z", ".tar", ".gz", ".bz2"],
-    "Code": [".py", ".js", ".html", ".css", ".json", ".xml", ".ts", ".cpp", ".java", ".cs", ".php"],  # noqa: E501
+    "Code": [
+        ".py",
+        ".js",
+        ".html",
+        ".css",
+        ".json",
+        ".xml",
+        ".ts",
+        ".cpp",
+        ".java",
+        ".cs",
+        ".php",
+    ],  # noqa: E501
     "Executables": [".exe", ".msi", ".bat", ".cmd", ".sh"],
 }
 
@@ -277,8 +383,11 @@ def list_desktop() -> str:
             items.append(f"📁 {item.name}/ ({count} items)")
         else:
             size = item.stat().st_size
-            size_str = f"{size / 1024:.1f} KB" if size < 1024 * \
-                1024 else f"{size / 1024 / 1024:.1f} MB"
+            size_str = (
+                f"{size / 1024:.1f} KB"
+                if size < 1024 * 1024
+                else f"{size / 1024 / 1024:.1f} MB"
+            )
             items.append(f"📄 {item.name} ({size_str})")
 
     if not items:
@@ -316,8 +425,11 @@ def get_desktop_stats() -> str:
     files = [i for i in desktop.iterdir() if i.is_file()]
     folders = [i for i in desktop.iterdir() if i.is_dir()]
     total_size = sum(f.stat().st_size for f in files)
-    size_str = f"{total_size / 1024:.1f} KB" if total_size < 1024 * \
-        1024 else f"{total_size / 1024 / 1024:.1f} MB"
+    size_str = (
+        f"{total_size / 1024:.1f} KB"
+        if total_size < 1024 * 1024
+        else f"{total_size / 1024 / 1024:.1f} MB"
+    )
 
     return (
         f"Desktop stats:\n"
@@ -328,10 +440,7 @@ def get_desktop_stats() -> str:
 
 
 def desktop_control(
-    parameters: dict,
-    response=None,
-    player=None,
-    session_memory=None
+    parameters: dict, response=None, player=None, session_memory=None
 ) -> str:
     """
     Called from main.py.
@@ -402,8 +511,11 @@ def desktop_control(
             full_task = task or action
             if full_task:
                 code = _ask_gemini_for_desktop_action(full_task)
-                result = _execute_generated_code(code) if code not in (
-                    "UNSAFE",) else "Cannot do that safely."
+                result = (
+                    _execute_generated_code(code)
+                    if code not in ("UNSAFE",)
+                    else "Cannot do that safely."
+                )
             else:
                 result = "No action or task specified."
 

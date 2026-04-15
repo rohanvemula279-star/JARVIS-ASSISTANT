@@ -6,16 +6,16 @@ from pathlib import Path
 from memory.config_manager import get_gemini_key  # type: ignore
 
 
-PLANNER_PROMPT = """You are the planning module of MARK XXV, a personal AI assistant.  # noqa: E501
-Your job: break any user goal into a sequence of steps using ONLY the tools listed below.  # noqa: E501
+PLANNER_PROMPT = """You are the planning module of MARK XXV, a personal AI assistant.  
+Your job: break any user goal into a sequence of steps using ONLY the tools listed below.  
 
 ABSOLUTE RULES:
 - NEVER use generated_code or write Python scripts. It does not exist.
-- NEVER reference previous step results in parameters. Every step is independent.  # noqa: E501
+- NEVER reference previous step results in parameters. Every step is independent.  
 - Use web_search for ANY information retrieval, research, or current data.
 - Use file_controller to save content to disk.
 - Use cmd_control to open files or run system commands.
-- Max 5 steps. Use the minimum steps needed.
+- Max 4 steps. Use the minimum steps needed.
 
 AVAILABLE TOOLS AND THEIR PARAMETERS:
 
@@ -24,122 +24,71 @@ open_app
 
 web_search
   query: string (required) — write a clear, focused search query
-  mode: "search" or "compare" (optional, default: search)
-  items: list of strings (optional, for compare mode)
-  aspect: string (optional, for compare mode)
 
 browser_task
-  request: string (required) — The user's natural language request for a web task
-  user_data: dict (optional) — User info for form filling: {name, email, phone, address, ...}
+  request: string (required)
+  user_data: dict (optional)
 
 file_controller
-  action: "write" | "create_file" | "read" | "list" | "delete" | "move" | "copy" | "find" | "disk_usage" (required)  # noqa: E501
-  path: string — use "desktop" for Desktop folder
-  name: string — filename
-  content: string — file content (for write/create_file)
+  action: "write" | "create_file" | "read" | "list" | "delete" | "find" (required)
+  path: string
+  name: string
+  content: string
 
 cmd_control
-  task: string (required) — natural language description of what to do
-  visible: boolean (optional)
+  task: string (required)
 
 computer_settings
-  action: string (required)
-  description: string — natural language description
-  value: string (optional)
+  action: string
+  description: string
 
 computer_control
-  action: "type" | "click" | "hotkey" | "press" | "scroll" | "screenshot" | "screen_find" | "screen_click" (required)  # noqa: E501
-  text: string (for type)
-  x, y: int (for click)
-  keys: string (for hotkey, e.g. "ctrl+c")
-  key: string (for press)
-  direction: "up" | "down" (for scroll)
-  description: string (for screen_find/screen_click)
+  action: "type" | "click" | "hotkey" | "press" | "scroll" | "screenshot"
+  text: string
 
 screen_process
-  text: string (required) — what to analyze or ask about the screen
-  angle: "screen" | "camera" (optional)
+  text: string (required)
 
 send_message
-  receiver: string (required)
-  message_text: string (required)
-  platform: string (required)
+  receiver: string
+  message_text: string
+  platform: string
 
 reminder
-  date: string YYYY-MM-DD (required)
-  time: string HH:MM (required)
-  message: string (required)
+  date: string
+  time: string
+  message: string
 
 desktop_control
-  action: "wallpaper" | "organize" | "clean" | "list" | "task" (required)
-  path: string (optional)
-  task: string (optional)
+  action: "wallpaper" | "organize" | "clean"
 
 youtube_video
-  action: "play" | "summarize" | "trending" (required)
-  query: string (for play)
+  action: "play" | "summarize"
 
 weather_report
-  city: string (required)
+  city: string
 
 flight_finder
-  origin: string (required)
-  destination: string (required)
-  date: string (required)
+  origin: string
+  destination: string
+  date: string
 
 code_helper
-  action: "write" | "edit" | "run" | "explain" (required)
-  description: string (required)
-  language: string (optional)
-  output_path: string (optional)
-  file_path: string (optional)
+  action: "write" | "edit" | "run"
+  description: string
 
 dev_agent
-  description: string (required)
-  language: string (optional)
+  description: string
 
-EXAMPLES:
+study_mode
+  action: "activate" | "deactivate"
 
-Goal: "makine mühendisliği hakkında araştırma yap ve not defterine kaydet"
-Steps:
-  1. web_search | query: "mechanical engineering overview definition history"
-  2. web_search | query: "mechanical engineering applications and future trends"  # noqa: E501
-  3. file_controller | action: write, path: desktop, name: makine_muhendisligi.txt, content: "MAKINE MUHENDISLIGI ARASTIRMASI\n\nBu dosya web arastirmasi sonuclari ile doldurulacak."  # noqa: E501
-  4. cmd_control | task: "open makine_muhendisligi.txt on desktop with notepad"
+dashboard
+  view: "summary" | "tasks" | "calendar"
 
-Goal: "Bitcoin fiyatı nedir"
-Steps:
-  1. web_search | query: "Bitcoin price today USD"
-
-Goal: "Masaüstündeki dosyaları listele ve en büyük 5 dosyayı bul"
-Steps:
-  1. file_controller | action: list, path: desktop
-  2. file_controller | action: largest, path: desktop, count: 5
-
-Goal: "WhatsApp'tan Ahmet'e yarın toplantı var de"
-Steps:
-  1. send_message | receiver: Ahmet, message_text: "Yarın toplantı var", platform: WhatsApp  # noqa: E501
-
-Goal: "Saati aç ve 30 dakika sonraya hatırlatıcı kur"
-Steps:
-  1. reminder | date: [today], time: [now+30min], message: "Hatırlatıcı"
-
-OUTPUT — return ONLY valid JSON, no markdown, no explanation, no code blocks:
-{
-  "goal": "...",
-  "steps": [
-    {
-      "step": 1,
-      "tool": "tool_name",
-      "description": "what this step does",
-      "parameters": {},
-      "critical": true
-    }
-  ]
-}
+OUTPUT — return ONLY valid JSON:
+{"goal":"...","steps":[{"step":1,"tool":"tool_name","description":"...","parameters":{}}]}
 """
-
-
 
 
 def create_plan(goal: str, context: str = "") -> dict:
@@ -147,13 +96,11 @@ def create_plan(goal: str, context: str = "") -> dict:
 
     genai.configure(api_key=get_gemini_key())
     model = genai.GenerativeModel(
-        model_name="gemini-2.5-flash-lite",
-        system_instruction=PLANNER_PROMPT
+        model_name="gemini-2.0-flash-exp",
+        generation_config={"temperature": 0.2, "max_output_tokens": 512},
     )
 
     user_input = f"Goal: {goal}"
-    if context:
-        user_input += f"\n\nContext: {context}"
 
     try:
         response = model.generate_content(user_input)
@@ -169,7 +116,9 @@ def create_plan(goal: str, context: str = "") -> dict:
             if step.get("tool") in ("generated_code",):
                 print(
                     f"[Planner] ⚠️ generated_code detected in step {
-                        step.get('step')} — replacing with web_search")
+                        step.get('step')
+                    } — replacing with web_search"
+                )
                 desc = step.get("description", goal)
                 step["tool"] = "web_search"
                 step["parameters"] = {"query": desc[:200]}
@@ -198,38 +147,22 @@ def _fallback_plan(goal: str) -> dict:
                 "tool": "web_search",
                 "description": f"Search for: {goal}",
                 "parameters": {"query": goal},
-                "critical": True
+                "critical": True,
             }
-        ]
+        ],
     }
 
 
-def replan(
-        goal: str,
-        completed_steps: list,
-        failed_step: dict,
-        error: str) -> dict:
+def replan(goal: str, completed_steps: list, failed_step: dict, error: str) -> dict:
     import google.generativeai as genai  # type: ignore
 
     genai.configure(api_key=get_gemini_key())
     model = genai.GenerativeModel(
-        model_name="gemini-2.5-flash",
-        system_instruction=PLANNER_PROMPT
+        model_name="gemini-2.0-flash-exp",
+        generation_config={"temperature": 0.2, "max_output_tokens": 512},
     )
 
-    completed_summary = "\n".join(
-        f"  - Step {s['step']} ({s['tool']}): DONE" for s in completed_steps
-    )
-
-    prompt = f"""Goal: {goal}
-
-Already completed:
-{completed_summary if completed_summary else '  (none)'}
-
-Failed step: [{failed_step.get('tool')}] {failed_step.get('description')}
-Error: {error}
-
-Create a REVISED plan for the remaining work only. Do not repeat completed steps."""  # noqa: E501
+    prompt = f"Goal: {goal}\nFailed: {failed_step.get('description')}\nFix and retry."
 
     try:
         response = model.generate_content(prompt)
@@ -241,10 +174,7 @@ Create a REVISED plan for the remaining work only. Do not repeat completed steps
         for step in plan.get("steps", []):
             if step.get("tool") == "generated_code":
                 step["tool"] = "web_search"
-                step["parameters"] = {
-                    "query": step.get(
-                        "description", goal)[
-                        :200]}
+                step["parameters"] = {"query": step.get("description", goal)[:200]}
 
         print(f"[Planner] 🔄 Revised plan: {len(plan['steps'])} steps")
         return plan

@@ -5,8 +5,7 @@ from pathlib import Path
 from enum import Enum
 
 
-
-from memory.config_manager import get_gemini_key, BASE_DIR # type: ignore
+from memory.config_manager import get_gemini_key, BASE_DIR  # type: ignore
 
 
 class ErrorDecision(Enum):
@@ -43,14 +42,8 @@ Return ONLY valid JSON:
 """
 
 
-
-
-
 def analyze_error(
-    step: dict,
-    error: str,
-    attempt: int = 1,
-    max_attempts: int = 2
+    step: dict, error: str, attempt: int = 1, max_attempts: int = 2
 ) -> dict:
     """
     Analyzes a failed step and returns a recovery decision.
@@ -76,26 +69,27 @@ def analyze_error(
     if attempt >= max_attempts:
         print(
             f"[ErrorHandler] ⚠️ Max attempts reached for step {
-                step.get('step')} — forcing replan")
+                step.get('step')
+            } — forcing replan"
+        )
         return {
             "decision": ErrorDecision.REPLAN,
             "reason": f"Failed {attempt} times: {error[:100]}",  # type: ignore
             "fix_suggestion": "Try a completely different approach or tool",
             "max_retries": 0,
-            "user_message": "Trying a different approach, sir."
+            "user_message": "Trying a different approach, sir.",
         }
 
     genai.configure(api_key=get_gemini_key())
     model = genai.GenerativeModel(
-        model_name="gemini-2.5-flash-lite",
-        system_instruction=ERROR_ANALYST_PROMPT
+        model_name="gemini-2.5-flash-lite", system_instruction=ERROR_ANALYST_PROMPT
     )
 
     prompt = f"""Failed step:
-Tool: {step.get('tool')}
-Description: {step.get('description')}
-Parameters: {json.dumps(step.get('parameters', {}), indent=2)}
-Critical: {step.get('critical', False)}
+Tool: {step.get("tool")}
+Description: {step.get("description")}
+Parameters: {json.dumps(step.get("parameters", {}), indent=2)}
+Critical: {step.get("critical", False)}
 
 Error:
 {error[:500]}  # type: ignore
@@ -115,19 +109,19 @@ Attempt number: {attempt}"""
             "replan": ErrorDecision.REPLAN,
             "abort": ErrorDecision.ABORT,
         }
-        result["decision"] = decision_map.get(
-            decision_str, ErrorDecision.REPLAN)
+        result["decision"] = decision_map.get(decision_str, ErrorDecision.REPLAN)
 
         if step.get("critical") and result["decision"] == ErrorDecision.SKIP:
             result["decision"] = ErrorDecision.REPLAN
-            result["user_message"] = "This step is critical — finding alternative approach, sir."  # noqa: E501
+            result["user_message"] = (
+                "This step is critical — finding alternative approach, sir."  # noqa: E501
+            )
 
         print(
-            f"[ErrorHandler] Decision: {
-                result['decision'].value} — {
-                result.get(
-                    'reason',
-                    '')}")
+            f"[ErrorHandler] Decision: {result['decision'].value} — {
+                result.get('reason', '')
+            }"
+        )
         return result
 
     except Exception as e:
@@ -137,7 +131,7 @@ Attempt number: {attempt}"""
             "reason": str(e),
             "fix_suggestion": "Try alternative approach",
             "max_retries": 1,
-            "user_message": "Encountered an issue, adjusting approach, sir."
+            "user_message": "Encountered an issue, adjusting approach, sir.",
         }
 
 
@@ -151,14 +145,14 @@ def generate_fix(step: dict, error: str, fix_suggestion: str) -> dict:
     import google.generativeai as genai  # type: ignore
 
     genai.configure(api_key=get_gemini_key())
-    model = genai.GenerativeModel(model_name="gemini-2.0-flash")
+    model = genai.GenerativeModel(model_name="gemini-2.5-flash")
 
     prompt = f"""A task step failed. Generate a replacement step.
 
 Original step:
-Tool: {step.get('tool')}
-Description: {step.get('description')}
-Parameters: {json.dumps(step.get('parameters', {}), indent=2)}
+Tool: {step.get("tool")}
+Description: {step.get("description")}
+Parameters: {json.dumps(step.get("parameters", {}), indent=2)}
 
 Error: {error[:300]}  # type: ignore
 Fix suggestion: {fix_suggestion}
@@ -179,10 +173,10 @@ Return ONLY the Python code, no explanation."""
                 "action": "run",
                 "description": fix_suggestion,
                 "code": code,
-                "language": "python"
+                "language": "python",
             },
             "depends_on": step.get("depends_on", []),
-            "critical": step.get("critical", False)
+            "critical": step.get("critical", False),
         }
 
     except Exception as e:
@@ -193,5 +187,5 @@ Return ONLY the Python code, no explanation."""
             "description": f"Fallback for: {step.get('description')}",
             "parameters": {"description": step.get("description", "")},
             "depends_on": step.get("depends_on", []),
-            "critical": step.get("critical", False)
+            "critical": step.get("critical", False),
         }

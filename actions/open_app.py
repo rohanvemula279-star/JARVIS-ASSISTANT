@@ -10,6 +10,7 @@ import webbrowser
 
 try:
     import psutil  # type: ignore
+
     _PSUTIL = True
 except ImportError:
     _PSUTIL = False
@@ -20,32 +21,76 @@ except ImportError:
 # ═══════════════════════════════════════════════════════════════════════
 _APP_ALIASES = {
     "whatsapp": {"Windows": "WhatsApp", "Darwin": "WhatsApp", "Linux": "whatsapp"},
-    "chrome": {"Windows": "chrome", "Darwin": "Google Chrome", "Linux": "google-chrome"},
-    "google chrome": {"Windows": "chrome", "Darwin": "Google Chrome", "Linux": "google-chrome"},
+    "chrome": {
+        "Windows": "chrome",
+        "Darwin": "Google Chrome",
+        "Linux": "google-chrome",
+    },
+    "google chrome": {
+        "Windows": "chrome",
+        "Darwin": "Google Chrome",
+        "Linux": "google-chrome",
+    },
     "firefox": {"Windows": "firefox", "Darwin": "Firefox", "Linux": "firefox"},
     "spotify": {"Windows": "Spotify", "Darwin": "Spotify", "Linux": "spotify"},
     "vscode": {"Windows": "code", "Darwin": "Visual Studio Code", "Linux": "code"},
-    "visual studio code": {"Windows": "code", "Darwin": "Visual Studio Code", "Linux": "code"},
+    "visual studio code": {
+        "Windows": "code",
+        "Darwin": "Visual Studio Code",
+        "Linux": "code",
+    },
     "discord": {"Windows": "Discord", "Darwin": "Discord", "Linux": "discord"},
     "telegram": {"Windows": "Telegram", "Darwin": "Telegram", "Linux": "telegram"},
     "notepad": {"Windows": "notepad.exe", "Darwin": "TextEdit", "Linux": "gedit"},
-    "calculator": {"Windows": "calc.exe", "Darwin": "Calculator", "Linux": "gnome-calculator"},
+    "calculator": {
+        "Windows": "calc.exe",
+        "Darwin": "Calculator",
+        "Linux": "gnome-calculator",
+    },
     "terminal": {"Windows": "cmd.exe", "Darwin": "Terminal", "Linux": "gnome-terminal"},
     "cmd": {"Windows": "cmd.exe", "Darwin": "Terminal", "Linux": "bash"},
     "explorer": {"Windows": "explorer.exe", "Darwin": "Finder", "Linux": "nautilus"},
-    "file explorer": {"Windows": "explorer.exe", "Darwin": "Finder", "Linux": "nautilus"},
+    "file explorer": {
+        "Windows": "explorer.exe",
+        "Darwin": "Finder",
+        "Linux": "nautilus",
+    },
     "paint": {"Windows": "mspaint.exe", "Darwin": "Preview", "Linux": "gimp"},
-    "word": {"Windows": "winword", "Darwin": "Microsoft Word", "Linux": "libreoffice --writer"},
-    "excel": {"Windows": "excel", "Darwin": "Microsoft Excel", "Linux": "libreoffice --calc"},
-    "powerpoint": {"Windows": "powerpnt", "Darwin": "Microsoft PowerPoint", "Linux": "libreoffice --impress"},
+    "word": {
+        "Windows": "winword",
+        "Darwin": "Microsoft Word",
+        "Linux": "libreoffice --writer",
+    },
+    "excel": {
+        "Windows": "excel",
+        "Darwin": "Microsoft Excel",
+        "Linux": "libreoffice --calc",
+    },
+    "powerpoint": {
+        "Windows": "powerpnt",
+        "Darwin": "Microsoft PowerPoint",
+        "Linux": "libreoffice --impress",
+    },
     "vlc": {"Windows": "vlc", "Darwin": "VLC", "Linux": "vlc"},
     "zoom": {"Windows": "Zoom", "Darwin": "zoom.us", "Linux": "zoom"},
     "slack": {"Windows": "Slack", "Darwin": "Slack", "Linux": "slack"},
     "steam": {"Windows": "steam", "Darwin": "Steam", "Linux": "steam"},
-    "task manager": {"Windows": "taskmgr.exe", "Darwin": "Activity Monitor", "Linux": "gnome-system-monitor"},
-    "settings": {"Windows": "ms-settings:", "Darwin": "System Preferences", "Linux": "gnome-control-center"},
+    "task manager": {
+        "Windows": "taskmgr.exe",
+        "Darwin": "Activity Monitor",
+        "Linux": "gnome-system-monitor",
+    },
+    "settings": {
+        "Windows": "ms-settings:",
+        "Darwin": "System Preferences",
+        "Linux": "gnome-control-center",
+    },
     "powershell": {"Windows": "powershell.exe", "Darwin": "Terminal", "Linux": "bash"},
-    "edge": {"Windows": "msedge", "Darwin": "Microsoft Edge", "Linux": "microsoft-edge"},
+    "edge": {
+        "Windows": "msedge",
+        "Darwin": "Microsoft Edge",
+        "Linux": "microsoft-edge",
+    },
     "brave": {"Windows": "brave", "Darwin": "Brave Browser", "Linux": "brave-browser"},
     "obsidian": {"Windows": "Obsidian", "Darwin": "Obsidian", "Linux": "obsidian"},
     "notion": {"Windows": "Notion", "Darwin": "Notion", "Linux": "notion"},
@@ -78,7 +123,6 @@ _WEB_URLS = {
     "sony liv": "https://www.sonyliv.com",
     "zee5": "https://www.zee5.com",
     "voot": "https://www.voot.com",
-
     # ── Social Media ──
     "facebook": "https://www.facebook.com",
     "instagram": "https://www.instagram.com",
@@ -92,7 +136,6 @@ _WEB_URLS = {
     "tumblr": "https://www.tumblr.com",
     "threads": "https://www.threads.net",
     "quora": "https://www.quora.com",
-
     # ── Messaging (web versions) ──
     "whatsapp": "https://web.whatsapp.com",
     "telegram": "https://web.telegram.org",
@@ -101,7 +144,6 @@ _WEB_URLS = {
     "skype": "https://web.skype.com",
     "messenger": "https://www.messenger.com",
     "signal": "https://signal.org",
-
     # ── Music ──
     "spotify": "https://open.spotify.com",
     "apple music": "https://music.apple.com",
@@ -109,7 +151,6 @@ _WEB_URLS = {
     "gaana": "https://gaana.com",
     "wynk": "https://wynk.in",
     "jiosaavn": "https://www.jiosaavn.com",
-
     # ── Google Services ──
     "google": "https://www.google.com",
     "gmail": "https://mail.google.com",
@@ -126,7 +167,6 @@ _WEB_URLS = {
     "google calendar": "https://calendar.google.com",
     "google keep": "https://keep.google.com",
     "google earth": "https://earth.google.com",
-
     # ── Microsoft Services ──
     "outlook": "https://outlook.live.com",
     "onedrive": "https://onedrive.live.com",
@@ -135,7 +175,6 @@ _WEB_URLS = {
     "office": "https://www.office.com",
     "bing": "https://www.bing.com",
     "copilot": "https://copilot.microsoft.com",
-
     # ── Developer / Productivity ──
     "github": "https://github.com",
     "gitlab": "https://gitlab.com",
@@ -160,7 +199,6 @@ _WEB_URLS = {
     "firebase": "https://console.firebase.google.com",
     "heroku": "https://www.heroku.com",
     "aws": "https://aws.amazon.com",
-
     # ── Shopping ──
     "amazon": "https://www.amazon.com",
     "flipkart": "https://www.flipkart.com",
@@ -168,7 +206,6 @@ _WEB_URLS = {
     "myntra": "https://www.myntra.com",
     "meesho": "https://www.meesho.com",
     "ajio": "https://www.ajio.com",
-
     # ── Education ──
     "coursera": "https://www.coursera.org",
     "udemy": "https://www.udemy.com",
@@ -176,7 +213,6 @@ _WEB_URLS = {
     "w3schools": "https://www.w3schools.com",
     "geeksforgeeks": "https://www.geeksforgeeks.org",
     "leetcode": "https://leetcode.com",
-
     # ── Misc ──
     "zoom": "https://zoom.us/join",
     "wikipedia": "https://www.wikipedia.org",
@@ -190,6 +226,7 @@ _WEB_URLS = {
 # ═══════════════════════════════════════════════════════════════════════
 #  3. HELPER FUNCTIONS
 # ═══════════════════════════════════════════════════════════════════════
+
 
 def _normalize(raw: str) -> str:
     """Map user input → OS-specific binary / app name."""
@@ -254,6 +291,8 @@ def _is_running(app_name: str) -> bool:
     """Check if app process is running (requires psutil)."""
     if not _PSUTIL:
         return False
+    import psutil
+
     app_lower = app_name.lower().replace(" ", "").replace(".exe", "")
     try:
         for proc in psutil.process_iter(["name"]):
@@ -286,12 +325,17 @@ def _open_in_browser(url: str) -> bool:
 #  4. OS-SPECIFIC DESKTOP LAUNCHERS
 # ═══════════════════════════════════════════════════════════════════════
 
+
 def _launch_windows(app_name: str) -> bool:
     """Try every Windows-native method to open a desktop app."""
 
     # ── Method 1: Direct binary from PATH ──
-    for candidate in [app_name, app_name + ".exe",
-                      app_name.lower(), app_name.lower() + ".exe"]:
+    for candidate in [
+        app_name,
+        app_name + ".exe",
+        app_name.lower(),
+        app_name.lower() + ".exe",
+    ]:
         binary = shutil.which(candidate)
         if binary:
             try:
@@ -299,6 +343,9 @@ def _launch_windows(app_name: str) -> bool:
                     [binary],
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
+                    creationflags=subprocess.CREATE_NEW_CONSOLE
+                    if "powershell" in candidate.lower() or "cmd" in candidate.lower()
+                    else 0,
                 )
                 time.sleep(1.5)
                 return True
@@ -313,9 +360,23 @@ def _launch_windows(app_name: str) -> bool:
     except Exception:
         pass
 
-    # ── Method 3: Start Menu search + psutil verification ──
+    # ── Method 3: Try shell execute for registered applications ──
+    try:
+        result = subprocess.run(
+            ["powershell", "-Command", f'Start-Process "{app_name}"'],
+            capture_output=True,
+            timeout=10,
+        )
+        if result.returncode == 0:
+            time.sleep(1.5)
+            return True
+    except Exception as e:
+        print(f"[open_app] ⚠️ Shell execute failed: {e}")
+
+    # ── Method 4: Start Menu search + psutil verification ──
     try:
         import pyautogui  # type: ignore
+
         pyautogui.PAUSE = 0.1
         pyautogui.press("win")
         time.sleep(0.6)
@@ -325,16 +386,13 @@ def _launch_windows(app_name: str) -> bool:
         time.sleep(3.0)
 
         if _PSUTIL:
-            # Verify app actually appeared as a process
             if _is_running(app_name):
                 return True
-            # Process NOT found → Start Menu probably opened a web search
             print(
-                f"[open_app] ⚠️ '{app_name}' not detected in processes after Start Menu search")
+                f"[open_app] ⚠️ '{app_name}' not detected in processes after Start Menu search"
+            )
             return False
 
-        # Without psutil we can't verify — assume success for known desktop
-        # apps
         return True
 
     except Exception as e:
@@ -362,6 +420,7 @@ def _launch_macos(app_name: str) -> bool:
     # ── Method 2: Spotlight via pyautogui ──
     try:
         import pyautogui  # type: ignore
+
         pyautogui.hotkey("command", "space")
         time.sleep(0.6)
         pyautogui.write(app_name, interval=0.05)
@@ -431,6 +490,7 @@ _OS_LAUNCHERS = {
 #  5. MAIN ENTRY POINT
 # ═══════════════════════════════════════════════════════════════════════
 
+
 def open_app(
     parameters=None,
     response=None,
@@ -476,13 +536,15 @@ def open_app(
     # ──────────────────────────────────────────────────────────────
     if is_desktop:
         try:
+            print(f"[open_app] 🔧 Attempting desktop launch: {normalized}")
             success = launcher(normalized)
 
-            # Retry with raw name if normalized failed
-            if not success and normalized != app_name:
+            if not success:
+                print(f"[open_app] ⚠️ First attempt failed, retrying with: {app_name}")
                 success = launcher(app_name)
 
             if success:
+                print(f"[open_app] ✅ Desktop launch succeeded")
                 return f"Opened {app_name} successfully, sir."
 
         except Exception as e:
@@ -498,8 +560,7 @@ def open_app(
                 )
 
         return (
-            f"I couldn't open {app_name}, sir. "
-            f"It may not be installed on this system."
+            f"I couldn't open {app_name}, sir. It may not be installed on this system."
         )
 
     # ──────────────────────────────────────────────────────────────

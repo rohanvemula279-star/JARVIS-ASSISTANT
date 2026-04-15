@@ -15,9 +15,7 @@ from agent.error_handler import analyze_error, generate_fix, ErrorDecision  # ty
 from memory.config_manager import get_gemini_key  # type: ignore
 
 
-def _run_generated_code(
-        description: str,
-        speak: Callable | None = None) -> str:
+def _run_generated_code(description: str, speak: Callable | None = None) -> str:
     import google.generativeai as genai  # type: ignore
 
     if speak:
@@ -31,28 +29,20 @@ def _run_generated_code(
     if not desktop.exists():
         try:
             import winreg  # type: ignore
+
             key = winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,  # type: ignore
-                r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders")
+                r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders",
+            )
             desktop = Path(winreg.QueryValueEx(key, "Desktop")[0])  # type: ignore
         except Exception:
             pass
 
     genai.configure(api_key=get_gemini_key())
     model = genai.GenerativeModel(
-        model_name="gemini-2.5-flash",
-        system_instruction=(
-            "You are an expert Python developer. "
-            "Write clean, complete, working Python code. "
-            "Use standard library + common packages. "
-            "Install missing packages with subprocess + pip if needed. "
-            "Return ONLY the Python code. No explanation, no markdown, no backticks.\n\n"
-            f"SYSTEM PATHS:\n"
-            f"  Desktop   = r'{desktop}'\n"
-            f"  Downloads = r'{downloads}'\n"
-            f"  Documents = r'{documents}'\n"
-            f"  Home      = r'{home}'\n"
-        )
+        model_name="gemini-2.0-flash-exp",
+        generation_config={"temperature": 0.3, "max_output_tokens": 2048},
+        system_instruction="Write Python code. Return ONLY code. No markdown.",
     )
 
     try:
@@ -72,8 +62,10 @@ def _run_generated_code(
 
         result = subprocess.run(
             [sys.executable, tmp_path],
-            capture_output=True, text=True,
-            timeout=120, cwd=str(Path.home())
+            capture_output=True,
+            text=True,
+            timeout=30,
+            cwd=str(Path.home()),
         )
 
         try:
@@ -101,21 +93,18 @@ def _run_generated_code(
 
 
 def _inject_context(
-        params: dict,
-        tool: str,
-        step_results: dict,
-        goal: str = "") -> dict:
-    if not step_results:
-        return params
+    params: dict, tool: str, step_results: dict, goal: str = ""
+) -> dict:
+    return params
 
     params = dict(params)
 
-    if tool == "file_controller" and params.get(
-            "action") in ("write", "create_file"):
+    if tool == "file_controller" and params.get("action") in ("write", "create_file"):
         content = params.get("content", "")
         if not content or len(content) < 50:
             all_results = [
-                v for v in step_results.values()
+                v
+                for v in step_results.values()
                 if v and len(v) > 100 and v not in ("Done.", "Completed.")
             ]
             if all_results:
@@ -128,25 +117,44 @@ def _inject_context(
 
 
 def _detect_language(text: str) -> str:
-    import google.generativeai as genai  # type: ignore
-    genai.configure(api_key=get_gemini_key())
-    model = genai.GenerativeModel("gemini-2.5-flash-lite")
-    try:
-        response = model.generate_content(
-            f"What language is this text written in? "
-            f"Reply with ONLY the language name in English (e.g. Turkish, English, French).\n\n"
-            f"Text: {text[:200]}"  # type: ignore
-        )
-        return response.text.strip()
-    except Exception:
+    if any(ord(c) < 128 for c in text[:50]):
         return "English"
+    if any("\u0600" <= c <= "\u06ff" for c in text[:50]):
+        return "Turkish"
+    if any("\u0400" <= c <= "\u04ff" for c in text[:50]):
+        return "Russian"
+    return "English"
 
 
 def _translate_to_goal_language(content: str, goal: str) -> str:
-    if not goal:
+    return content
+
+    target_lang = _detect_language(goal)
+    if target_lang == "English":
+        return content
+
+    try:
+        import google.generativeai as genai  # type: ignore
+
+        genai.configure(api_key=get_gemini_key())
+        model = genai.GenerativeModel("gemini-2.0-flash-exp")
+
+        print(f"[Executor] 🌐 Translating to: {target_lang}")
+
+        prompt = (
+            f"Translate to {target_lang}. Keep facts/numbers. Output only translated text.\n\n"
+            f"{content[:3000]}"
+        )
+        response = model.generate_content(prompt)
+        translated = response.text.strip()
+        print(f"[Executor] ✅ Translation done ({target_lang})")
+        return translated
+    except Exception as e:
+        print(f"[Executor] ⚠️ Translation failed: {e}")
         return content
     try:
         import google.generativeai as genai  # type: ignore
+
         genai.configure(api_key=get_gemini_key())
         model = genai.GenerativeModel("gemini-2.5-flash")
 
@@ -176,111 +184,121 @@ def _call_tool(tool: str, parameters: dict, speak: Callable | None) -> str:
 
     if tool == "open_app":
         from actions.open_app import open_app  # type: ignore
+
         return open_app(parameters=parameters, player=None) or "Done."
 
     elif tool == "web_search":
         from actions.web_search import web_search  # type: ignore
+
         return web_search(parameters=parameters, player=None) or "Done."
 
     elif tool == "browser_task":
         import asyncio
         from actions.browser_agent import execute_browser_task
+
         request_text = parameters.get("request", "")
         user_data = parameters.get("user_data")
         try:
             loop = asyncio.get_event_loop()
             if loop.is_running():
                 import concurrent.futures
+
                 with concurrent.futures.ThreadPoolExecutor() as pool:
                     result = pool.submit(
                         asyncio.run,
-                        execute_browser_task(user_request=request_text, user_data=user_data)
+                        execute_browser_task(
+                            user_request=request_text, user_data=user_data
+                        ),
                     ).result()
             else:
-                result = loop.run_until_complete(execute_browser_task(user_request=request_text, user_data=user_data))
+                result = loop.run_until_complete(
+                    execute_browser_task(user_request=request_text, user_data=user_data)
+                )
         except RuntimeError:
-            result = asyncio.run(execute_browser_task(user_request=request_text, user_data=user_data))
+            result = asyncio.run(
+                execute_browser_task(user_request=request_text, user_data=user_data)
+            )
         return result or "Done."
 
     elif tool == "file_controller":
         from actions.file_controller import file_controller  # type: ignore
+
         return file_controller(parameters=parameters, player=None) or "Done."
 
     elif tool == "cmd_control":
         from actions.cmd_control import cmd_control  # type: ignore
+
         return cmd_control(parameters=parameters, player=None) or "Done."
 
     elif tool == "code_helper":
         from actions.code_helper import code_helper  # type: ignore
-        return code_helper(
-            parameters=parameters,
-            player=None,
-            speak=speak) or "Done."
+
+        return code_helper(parameters=parameters, player=None, speak=speak) or "Done."
 
     elif tool == "dev_agent":
         from actions.dev_agent import dev_agent  # type: ignore
-        return dev_agent(
-            parameters=parameters,
-            player=None,
-            speak=speak) or "Done."
+
+        return dev_agent(parameters=parameters, player=None, speak=speak) or "Done."
 
     elif tool == "screen_process":
         from actions.screen_processor import screen_process  # type: ignore
+
         screen_process(parameters=parameters, player=None)
         return "Screen captured and analyzed."
 
     elif tool == "send_message":
         from actions.send_message import send_message  # type: ignore
+
         return send_message(parameters=parameters, player=None) or "Done."
 
     elif tool == "reminder":
         from actions.reminder import reminder  # type: ignore
+
         return reminder(parameters=parameters, player=None) or "Done."
 
     elif tool == "youtube_video":
         from actions.youtube_video import youtube_video  # type: ignore
+
         return youtube_video(parameters=parameters, player=None) or "Done."
 
     elif tool == "weather_report":
         from actions.weather_report import weather_action  # type: ignore
+
         return weather_action(parameters=parameters, player=None) or "Done."
 
     elif tool == "computer_settings":
         from actions.computer_settings import computer_settings  # type: ignore
+
         return computer_settings(parameters=parameters, player=None) or "Done."
 
     elif tool == "desktop_control":
         from actions.desktop import desktop_control  # type: ignore
+
         return desktop_control(parameters=parameters, player=None) or "Done."
 
     elif tool == "computer_control":
         from actions.computer_control import computer_control  # type: ignore
+
         return computer_control(parameters=parameters, player=None) or "Done."
 
     elif tool == "generated_code":
         description = parameters.get("description", "")
         if not description:
-            raise ValueError(
-                "generated_code requires a 'description' parameter.")
+            raise ValueError("generated_code requires a 'description' parameter.")
         return _run_generated_code(description, speak=speak)
 
     elif tool == "flight_finder":
         from actions.flight_finder import flight_finder  # type: ignore
-        return flight_finder(
-            parameters=parameters,
-            player=None,
-            speak=speak) or "Done."
+
+        return flight_finder(parameters=parameters, player=None, speak=speak) or "Done."
 
     else:
-        print(
-            f"[Executor] ⚠️ Unknown tool '{tool}' — falling back to generated_code")
-        return _run_generated_code(
-            f"Accomplish this task: {parameters}", speak=speak)
+        print(f"[Executor] ⚠️ Unknown tool '{tool}' — falling back to generated_code")
+        return _run_generated_code(f"Accomplish this task: {parameters}", speak=speak)
 
 
 class AgentExecutor:
-
-    MAX_REPLAN_ATTEMPTS = 2
+    MAX_REPLAN_ATTEMPTS = 1
 
     def execute(
         self,
@@ -326,7 +344,7 @@ class AgentExecutor:
                 attempt = 1
                 step_ok = False
 
-                while attempt <= 3:
+                while attempt <= 2:
                     if cancel_flag is not None and cancel_flag.is_set():  # type: ignore
                         break
                     try:
@@ -336,17 +354,20 @@ class AgentExecutor:
                         print(
                             f"[Executor] ✅ Step {step_num} done: {
                                 str(result)[  # type: ignore
-                                    :100]}")  # type: ignore
+                                    :100
+                                ]
+                            }"
+                        )  # type: ignore
                         step_ok = True
                         break
 
                     except Exception as e:
                         error_msg = str(e)
                         print(
-                            f"[Executor] ❌ Step {step_num} attempt {attempt} failed: {error_msg}")
+                            f"[Executor] ❌ Step {step_num} attempt {attempt} failed: {error_msg}"
+                        )
 
-                        recovery = analyze_error(
-                            step, error_msg, attempt=attempt)
+                        recovery = analyze_error(step, error_msg, attempt=attempt)
                         decision = recovery["decision"]
                         user_msg = recovery.get("user_message", "")
 
@@ -356,7 +377,8 @@ class AgentExecutor:
                         if decision == ErrorDecision.RETRY:
                             attempt += 1
                             import time
-                            time.sleep(2)
+
+                            time.sleep(0.5)
                             continue
 
                         elif decision == ErrorDecision.SKIP:
@@ -366,9 +388,7 @@ class AgentExecutor:
                             break
 
                         elif decision == ErrorDecision.ABORT:
-                            msg = f"Task aborted, sir. {
-                                recovery.get(
-                                    'reason', '')}"
+                            msg = f"Task aborted, sir. {recovery.get('reason', '')}"
                             if speak is not None:
                                 speak(msg)  # type: ignore
                             return msg
@@ -378,22 +398,23 @@ class AgentExecutor:
                             if fix_suggestion and tool != "generated_code":
                                 try:
                                     fixed_step = generate_fix(
-                                        step, error_msg, fix_suggestion)
+                                        step, error_msg, fix_suggestion
+                                    )
                                     if speak is not None:
                                         speak(  # type: ignore
-                                            "Trying an alternative approach, sir.")
+                                            "Trying an alternative approach, sir."
+                                        )
                                     res = _call_tool(
                                         fixed_step["tool"],
                                         fixed_step["parameters"],
-                                        speak
+                                        speak,
                                     )
                                     step_results[step_num] = res
                                     completed_steps.append(step)  # type: ignore
                                     step_ok = True
                                     break
                                 except Exception as fix_err:
-                                    print(
-                                        f"[Executor] ⚠️ Fix failed: {fix_err}")
+                                    print(f"[Executor] ⚠️ Fix failed: {fix_err}")
 
                             failed_step = step
                             failed_error = error_msg
@@ -426,32 +447,14 @@ class AgentExecutor:
         return "Execution finished."
 
     def _summarize(
-            self,
-            goal: str,
-            completed_steps: list,
-            speak: Callable | None) -> str:
-        fallback = f"All done, sir. Completed {
-            len(completed_steps)} steps for: {
-            goal[  # type: ignore
-                :60]}."  # type: ignore
-        try:
-            import google.generativeai as genai  # type: ignore
-            genai.configure(api_key=get_gemini_key())
-            model = genai.GenerativeModel(model_name="gemini-2.5-flash-lite")
-            steps_str = "\n".join(
-                f"- {s.get('description', '')}" for s in completed_steps)
-            prompt = (
-                f'User goal: "{goal}"\n'
-                f"Completed steps:\n{steps_str}\n\n"
-                "Write a single natural sentence summarizing what was accomplished. "
-                "Address the user as 'sir'. Be direct and positive."
-            )
-            response = model.generate_content(prompt)
-            summary = response.text.strip()
-            if speak:
-                speak(summary)
-            return summary
-        except Exception:
-            if speak:
-                speak(fallback)
-            return fallback
+        self, goal: str, completed_steps: list, speak: Callable | None
+    ) -> str:
+        if not speak:
+            return f"Completed {len(completed_steps)} steps."
+
+        steps_str = ", ".join(
+            s.get("description", "")[:30] for s in completed_steps[:3]
+        )
+        summary = f"All done, sir. {steps_str}."
+        speak(summary)
+        return summary
