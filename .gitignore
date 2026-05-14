@@ -3,20 +3,54 @@ __pycache__/
 *$py.class
 *.so
 
+# Secret configuration files — NEVER commit
+.env
+.env.local
+.env.production
 config/api_keys.json
 config/gmail_credentials.json
-memory/long_term.json
+config/remote_token.txt
+electron-app/.env
 
-.env
-.venv
-env/
+# Virtual environments
+.venv/
 venv/
+venv2/
+env/
 ENV/
 env.bak/
 venv.bak/
 
+# Memory & runtime data
+memory/long_term.json
+memory_store/
+data/chroma_db/
+data/sessions/
+data/memory/
+data/sandbox/
+data/logs/
+
+# Test & coverage
 .pytest_cache/
 .coverage
 htmlcov/
+.ruff_cache/
 
+# OS files
 .DS_Store
+Thumbs.db
+
+# Keys & certificates
+*.pem
+*.key
+*.crt
+*.p12
+
+# Build artifacts
+electron-app/dist/
+electron-app/node_modules/
+node_modules/
+
+# IDE
+.vscode/settings.json
+.idea/
