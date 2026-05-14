@@ -1,0 +1,14 @@
+{
+  "id": "agent.task_manager",
+  "name": "task-manager",
+  "description": "Automatically imported agent from VierisidJarvis",
+  "kind": "agent",
+  "category": "jarvis-daemon",
+  "origin": "VierisidJarvis",
+  "entry": "index.js",
+  "paramsSchema": {
+    "type": "object"
+  },
+  "requires": [],
+  "riskLevel": "medium"
+}

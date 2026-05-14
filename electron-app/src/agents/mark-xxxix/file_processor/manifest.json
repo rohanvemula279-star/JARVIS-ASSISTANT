@@ -1,0 +1,14 @@
+{
+  "id": "task.file_processor",
+  "name": "file_processor",
+  "description": "Automatically imported task from Mark-XXXIX",
+  "kind": "task",
+  "category": "mark-xxxix",
+  "origin": "Mark-XXXIX",
+  "entry": "index.js",
+  "paramsSchema": {
+    "type": "object"
+  },
+  "requires": [],
+  "riskLevel": "medium"
+}

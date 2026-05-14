@@ -1,0 +1,17 @@
+{
+  "id": "blueprint_4ba74738",
+  "name": "default",
+  "version": "2026.04.19",
+  "digest": "9724c1e20e6e3e4d",
+  "config": {
+    "key": "value"
+  },
+  "network_policy": {
+    "default": "allow"
+  },
+  "filesystem_policy": {
+    "/data": "rw"
+  },
+  "created_at": "2026-04-19T09:44:55.038361",
+  "verified": false
+}

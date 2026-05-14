@@ -1,0 +1,14 @@
+{
+  "id": "agent.api_docs",
+  "name": "api-docs",
+  "description": "Automatically imported agent from Ruflo",
+  "kind": "agent",
+  "category": "ruflo-swarm",
+  "origin": "Ruflo",
+  "entry": "index.js",
+  "paramsSchema": {
+    "type": "object"
+  },
+  "requires": [],
+  "riskLevel": "high"
+}

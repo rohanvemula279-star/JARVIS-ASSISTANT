@@ -1,0 +1,14 @@
+{
+  "id": "agent.terminal",
+  "name": "terminal",
+  "description": "Automatically imported agent from VierisidJarvis",
+  "kind": "agent",
+  "category": "jarvis-daemon",
+  "origin": "VierisidJarvis",
+  "entry": "index.js",
+  "paramsSchema": {
+    "type": "object"
+  },
+  "requires": [],
+  "riskLevel": "medium"
+}

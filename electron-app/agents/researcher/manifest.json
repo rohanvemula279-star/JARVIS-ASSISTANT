@@ -1,0 +1,5 @@
+{
+  "name": "researcher",
+  "description": "Research agent",
+  "skills": ["search"]
+}

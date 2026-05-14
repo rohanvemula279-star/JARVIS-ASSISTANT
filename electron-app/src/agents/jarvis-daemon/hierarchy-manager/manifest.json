@@ -1,0 +1,14 @@
+{
+  "id": "agent.hierarchy_manager",
+  "name": "hierarchy-manager",
+  "description": "Automatically imported agent from VierisidJarvis",
+  "kind": "agent",
+  "category": "jarvis-daemon",
+  "origin": "VierisidJarvis",
+  "entry": "index.js",
+  "paramsSchema": {
+    "type": "object"
+  },
+  "requires": [],
+  "riskLevel": "medium"
+}

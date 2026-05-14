@@ -1,0 +1,14 @@
+{
+  "id": "task.computer_control",
+  "name": "computer_control",
+  "description": "Automatically imported task from Mark-XXXIX",
+  "kind": "task",
+  "category": "mark-xxxix",
+  "origin": "Mark-XXXIX",
+  "entry": "index.js",
+  "paramsSchema": {
+    "type": "object"
+  },
+  "requires": [],
+  "riskLevel": "medium"
+}

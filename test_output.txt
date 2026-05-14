@@ -1,0 +1,125 @@
+
+[1m────────────────────────────────────────────────────────────[0m
+[1m  JARVIS Mark-XL — System Test  08:06:16[0m
+[1m────────────────────────────────────────────────────────────[0m
+
+[94m[1m[1] Core health[0m
+  [92m✅[0m Backend reachable [93m(0.0s)[0m
+  [92m✅[0m   backend: ok
+  [92m✅[0m   gemini: ok
+  [92m✅[0m   redis: unavailable
+     using fallback (unavailable)
+  [92m✅[0m   chromadb: unavailable
+     using fallback (unavailable)
+  [92m✅[0m   tools registered: 17
+     expected ≥10, got 17
+  [92m✅[0m   agent profiles: 6
+
+[94m[1m[2] Static endpoints[0m
+  [92m✅[0m GET /api/v1/tools
+     17 tools
+  [92m✅[0m GET /api/v1/skills
+     0 skills
+  [92m✅[0m GET /api/v1/tasks
+     0 tasks
+  [91m❌[0m GET /api/v1/agents/profiles
+     HTTP 404
+
+[94m[1m[3] Live context (must NOT be hardcoded)[0m
+  [93m⚠️ [0m GET /api/v1/context/system
+     HTTP 404
+  [93m⚠️ [0m GET /api/v1/context/weather
+     HTTP 404
+  [92m✅[0m GET /api/v1/context
+     cpu=?%
+
+[94m[1m[4] Intent router[0m
+  [93m⚠️ [0m Router status endpoint
+     skipping per-case tests
+
+[94m[1m[5] Chat stream — easy (conversation)[0m
+Traceback (most recent call last):
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpx\_transports\default.py", line 271, in __aiter__
+    async for part in self._httpcore_stream:
+        yield part
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpcore\_async\connection_pool.py", line 407, in __aiter__
+    raise exc from None
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpcore\_async\connection_pool.py", line 403, in __aiter__
+    async for part in self._stream:
+        yield part
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpcore\_async\http11.py", line 342, in __aiter__
+    raise exc
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpcore\_async\http11.py", line 334, in __aiter__
+    async for chunk in self._connection._receive_response_body(**kwargs):
+        yield chunk
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpcore\_async\http11.py", line 203, in _receive_response_body
+    event = await self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpcore\_async\http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.READ_NUM_BYTES, timeout=timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpcore\_backends\anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\rohan\ASSISTANT\test_jarvis_e2e.py", line 359, in <module>
+    failed = asyncio.run(run_tests())
+  File "C:\Python314\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\rohan\ASSISTANT\test_jarvis_e2e.py", line 210, in run_tests
+    answer, events, dur = await stream_collect(
+                          ^^^^^^^^^^^^^^^^^^^^^
+        client, "Hello JARVIS, what's today's date and time?", "easy-001"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\rohan\ASSISTANT\test_jarvis_e2e.py", line 51, in stream_collect
+    async for chunk in resp.aiter_text():
+    ...<15 lines>...
+                    full_answer = data.get("content", full_answer)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpx\_models.py", line 1018, in aiter_text
+    async for byte_content in self.aiter_bytes():
+    ...<2 lines>...
+            yield chunk
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpx\_models.py", line 997, in aiter_bytes
+    async for raw_bytes in self.aiter_raw():
+    ...<2 lines>...
+            yield chunk
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpx\_models.py", line 1055, in aiter_raw
+    async for raw_stream_bytes in self.stream:
+    ...<2 lines>...
+            yield chunk
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 176, in __aiter__
+    async for chunk in self._stream:
+        yield chunk
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpx\_transports\default.py", line 270, in __aiter__
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\rohan\AppData\Roaming\Python\Python314\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout

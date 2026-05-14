@@ -1,0 +1,14 @@
+{
+  "id": "agent.performance_analyst",
+  "name": "performance-analyst",
+  "description": "Automatically imported agent from Ruflo",
+  "kind": "agent",
+  "category": "ruflo-swarm",
+  "origin": "Ruflo",
+  "entry": "index.js",
+  "paramsSchema": {
+    "type": "object"
+  },
+  "requires": [],
+  "riskLevel": "high"
+}

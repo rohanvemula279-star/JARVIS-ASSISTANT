@@ -1,0 +1,13 @@
+{
+  "name": "jarvis-system",
+  "version": "1.0.0",
+  "description": "JARVIS Mark-XXXIX - Advanced Desktop Assistant",
+  "scripts": {
+    "install:all": "npm install --prefix electron-app && pip install -r python-backend/requirements.txt",
+    "start": "npm run start --prefix electron-app",
+    "build": "npm run build --prefix electron-app",
+    "dist": "npm run dist --prefix electron-app"
+  },
+  "author": "Rohan",
+  "license": "MIT"
+}

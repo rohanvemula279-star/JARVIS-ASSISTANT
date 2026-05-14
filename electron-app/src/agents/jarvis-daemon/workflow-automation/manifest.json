@@ -1,0 +1,14 @@
+{
+  "id": "agent.workflow_automation",
+  "name": "workflow-automation",
+  "description": "Automatically imported agent from VierisidJarvis",
+  "kind": "agent",
+  "category": "jarvis-daemon",
+  "origin": "VierisidJarvis",
+  "entry": "index.js",
+  "paramsSchema": {
+    "type": "object"
+  },
+  "requires": [],
+  "riskLevel": "medium"
+}

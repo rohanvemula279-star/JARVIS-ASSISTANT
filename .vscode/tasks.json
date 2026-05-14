@@ -1,0 +1,78 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "JERSEY: Start All",
+      "type": "shell",
+      "command": "${workspaceFolder}/start-jarvis.sh",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "group": "jervey"
+      },
+      "dependsOn": []
+    },
+    {
+      "label": "JERSEY: Backend Only",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/python-backend && ${workspaceFolder}/python-backend/venv/bin/python -m app.main",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "JERSEY: Frontend Only",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/electron-app && npm run dev",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "JERSEY: Electron Only",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/electron-app && npm run electron",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "JERSEY: Setup Virtual Environment",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/python-backend && python3 -m venv venv",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "JERSEY: Install Dependencies",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/electron-app && npm install",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "JERSEY: Build App",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/electron-app && npm run build:app",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    }
+  ]
+}

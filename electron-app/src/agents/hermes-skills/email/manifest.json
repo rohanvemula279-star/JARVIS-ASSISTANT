@@ -1,0 +1,14 @@
+{
+  "id": "skill.email",
+  "name": "email",
+  "description": "Automatically imported skill from Hermes",
+  "kind": "skill",
+  "category": "hermes-skills",
+  "origin": "Hermes",
+  "entry": "index.js",
+  "paramsSchema": {
+    "type": "object"
+  },
+  "requires": [],
+  "riskLevel": "medium"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "skill.sherpa_onnx_tts",
+  "name": "sherpa-onnx-tts",
+  "description": "Automatically imported skill from OpenClaw",
+  "kind": "skill",
+  "category": "openclaw-skills",
+  "origin": "OpenClaw",
+  "entry": "index.js",
+  "paramsSchema": {
+    "type": "object"
+  },
+  "requires": [],
+  "riskLevel": "medium"
+}

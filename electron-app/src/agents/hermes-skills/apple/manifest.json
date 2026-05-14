@@ -1,0 +1,14 @@
+{
+  "id": "skill.apple",
+  "name": "apple",
+  "description": "Automatically imported skill from Hermes",
+  "kind": "skill",
+  "category": "hermes-skills",
+  "origin": "Hermes",
+  "entry": "index.js",
+  "paramsSchema": {
+    "type": "object"
+  },
+  "requires": [],
+  "riskLevel": "medium"
+}
